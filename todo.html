@@ -736,10 +736,22 @@
         <div>
           <b class="text-gray-800 dark:text-white">基本操作</b>
           <ul class="list-disc pl-4 mt-1 space-y-1">
+            <li>顶部导航：新建任务、新增区块、全部任务、导入/导出、统计、回收站、归档</li>
+            <li>顶部右侧图标：🔔 近期到期任务 · 📅 任务日历 · ⚙ 设置 · 🌙 深色模式 · ❓ 帮助</li>
             <li>点击顶部「新建任务」或区块内「添加任务」创建任务</li>
             <li><b>点击任务条</b>即可编辑任务详情</li>
             <li>勾选复选框标记完成，点右侧 🗑 删除（移入回收站）</li>
             <li>任务条可<b>拖拽</b>移动到其他区块</li>
+            <li>已完成任务可点击 <b>归档</b> 移入归档区</li>
+          </ul>
+        </div>
+        <div>
+          <b class="text-gray-800 dark:text-white">排序 & 标签</b>
+          <ul class="list-disc pl-4 mt-1 space-y-1">
+            <li>区块标题栏：↕ 默认 / 题 标题 / 期 日期 / 要 重要性 / 部 部门</li>
+            <li>点击排序按钮切换排序方式，再点切换升/降序</li>
+            <li>任务可添加<b>标签</b>（逗号分隔），支持彩色标签显示与筛选</li>
+            <li>设置面板中可管理标签颜色</li>
           </ul>
         </div>
         <div>
@@ -748,6 +760,28 @@
             <li>点击区块标题栏 📋 或顶部「全部任务」打开任务列表视口</li>
             <li>勾选后使用工具栏：移动/改状态/改截止/改重要性/删除</li>
             <li>可按状态筛选后批量选中，支持全选当前页 / 全选全部</li>
+          </ul>
+        </div>
+        <div>
+          <b class="text-gray-800 dark:text-white">近期到期提醒</b>
+          <ul class="list-disc pl-4 mt-1 space-y-1">
+            <li>点击顶部 🔔 图标查看近期到期任务列表</li>
+            <li>点击表头（任务/区块/截止日期/时限）可排序</li>
+            <li>提前天数可在设置中配置（默认3天）</li>
+          </ul>
+        </div>
+        <div>
+          <b class="text-gray-800 dark:text-white">任务日历</b>
+          <ul class="list-disc pl-4 mt-1 space-y-1">
+            <li>点击顶部 📅 图标打开任务日历</li>
+            <li>日历中显示各日期的任务数量，点击日期可快速创建任务</li>
+          </ul>
+        </div>
+        <div>
+          <b class="text-gray-800 dark:text-white">周期性任务</b>
+          <ul class="list-disc pl-4 mt-1 space-y-1">
+            <li>创建/编辑任务时可设置重复周期：每天/每周/每月/每年</li>
+            <li>完成后自动创建下一周期任务</li>
           </ul>
         </div>
         <div>
@@ -769,7 +803,7 @@
           <b class="text-gray-800 dark:text-white">数据安全</b>
           <ul class="list-disc pl-4 mt-1 space-y-1">
             <li>所有数据存储在浏览器本地，不会上传任何服务器</li>
-            <li>设置中可配置自动存档（频次/保留份数/存储标识）</li>
+            <li>设置中可配置自动存档 / 提醒 / 去重</li>
           </ul>
         </div>
         <hr class="border-gray-200 dark:border-gray-600">
@@ -1375,44 +1409,33 @@
           return 0;
         });
         
-        // Build sort buttons
-        var sortOpts = [
-          {k:'dueDate',l:'截止'},
-          {k:'title',l:'任务'},
-          {k:'catName',l:'区块'},
-          {k:'urgency',l:'时限'}
-        ];
-        var sortHtml = '<span class="text-xs text-gray-400" style="margin-left:8px">排序</span>';
-        sortOpts.forEach(function(o) {
-          var active = reminderSortBy === o.k;
-          sortHtml += '<span class="sort-opt ' + (active?'active':'') + '" style="width:auto;padding:0 4px" data-rsort="' + o.k + '">' + o.l + (active ? (reminderSortOrder==='asc'?'↑':'↓') : '') + '</span>';
-        });
+        // Table with clickable headers for sorting
+        function th(k, l) {
+          var arrow = reminderSortBy === k ? (reminderSortOrder === 'asc' ? ' ↑' : ' ↓') : '';
+          return '<th class="px-3 py-2 text-left text-xs" style="cursor:pointer;user-select:none" data-rsort="' + k + '">' + l + arrow + '</th>';
+        }
         
-        var html = '<div style="display:flex;align-items:center;gap:1px;margin-bottom:8px">' + sortHtml + '</div>';
-        html += '<div class="overflow-x-auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg table-striped"><thead class="bg-gray-100 dark:bg-gray-700"><tr>';
-        html += '<th class="px-3 py-2 text-left text-xs">任务</th><th class="px-3 py-2 text-left text-xs">区块</th><th class="px-3 py-2 text-left text-xs">截止日期</th><th class="px-3 py-2 text-right text-xs">时限</th>';
+        var html = '<div class="overflow-x-auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg table-striped"><thead class="bg-gray-100 dark:bg-gray-700"><tr>';
+        html += '<th class="px-3 py-2 text-left text-xs" style="width:30px">#</th>';
+        html += th('title', '任务');
+        html += th('catName', '区块');
+        html += th('dueDate', '截止日期');
+        html += th('urgency', '时限');
         html += '</tr></thead><tbody class="divide-y">';
-        upcoming.forEach(function(t) {
+        upcoming.forEach(function(t, idx) {
           var due = t.dueDate.split('T')[0];
           var diff = Math.round((new Date(due) - new Date(nowStr)) / 86400000);
           var label = diff === 0 ? '今天' : diff === 1 ? '明天' : diff + '天后';
           var c = diff <= 1 ? '#dc2626' : diff <= 3 ? '#d97706' : '#6366f1';
-          html += '<tr class="text-xs"><td class="px-3 py-2" style="color:' + c + ';font-weight:' + (diff<=1?'600':'400') + '">' + escapeHTML(t.title.substring(0,24)) + '</td><td class="px-3 py-2 text-gray-500">' + escapeHTML(t.catName) + '</td><td class="px-3 py-2">' + due + '</td><td class="px-3 py-2 text-right" style="color:' + c + ';font-weight:600">' + label + '</td></tr>';
+          html += '<tr class="text-xs"><td class="px-3 py-2 text-gray-400">' + (idx + 1) + '</td><td class="px-3 py-2" style="color:' + c + ';font-weight:' + (diff<=1?'600':'400') + '">' + escapeHTML(t.title.substring(0,24)) + '</td><td class="px-3 py-2 text-gray-500">' + escapeHTML(t.catName) + '</td><td class="px-3 py-2">' + due + '</td><td class="px-3 py-2 text-right" style="color:' + c + ';font-weight:600">' + label + '</td></tr>';
         });
         html += '</tbody></table></div>';
         elements.taskListTitle.textContent = '近期到期 (' + upcoming.length + ')';
         elements.taskListContent.innerHTML = html;
-        // Hide batch bar
-        elements.taskListBatchBar.classList.add('hidden');
-        // Set compact width
-        var tlContent = elements.taskListModal.querySelector('.modal-content');
-        if (tlContent) { tlContent.classList.add('compact'); tlContent.classList.remove('wide'); }
-        elements.taskListModal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
         
-        // Bind reminder sort buttons
-        elements.taskListContent.querySelectorAll('[data-rsort]').forEach(function(btn) {
-          btn.onclick = function() {
+        // Bind click-to-sort on header cells
+        elements.taskListContent.querySelectorAll('th[data-rsort]').forEach(function(th) {
+          th.onclick = function() {
             var k = this.getAttribute('data-rsort');
             if (reminderSortBy === k) {
               reminderSortOrder = reminderSortOrder === 'asc' ? 'desc' : 'asc';
@@ -1423,6 +1446,14 @@
             showReminderModal();
           };
         });
+        
+        // Hide batch bar
+        elements.taskListBatchBar.classList.add('hidden');
+        // Set compact width
+        var tlContent = elements.taskListModal.querySelector('.modal-content');
+        if (tlContent) { tlContent.classList.add('compact'); tlContent.classList.remove('wide'); }
+        elements.taskListModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
       }
 
       document.getElementById('reminder-icon-btn').addEventListener('click', showReminderModal);
