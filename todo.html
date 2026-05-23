@@ -326,8 +326,8 @@
     .page-btn { padding: 4px 8px; font-size: 12px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer; }
     .page-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
 
-    .app-footer { text-align: center; padding: 1.5rem 1rem; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; margin-top: 2rem; }
-    body.dark-mode .app-footer { color: #64748b; border-top-color: #334155; }
+    .app-footer { text-align: center; padding: 1.5rem 1rem; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; position: sticky; bottom: 0; z-index: 30; background: #f1f5f9; margin-top: 2rem; }
+    body.dark-mode .app-footer { color: #64748b; border-top-color: #334155; background: #0f172a; }
 
     #task-list-batch-bar { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 2px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; }
     body.dark-mode #task-list-batch-bar { background: #0c1929; border-color: #1e3a5f; }
@@ -389,26 +389,25 @@
   <div class="header-fixed">
     <div class="container">
       <header>
-        <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
-          <h1 class="text-xl font-bold page-title" contenteditable="true">高效待办事项管理</h1>
-          <div class="flex flex-wrap items-center gap-1.5">
+        <div class="flex flex-wrap justify-between items-center gap-1 mb-2">
+          <h1 class="text-lg font-bold page-title" contenteditable="true" style="white-space:nowrap">高效待办事项管理</h1>
+          <div class="flex flex-wrap items-center gap-1" style="max-width:calc(100% - 160px)">
             <button id="new-task-btn" class="btn btn-primary"><i class="fa fa-plus"></i> 新建任务</button>
             <button id="new-category-btn" class="btn btn-secondary"><i class="fa fa-th-large"></i> 新增区块</button>
             <button id="all-tasks-btn" class="btn btn-secondary"><i class="fa fa-list-alt"></i> 全部任务</button>
-            <span class="btn-sep"></span>
-            <button id="import-data-btn" class="btn btn-secondary"><i class="fa fa-upload"></i> 导入</button>
-            <button id="export-data-btn" class="btn btn-secondary"><i class="fa fa-download"></i> 导出</button>
-            <span class="btn-sep"></span>
-            <button id="stats-btn" class="btn btn-secondary"><i class="fa fa-bar-chart"></i> 统计</button>
-            <button id="recycle-bin-btn" class="btn btn-recycle"><i class="fa fa-trash"></i> 回收站</button>
-            <button id="archive-btn" class="btn btn-secondary"><i class="fa fa-archive"></i> 归档</button>
-            <button id="settings-btn" class="btn btn-secondary"><i class="fa fa-cog"></i> 设置</button>
-            <button id="help-btn" class="btn btn-secondary"><i class="fa fa-question-circle"></i> 帮助</button>
-            <span class="btn-sep"></span>
-            <button id="toggle-dark-mode" class="btn btn-secondary"><i class="fa fa-moon-o"></i> 深色模式</button>
-            <span class="btn-sep"></span>
-            <button id="reminder-icon-btn" class="btn btn-secondary" title="近期到期任务" style="font-size:11px;padding:0.25rem 0.5rem"><i class="fa fa-bell-o"></i></button>
-            <button id="calendar-btn" class="btn btn-secondary" title="任务日历" style="font-size:11px;padding:0.25rem 0.5rem"><i class="fa fa-calendar"></i> <span id="calendar-btn-date">日历</span></button>
+            <span class="btn-sep" style="margin:0 1px"></span>
+            <button id="import-data-btn" class="btn btn-secondary" style="padding:0.25rem 0.5rem"><i class="fa fa-upload"></i></button>
+            <button id="export-data-btn" class="btn btn-secondary" style="padding:0.25rem 0.5rem"><i class="fa fa-download"></i></button>
+            <span class="btn-sep" style="margin:0 1px"></span>
+            <button id="stats-btn" class="btn btn-secondary" style="padding:0.25rem 0.5rem"><i class="fa fa-bar-chart"></i></button>
+            <button id="recycle-bin-btn" class="btn btn-recycle" style="padding:0.25rem 0.5rem"><i class="fa fa-trash"></i></button>
+            <button id="archive-btn" class="btn btn-secondary" style="padding:0.25rem 0.5rem"><i class="fa fa-archive"></i></button>
+            <button id="settings-btn" class="btn btn-secondary" style="padding:0.25rem 0.5rem"><i class="fa fa-cog"></i></button>
+            <button id="help-btn" class="btn btn-secondary" style="padding:0.25rem 0.5rem"><i class="fa fa-question-circle"></i></button>
+            <span class="btn-sep" style="margin:0 1px"></span>
+            <button id="toggle-dark-mode" class="btn btn-secondary" style="padding:0.25rem 0.5rem"><i class="fa fa-moon-o"></i></button>
+            <button id="reminder-icon-btn" class="btn btn-secondary" title="近期到期任务" style="font-size:12px;padding:0.25rem 0.4rem"><i class="fa fa-bell-o"></i></button>
+            <button id="calendar-btn" class="btn btn-secondary" title="任务日历" style="font-size:12px;padding:0.25rem 0.4rem"><i class="fa fa-calendar"></i></button>
             
             <input type="file" id="file-input-json" accept=".json" class="hidden">
             <input type="file" id="file-input-excel" accept=".xlsx,.xls" class="hidden">
@@ -1346,17 +1345,19 @@
       document.getElementById('reminder-icon-btn').addEventListener('click', () => {
         const upcoming = getUpcomingTasks();
         if (upcoming.length === 0) { alert('暂无近期到期任务'); return; }
-        let html = '<div style="font-size:12px"><table class="min-w-full"><thead><tr style="font-size:11px;color:#64748b"><th class="text-left px-2 py-1">任务</th><th class="text-left px-2 py-1">区块</th><th class="text-left px-2 py-1">截止</th><th class="text-left px-2 py-1">距今天数</th></tr></thead><tbody>';
+        let html = '<div style="padding:4px 0"><table style="width:100%;border-collapse:collapse;font-size:12px">';
+        html += '<thead><tr style="border-bottom:1px solid #e2e8f0;color:#94a3b8;font-size:10px"><th style="padding:6px 8px;text-align:left;font-weight:500">任务</th><th style="padding:6px 8px;text-align:left;font-weight:500">截止</th><th style="padding:6px 8px;text-align:right;font-weight:500">时限</th></tr></thead><tbody>';
         const nowStr = new Date().toISOString().split('T')[0];
         upcoming.forEach(t => {
           const due = t.dueDate.split('T')[0];
           const diff = Math.round((new Date(due) - new Date(nowStr)) / 86400000);
           const label = diff === 0 ? '今天' : diff === 1 ? '明天' : diff + '天后';
-          const color = diff <= 1 ? '#ef4444' : diff <= 3 ? '#f59e0b' : '#6366f1';
-          html += '<tr><td class="px-2 py-1" style="color:' + color + '">' + escapeHTML(t.title.substring(0,20)) + '</td><td class="px-2 py-1 text-gray-500">' + escapeHTML(t.catName) + '</td><td class="px-2 py-1">' + due + '</td><td class="px-2 py-1" style="color:' + color + '">' + label + '</td></tr>';
+          const bg = diff <= 1 ? '#fef2f2' : diff <= 3 ? '#fffbeb' : '#f8fafc';
+          const c = diff <= 1 ? '#dc2626' : diff <= 3 ? '#d97706' : '#6366f1';
+          html += '<tr style="border-bottom:1px solid #f1f5f9;background:' + bg + '"><td style="padding:5px 8px"><span style="color:#1e293b">' + escapeHTML(t.title.substring(0,18)) + '</span><span style="color:#94a3b8;font-size:10px;margin-left:6px">' + escapeHTML(t.catName) + '</span></td><td style="padding:5px 8px;color:#64748b">' + due + '</td><td style="padding:5px 8px;text-align:right;color:' + c + ';font-weight:600">' + label + '</td></tr>';
         });
         html += '</tbody></table></div>';
-        elements.taskListTitle.textContent = '近期到期任务';
+        elements.taskListTitle.textContent = '近期到期 (' + upcoming.length + ')';
         elements.taskListContent.innerHTML = html;
         elements.taskListModal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
@@ -1982,7 +1983,7 @@
               <span class="status-tag in-progress" data-status="in-progress">进:${cnt.ip}</span>
               <span class="status-tag completed" data-status="completed">完:${cnt.c}</span>
               <span class="status-tag overdue" data-status="overdue">逾:${cnt.o}</span>
-              <span class="sort-cycle-btn" data-cid="${cat.id}" style="margin-left:3px;padding-left:4px;border-left:1px solid #d1d5db;cursor:pointer;color:#6b7280;user-select:none" title="点击切换排序方式">${cat.sortBy==='default'?'默认':cat.sortBy==='dueDate'?'日期':cat.sortBy==='priority'?'重要':cat.sortBy==='dept'?'部门':'标题'} ${cat.sortOrder === 'asc' ? '↑' : '↓'}</span>
+              <span class="sort-cycle-btn" data-cid="${cat.id}" onclick="cycleSort(this)" style="margin-left:3px;padding-left:4px;border-left:1px solid #d1d5db;cursor:pointer;color:#6b7280;user-select:none" title="点击切换排序方式">${cat.sortBy==='default'?'默认':cat.sortBy==='dueDate'?'日期':cat.sortBy==='priority'?'重要':cat.sortBy==='dept'?'部门':'标题'} ${cat.sortOrder === 'asc' ? '↑' : '↓'}</span>
             </div>
           </div>
           <div>${btns}</div>
@@ -2200,11 +2201,9 @@
       // Sort cycle button - delegated on categories-container (survives re-renders)
     }
 
-    // Sort delegate: click on .sort-cycle-btn anywhere under categories-container
-    document.getElementById('categories-container').addEventListener('click', function(e) {
-      const btn = e.target.closest('.sort-cycle-btn');
-      if (!btn) return;
-      const cid = parseInt(btn.getAttribute('data-cid'));
+    // Sort cycle - inline onclick handler
+    function cycleSort(el) {
+      const cid = parseInt(el.getAttribute('data-cid'));
       const cat = categories.find(c => c.id === cid);
       if (!cat) return;
       const order = ['default','dueDate','priority','dept','title'];
@@ -2216,7 +2215,7 @@
       }
       saveDataToStorage();
       renderCategories();
-    });
+    }
 
     function initModals() {
       [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, document.getElementById('calendar-modal'), elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal')].forEach(m => m.classList.add('hidden'));
