@@ -326,8 +326,8 @@
     .page-btn { padding: 4px 8px; font-size: 12px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer; }
     .page-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
 
-    .app-footer { text-align: center; padding: 1.5rem 1rem; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; margin-top: 2rem; }
-    body.dark-mode .app-footer { color: #64748b; border-top-color: #334155; }
+    .app-footer { text-align: center; padding: 0.5rem 1rem; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; position: sticky; bottom: 0; z-index: 30; background: #f1f5f9; margin-top: 0; }
+    body.dark-mode .app-footer { color: #64748b; border-top-color: #334155; background: #0f172a; }
 
     #task-list-batch-bar { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 2px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; }
     body.dark-mode #task-list-batch-bar { background: #0c1929; border-color: #1e3a5f; }
@@ -412,7 +412,6 @@
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-2 mb-2">
-          <button id="calendar-btn" class="btn btn-secondary" style="font-size:13px;padding:2px 10px"><i class="fa fa-calendar"></i> <span id="calendar-btn-date">日历</span></button>
           <button class="filter-btn active" data-filter="all">全部任务</button>
           <button class="filter-btn" data-filter="pending">待处理</button>
           <button class="filter-btn" data-filter="in-progress">进行中</button>
@@ -420,10 +419,10 @@
           <button class="filter-btn" data-filter="overdue">已逾期</button>
         </div>
         <div id="tag-filter-bar" class="flex flex-wrap gap-1 mb-1" style="min-height:18px"></div>
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2" style="margin-top:2px">
           <div class="relative" style="flex:1;min-width:180px;max-width:320px">
-            <input type="text" id="search-input" placeholder="搜索任务..." class="form-input">
-            <i class="fa fa-search" style="position:absolute;left:8px;top:7px;font-size:12px;color:#94a3b8"></i>
+            <input type="text" id="search-input" placeholder="搜索任务..." class="form-input" style="padding-left:24px">
+            <i class="fa fa-search" style="position:absolute;left:7px;top:7px;font-size:12px;color:#94a3b8"></i>
           </div>
           <div id="reminder-bar" class="reminder-bar hidden-bar" style="flex:2;min-width:200px;margin-bottom:0"></div>
         </div>
@@ -431,7 +430,7 @@
     </div>
   </div>
 
-  <div class="container">
+  <div class="container" style="padding-bottom:8px">
     <main id="categories-container"></main>
   </div>
 
@@ -2177,25 +2176,27 @@
 
 
       // Sort cycle button: click cycles sortBy (默认→日期→重要→部门→标题→默认), then toggles order
-      document.querySelectorAll('.sort-cycle-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const cid = parseInt(btn.dataset.cid);
-          const cat = categories.find(c => c.id === cid);
-          if (cat) {
-            const order = ['default','dueDate','priority','dept','title'];
-            const idx = order.indexOf(cat.sortBy);
-            if (idx === -1 || idx === order.length - 1) {
-              // At end, toggle order
-              cat.sortOrder = cat.sortOrder === 'asc' ? 'desc' : 'asc';
-            } else {
-              cat.sortBy = order[idx + 1];
-            }
-            saveDataToStorage();
-            renderCategories();
-          }
-        });
-      });
+      // Use event delegation to avoid re-binding issues after renderCategories()
     }
+
+    // Sort cycle button - delegated event (outside initTaskDrag to survive re-renders)
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('.sort-cycle-btn');
+      if (!btn) return;
+      const cid = parseInt(btn.dataset.cid);
+      const cat = categories.find(c => c.id === cid);
+      if (cat) {
+        const order = ['default','dueDate','priority','dept','title'];
+        const idx = order.indexOf(cat.sortBy);
+        if (idx === -1 || idx === order.length - 1) {
+          cat.sortOrder = cat.sortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+          cat.sortBy = order[idx + 1];
+        }
+        saveDataToStorage();
+        renderCategories();
+      }
+    });
 
     function initModals() {
       [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, document.getElementById('calendar-modal'), elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal')].forEach(m => m.classList.add('hidden'));
@@ -3580,9 +3581,11 @@
 
   <div id="task-tooltip" class="task-tooltip hidden"></div>
   <footer class="app-footer">
-    <p>yongbing.yang@gmail.com</p>
-    <p style="margin-top:2px;">本工具由 AI 辅助生成 · 仅供个人使用 · 数据仅存储于浏览器本地</p>
-    <p style="margin-top:4px;font-size:10px;color:#cbd5e1;">v2026.05.23</p>
+    <div class="flex justify-between items-center" style="font-size:10px">
+      <p>yongbing.yang@gmail.com</p>
+      <button id="calendar-btn" class="btn btn-secondary" style="font-size:12px;padding:1px 8px"><i class="fa fa-calendar"></i> <span id="calendar-btn-date">日历</span></button>
+      <p>AI 辅助生成 · 仅供个人使用 · 数据本地存储 · v2026.05.23</p>
+    </div>
   </footer>
 
   <div id="dedup-modal" class="modal-backdrop hidden">
