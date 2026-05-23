@@ -45,7 +45,7 @@
       top: 0;
       z-index: 40;
       background: #f1f5f9;
-      padding: 1rem 0;
+      padding: 0.5rem 0;
     }
     body.dark-mode .header-fixed { background: #0f172a; }
 
@@ -175,6 +175,7 @@
     .btn { padding: 0.375rem 0.75rem; border-radius: 2px; font-size: 0.75rem; font-weight: 500; display: flex; align-items: center; gap: 0.375rem; cursor: pointer !important; }
     .btn-sep { width: 1px; background: #cbd5e1; margin: 0 2px; align-self: stretch; }
     body.dark-mode .btn-sep { background: #475569; }
+    body.dark-mode .modal-content .task-footer { border-top-color: #334155; }
     .btn-primary { background: #3b82f6; color: white; }
     .btn-secondary { background: #e2e8f0; color: #1e293b; }
     .btn-danger { background: #ef4444; color: white; }
@@ -346,7 +347,7 @@
       #categories-container { grid-template-columns: repeat(1, 1fr) !important; }
     }
 
-    .reminder-bar { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 2px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; font-size: 12px; }
+    .reminder-bar { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 2px; padding: 0.375rem 0.625rem; display: flex; align-items: center; gap: 0.375rem; flex-wrap: wrap; font-size: 11px; }
     body.dark-mode .reminder-bar { background: #2d1f0a; border-color: #78350f; }
     .reminder-bar.hidden-bar { display: none; }
     .reminder-item { background: #fff; border: 1px solid #fdba74; border-radius: 2px; padding: 1px 6px; font-size: 11px; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
@@ -387,8 +388,8 @@
 <body>
   <div class="header-fixed">
     <div class="container">
-      <header class="mb-6">
-        <div class="flex flex-wrap justify-between items-center gap-2 mb-4">
+      <header>
+        <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
           <h1 class="text-2xl font-bold page-title" contenteditable="true">高效待办事项管理</h1>
           <div class="flex flex-wrap gap-2">
             <button id="new-task-btn" class="btn btn-primary"><i class="fa fa-plus"></i> 新建任务</button>
@@ -399,7 +400,7 @@
             <button id="export-data-btn" class="btn btn-secondary"><i class="fa fa-download"></i> 导出</button>
             <span class="btn-sep"></span>
             <button id="stats-btn" class="btn btn-secondary"><i class="fa fa-bar-chart"></i> 统计</button>
-            <button id="calendar-btn" class="btn btn-secondary"><i class="fa fa-calendar"></i> 日历</button>
+            <button id="calendar-btn" class="btn btn-secondary"><i class="fa fa-calendar"></i> <span id="calendar-btn-date">日历</span></button>
             <button id="recycle-bin-btn" class="btn btn-recycle"><i class="fa fa-trash"></i> 回收站</button>
             <button id="archive-btn" class="btn btn-secondary"><i class="fa fa-archive"></i> 归档</button>
             <button id="settings-btn" class="btn btn-secondary"><i class="fa fa-cog"></i> 设置</button>
@@ -411,24 +412,26 @@
             <input type="file" id="file-input-excel" accept=".xlsx,.xls" class="hidden">
           </div>
         </div>
-        <div class="flex flex-wrap gap-2 mb-4">
+        <div class="flex flex-wrap gap-2 mb-2">
           <button class="filter-btn active" data-filter="all">全部任务</button>
           <button class="filter-btn" data-filter="pending">待处理</button>
           <button class="filter-btn" data-filter="in-progress">进行中</button>
           <button class="filter-btn" data-filter="completed">已完成</button>
           <button class="filter-btn" data-filter="overdue">已逾期</button>
         </div>
-        <div id="tag-filter-bar" class="flex flex-wrap gap-1 mb-3" style="min-height:20px"></div>
-        <div class="relative max-w-lg">
-          <input type="text" id="search-input" placeholder="搜索任务..." class="form-input pl-8">
-          <i class="fa fa-search absolute left-2.5 top-2 text-slate-400"></i>
+        <div id="tag-filter-bar" class="flex flex-wrap gap-1 mb-2" style="min-height:20px"></div>
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="relative" style="flex:1;min-width:200px;max-width:360px">
+            <input type="text" id="search-input" placeholder="搜索任务..." class="form-input pl-8">
+            <i class="fa fa-search absolute left-2.5 top-2 text-slate-400"></i>
+          </div>
+          <div id="reminder-bar" class="reminder-bar hidden-bar" style="flex:2;min-width:200px;margin-bottom:0"></div>
         </div>
       </header>
     </div>
   </div>
 
   <div class="container">
-    <div id="reminder-bar" class="reminder-bar hidden-bar"></div>
     <main id="categories-container"></main>
   </div>
 
@@ -452,14 +455,15 @@
   </div>
 
   <div id="task-modal" class="modal-backdrop hidden">
-    <div class="modal-content">
-      <div class="flex justify-between items-center mb-4">
+    <div class="modal-content" style="display:flex;flex-direction:column;max-height:85vh">
+      <div class="flex justify-between items-center mb-4" style="flex-shrink:0">
         <h2 id="task-modal-title" class="text-lg font-bold">新建任务</h2>
         <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
       </div>
-      <form id="task-form">
+      <form id="task-form" style="display:flex;flex-direction:column;flex:1;min-height:0">
         <input type="hidden" id="task-id">
         <input type="hidden" id="task-old-category-id">
+        <div style="overflow-y:auto;flex:1;min-height:0;padding-right:4px">
         <div class="form-group">
           <label class="form-label">任务标题</label>
           <input type="text" id="task-title" class="form-input" required>
@@ -510,7 +514,8 @@
             <option value="yearly">每年</option>
           </select>
         </div>
-        <div class="flex justify-end gap-3 mt-6">
+        </div>
+        <div class="flex justify-end gap-3 task-footer" style="flex-shrink:0;padding-top:10px;border-top:1px solid #e2e8f0;margin-top:4px;background:inherit">
           <button type="button" class="btn btn-secondary close-modal">取消</button>
           <button type="submit" class="btn btn-primary">保存</button>
         </div>
@@ -949,6 +954,7 @@
       initAutoBackup();
       checkOverdueTasks();
       initTooltip();
+      updateCalendarBtnDate();
       document.querySelector('.page-title').addEventListener('input', function() {
         pageTitle = this.textContent.trim() || '高效待办事项管理';
         document.title = pageTitle;
@@ -2210,13 +2216,17 @@
       elements.closeModalButtons.forEach(btn => {
         btn.addEventListener('click', function() {
           const parent = this.closest('.modal-backdrop');
-          const listVisible = parent && (parent.id === 'task-modal' || parent.id === 'confirm-modal' || parent.id === 'import-confirm-modal') && currentViewCatId;
-          if (listVisible) {
+          if (parent) {
             parent.classList.add('hidden');
-            document.body.style.overflow = '';
+            if (parent.id !== 'calendar-modal') document.body.style.overflow = '';
+            // If task-modal closed and calendar is open behind, keep calendar
+            if (parent.id === 'task-modal' && document.getElementById('calendar-modal') && !document.getElementById('calendar-modal').classList.contains('hidden')) {
+              document.body.style.overflow = 'hidden';
+            }
           } else {
+            // No parent modal found, close all common modals except calendar
             if (!elements.taskListModal.classList.contains('hidden')) currentViewCatId = null;
-            [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, document.getElementById('calendar-modal'), elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal')].forEach(m => m.classList.add('hidden'));
+            [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal')].forEach(m => m.classList.add('hidden'));
             document.body.style.overflow = '';
           }
         });
@@ -2405,7 +2415,11 @@
       saveDataToStorage();
       renderCategories();
       elements.taskModal.classList.add('hidden');
-      if (currentViewCatId) {
+      // If calendar is open behind, keep body scroll locked
+      const calModal = document.getElementById('calendar-modal');
+      if (calModal && !calModal.classList.contains('hidden')) {
+        document.body.style.overflow = 'hidden';
+      } else if (currentViewCatId) {
         showTaskListModal(currentViewCatId);
       } else {
         document.body.style.overflow = '';
@@ -2921,8 +2935,6 @@
           cell.addEventListener('click', () => {
             const dateStr = cell.dataset.date;
             if (dateStr) {
-              modal.classList.add('hidden');
-              document.body.style.overflow = '';
               openTaskModal(null, defaultCategoryId);
               document.getElementById('task-due-date').value = dateStr;
             }
@@ -3315,6 +3327,13 @@
       }
     }
 
+    function updateCalendarBtnDate() {
+      const el = document.getElementById('calendar-btn-date');
+      if (!el) return;
+      const d = new Date();
+      el.textContent = d.getMonth() + 1 + '月' + d.getDate() + '日';
+    }
+
     function getUpcomingTasks() {
       if (!appSettings.reminderEnabled) return [];
       const now = new Date();
@@ -3340,6 +3359,7 @@
 
     function renderReminderBar() {
       const upcoming = getUpcomingTasks();
+      updateCalendarBtnDate();
       if (!appSettings.reminderEnabled || upcoming.length === 0) {
         elements.reminderBar.classList.add('hidden-bar');
         return;
