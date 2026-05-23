@@ -240,7 +240,6 @@
     body.dark-mode .task-title { color: #f8fafc; }
     body.dark-mode .form-input { background: #334155; border-color: #475569; color: #f8fafc; }
     body.dark-mode .modal-content { background: #1e293b; }
-    body.dark-mode .sticky-recycle-header { background: #1e293b; }
     body.dark-mode .category-name, body.dark-mode .page-title { color: #ffffff !important; }
     .page-title { color: #1e293b !important; }
     body.dark-mode .form-label { color: #cbd5e1; }
@@ -558,17 +557,6 @@
         <p class="text-xs text-gray-400 mt-2">备份文件下载到本地后即为实际文件路径；存储标识是浏览器本地数据库的键名，仅本设备/本浏览器可访问。</p>
       </div>
       
-      <div class="settings-group">
-        <h3 class="settings-title">数据去重</h3>
-        <p class="text-xs text-gray-500 mb-2">同一区块内，标题和截止日期完全相同的任务视为重复。</p>
-        <div id="dedup-status" class="text-xs text-gray-500 mb-2"></div>
-        <div class="flex gap-2 items-center">
-          <button type="button" id="dedup-detail-btn" class="btn btn-primary text-xs"><i class="fa fa-list"></i> 查看重复详情</button>
-          <button type="button" id="dedup-btn" class="btn btn-secondary text-xs"><i class="fa fa-filter"></i> 一键快速去重</button>
-        </div>
-        <span id="dedup-result" class="text-xs text-green-600 mt-1 block hidden"></span>
-      </div>
-      
       </div>
       
       <div class="settings-footer">
@@ -593,29 +581,12 @@
   </div>
 
   <div id="import-confirm-modal" class="modal-backdrop hidden">
-    <div class="modal-content" style="max-width:560px">
+    <div class="modal-content">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold">导入预览</h2>
+        <h2 class="text-lg font-bold">导入确认</h2>
         <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
       </div>
-      <div id="import-preview-content" class="text-sm text-gray-600 dark:text-gray-300 mb-4 space-y-2"></div>
-      <div id="import-options" class="mb-4">
-        <label class="flex items-center gap-2 text-sm mb-2">
-          <input type="radio" name="import-mode" value="overwrite" checked class="form-input w-auto">
-          <span>覆盖导入 — 清空现有数据后导入（回收站保留）</span>
-        </label>
-        <label class="flex items-center gap-2 text-sm">
-          <input type="radio" name="import-mode" value="append" class="form-input w-auto">
-          <span>追加导入 — 在现有数据基础上新增（重复区块合并）</span>
-        </label>
-        <div id="import-append-opts" class="ml-6 mt-2 hidden">
-          <div id="import-dup-info" class="text-xs text-orange-500 mb-1 hidden"></div>
-          <label class="flex items-center gap-2 text-sm">
-            <input type="checkbox" id="import-skip-dupes" class="form-input w-auto" checked>
-            <span>跳过重复任务（同名+同截止日期视为重复）</span>
-          </label>
-        </div>
-      </div>
+      <p class="mb-5 text-sm text-slate-600">导入将覆盖当前所有数据，请先备份！</p>
       <div class="flex justify-end gap-3">
         <button type="button" class="btn btn-secondary close-modal">取消</button>
         <button type="button" id="confirm-import" class="btn btn-primary">确认导入</button>
@@ -642,98 +613,48 @@
         <div>
           <b class="text-gray-800 dark:text-white">批量操作</b>
           <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li>点击区块标题栏 📋 或顶部「全部任务」打开任务列表视口</li>
-            <li>勾选后使用工具栏：移动/改状态/改截止/改重要性/删除</li>
-            <li>可按状态筛选后批量选中，支持全选当前页 / 全选全部</li>
+            <li>点击区块标题栏的 📋 图标打开任务列表视口</li>
+            <li>勾选任务后使用工具栏进行批量移动/改状态/改优先级/删除等</li>
           </ul>
         </div>
         <div>
-          <b class="text-gray-800 dark:text-white">导入导出</b>
+          <b class="text-gray-800 dark:text-white">区块管理</b>
           <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li><b>导出</b>：按区块/状态/重要性多维度筛选后导出 JSON 或 Excel</li>
-            <li><b>导入</b>：预览导入概况，可选<b>覆盖</b>（替换全部）或<b>追加</b>（合并新增）</li>
-            <li>JSON 格式支持导入导出互通，Excel 支持跨工具编辑</li>
-          </ul>
-        </div>
-        <div>
-          <b class="text-gray-800 dark:text-white">回收站</b>
-          <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li>删除的任务移入回收站，可逐一恢复或永久删除</li>
-            <li>支持一键「恢复全部」或「清空回收站」</li>
+            <li>点击「新增区块」创建分类，点击标题可改名</li>
+            <li>标题栏状态标签（总/待/进/完/逾）可点击筛选</li>
           </ul>
         </div>
         <div>
           <b class="text-gray-800 dark:text-white">数据安全</b>
           <ul class="list-disc pl-4 mt-1 space-y-1">
             <li>所有数据存储在浏览器本地，不会上传任何服务器</li>
-            <li>设置中可配置自动存档（频次/保留份数/存储标识）</li>
+            <li>支持 JSON / Excel 导入导出，设置中可配置自动备份</li>
           </ul>
         </div>
         <hr class="border-gray-200 dark:border-gray-600">
         <div>
           <b class="text-gray-800 dark:text-white">关于</b>
-          <p class="mt-1">本工具由 AI 辅助生成，版本 v2026.05.23</p>
+          <p class="mt-1">本工具由 AI 辅助生成，版本 v2026.05.22</p>
           <p>作者邮箱：<a href="mailto:yongbing.yang@gmail.com" class="text-blue-600 dark:text-blue-400">yongbing.yang@gmail.com</a></p>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="export-modal" class="modal-backdrop hidden">
-    <div class="modal-content" style="max-width:480px">
+  <div id="recycle-modal" class="modal-backdrop hidden">
+    <div class="modal-content task-list">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold">导出数据</h2>
+        <h2 class="text-lg font-bold">任务回收站</h2>
         <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
       </div>
-      <div class="mb-3">
-        <label class="text-sm font-medium">导出格式</label>
-        <div class="flex gap-2 mt-1">
-          <label class="flex items-center gap-1 text-sm"><input type="radio" name="export-format" value="json" checked class="form-input w-auto"> JSON</label>
-          <label class="flex items-center gap-1 text-sm"><input type="radio" name="export-format" value="excel" class="form-input w-auto"> Excel</label>
+      <div class="mb-4 flex justify-between items-center">
+        <p class="text-sm text-gray-600 dark:text-gray-300">回收站中的任务可恢复或永久删除</p>
+        <div class="flex gap-2">
+          <button id="restore-all-btn" class="btn btn-secondary text-sm"><i class="fa fa-recycle"></i> 恢复全部</button>
+          <button id="delete-all-btn" class="btn btn-danger text-sm"><i class="fa fa-trash"></i> 清空回收站</button>
         </div>
       </div>
-      <div class="mb-3">
-        <label class="text-sm font-medium">选择区块 <span class="text-xs text-gray-400">不选=全选</span></label>
-        <div id="export-cat-filters" class="flex flex-wrap gap-1 mt-1 max-h-24 overflow-y-auto"></div>
-      </div>
-      <div class="mb-3">
-        <label class="text-sm font-medium">任务状态 <span class="text-xs text-gray-400">不选=全选</span></label>
-        <div class="flex flex-wrap gap-1 mt-1" id="export-status-filters">
-        </div>
-      </div>
-      <div class="mb-3">
-        <label class="text-sm font-medium">重要性 <span class="text-xs text-gray-400">不选=全选</span></label>
-        <div class="flex flex-wrap gap-1 mt-1" id="export-priority-filters">
-        </div>
-      </div>
-      <div class="flex gap-2 mb-3">
-        <button id="export-sel-all" class="text-xs text-blue-500 hover:underline">全选</button>
-        <button id="export-sel-none" class="text-xs text-gray-400 hover:underline">全不选</button>
-        <span id="export-count" class="text-xs text-gray-500 ml-auto"></span>
-      </div>
-      <div class="flex justify-end gap-3">
-        <button type="button" class="btn btn-secondary close-modal">取消</button>
-        <button type="button" id="export-confirm-btn" class="btn btn-primary">导出</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="recycle-modal" class="modal-backdrop hidden">
-    <div class="modal-content task-list" style="display:flex;flex-direction:column;max-height:80vh;padding:1.25rem">
-      <div class="sticky-recycle-header" style="flex-shrink:0;position:sticky;top:0;background:white;z-index:10;padding-bottom:0.5rem">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-bold">任务回收站</h2>
-          <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
-        </div>
-        <div class="mb-4 flex justify-between items-center">
-          <p class="text-sm text-gray-600 dark:text-gray-300">回收站中的任务可恢复或永久删除</p>
-          <div class="flex gap-2">
-            <button id="restore-all-btn" class="btn btn-secondary text-sm"><i class="fa fa-recycle"></i> 恢复全部</button>
-            <button id="delete-all-btn" class="btn btn-danger text-sm"><i class="fa fa-trash"></i> 清空回收站</button>
-          </div>
-        </div>
-      </div>
-      <div id="recycle-content" style="overflow-y:auto;flex:1;min-height:0"></div>
+      <div id="recycle-content"></div>
     </div>
   </div>
 
@@ -797,7 +718,6 @@
       taskListModal: document.getElementById('task-list-modal'),
       statsModal: document.getElementById('stats-modal'),
       settingsModal: document.getElementById('settings-modal'),
-      exportModal: document.getElementById('export-modal'),
       recycleModal: document.getElementById('recycle-modal'),
       helpModal: document.getElementById('help-modal'),
       addCategoryForm: document.getElementById('add-category-form'),
@@ -1029,57 +949,8 @@
 
       elements.settingsBtn.addEventListener('click', () => {
         refreshBackupStatus();
-        refreshDedupStatus();
         elements.settingsModal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
-      });
-
-      document.getElementById('dedup-detail-btn').addEventListener('click', () => {
-        showDedupModal();
-      });
-      
-      document.getElementById('dedup-btn').addEventListener('click', () => {
-        var cnt = countDupes();
-        if (cnt === 0) return;
-        if (!confirm('检测到 ' + cnt + ' 条重复任务，将保留每组第一条。确定快速去重？\n\n如需手动选择，请点击「查看重复详情」。')) return;
-        var removed = dedupTasks();
-        document.getElementById('dedup-result').textContent = '已去除 ' + removed + ' 条重复任务';
-        document.getElementById('dedup-result').classList.remove('hidden');
-        refreshDedupStatus();
-      });
-      
-      document.getElementById('dedup-confirm-btn').addEventListener('click', () => {
-        var selCnt = document.querySelectorAll('#dedup-modal .dedup-cb:checked').length;
-        if (selCnt === 0) { alert('请至少勾选一项'); return; }
-        if (!confirm('确定删除已勾选的 ' + selCnt + ' 项？')) return;
-        var removed = dedupSelected();
-        document.getElementById('dedup-modal').classList.add('hidden');
-        document.body.style.overflow = '';
-        document.getElementById('dedup-result').textContent = '已去除 ' + removed + ' 条重复任务';
-        document.getElementById('dedup-result').classList.remove('hidden');
-        refreshDedupStatus();
-        if (document.getElementById('settings-modal').classList.contains('hidden')) {
-          document.getElementById('settings-modal').classList.remove('hidden');
-        }
-      });
-      
-      document.getElementById('dedup-sel-dupes').addEventListener('click', () => {
-        document.querySelectorAll('#dedup-modal .dedup-cb:not(:disabled)').forEach(function(cb) { cb.checked = true; });
-        document.getElementById('dedup-sel-count').textContent = '已选 ' + document.querySelectorAll('#dedup-modal .dedup-cb:checked').length + ' 项';
-      });
-      
-      document.getElementById('dedup-sel-none').addEventListener('click', () => {
-        document.querySelectorAll('#dedup-modal .dedup-cb:not(:disabled)').forEach(function(cb) { cb.checked = false; });
-        document.getElementById('dedup-sel-count').textContent = '已选 0 项';
-      });
-      
-      // Dedup modal close buttons
-      document.querySelectorAll('#dedup-modal .close-modal').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-          e.stopImmediatePropagation();
-          document.getElementById('dedup-modal').classList.add('hidden');
-          document.body.style.overflow = '';
-        });
       });
 
       document.getElementById('export-backups-btn').addEventListener('click', () => {
@@ -1137,7 +1008,34 @@
       });
 
       elements.exportDataBtn.addEventListener('click', function() {
-        showExportModal();
+        const menu = document.createElement('div');
+        menu.className = 'fixed z-50 bg-white dark:bg-gray-800 shadow-lg rounded-md py-2';
+        menu.style.top = (this.offsetTop + this.offsetHeight + 5) + 'px';
+        menu.style.left = this.offsetLeft + 'px';
+        menu.innerHTML = `
+          <button id="export-json-btn" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">导出JSON</button>
+          <button id="export-excel-btn" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100">导出Excel</button>
+        `;
+        document.body.appendChild(menu);
+        
+        menu.querySelector('#export-json-btn').addEventListener('click', () => {
+          exportDataToFile('json');
+          document.body.removeChild(menu);
+        });
+        
+        menu.querySelector('#export-excel-btn').addEventListener('click', () => {
+          exportDataToFile('excel');
+          document.body.removeChild(menu);
+        });
+        
+        setTimeout(() => {
+          document.addEventListener('click', function closeMenu(e) {
+            if (!menu.contains(e.target) && e.target !== elements.exportDataBtn) {
+              document.body.removeChild(menu);
+              document.removeEventListener('click', closeMenu);
+            }
+          }, { once: true });
+        }, 0);
       });
       
       elements.importDataBtn.addEventListener('click', function() {
@@ -1188,21 +1086,19 @@
       
       let html = `<div class="overflow-x-auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg">
         <thead class="bg-gray-100 dark:bg-gray-700">
-          <tr><th class="px-4 py-2 text-left text-xs">#</th><th class="px-4 py-2 text-left text-xs">任务标题</th><th class="px-4 py-2 text-left text-xs">主责部门</th><th class="px-4 py-2 text-left text-xs">原区块</th><th class="px-4 py-2 text-right text-xs">操作</th></tr>
+          <tr><th class="px-4 py-2 text-left text-xs">恢复</th><th class="px-4 py-2 text-left text-xs">任务标题</th><th class="px-4 py-2 text-left text-xs">主责部门</th><th class="px-4 py-2 text-left text-xs">原区块</th><th class="px-4 py-2 text-left text-xs">操作</th></tr>
         </thead><tbody class="divide-y">`;
       
       if (recycleBin.tasks.length === 0) {
         html += `<tr><td colspan="5" class="text-center py-8">回收站为空</td></tr>`;
       } else {
-        recycleBin.tasks.forEach(function(task, idx) {
+        recycleBin.tasks.forEach(task => {
           html += `
-            <tr><td class="px-4 py-3 text-xs text-gray-400">${idx+1}</td>
+            <tr><td class="px-4 py-3"><button class="restore-task-btn text-purple-600" data-taskid="${task.id}"><i class="fa fa-recycle"></i></button></td>
             <td class="px-4 py-3 text-sm">${escapeHTML(task.title)}</td>
             <td class="px-4 py-3 text-sm">${escapeHTML(task.dept || '-')}</td>
             <td class="px-4 py-3 text-sm">${escapeHTML(task.originalCategory || '-')}</td>
-            <td class="px-4 py-3 text-sm text-right">
-              <button class="restore-task-btn text-purple-600 mr-2" data-taskid="${task.id}"><i class="fa fa-recycle"></i> 恢复</button>
-              <button class="delete-forever-btn text-red-600" data-taskid="${task.id}"><i class="fa fa-trash"></i> 删除</button></td></tr>`;
+            <td class="px-4 py-3 text-sm"><button class="delete-forever-btn text-red-600" data-taskid="${task.id}"><i class="fa fa-trash"></i></button></td></tr>`;
         });
       }
       
@@ -1278,130 +1174,34 @@
       }
     }
 
-    function showExportModal() {
-      var modal = document.getElementById('export-modal');
-      // Build category checkboxes
-      var catHtml = '';
-      categories.forEach(function(cat) {
-        if (cat.isRecycle) return;
-        catHtml += '<label class="px-2 py-1 rounded border text-xs cursor-pointer hover:bg-blue-50"><input type="checkbox" class="export-cat-cb" value="'+cat.id+'"> '+escapeHTML(cat.name)+'</label>';
-      });
-      document.getElementById('export-cat-filters').innerHTML = catHtml;
-      // Build status checkboxes
-      var stHtml = '';
-      [{v:'pending',l:'待处理'},{v:'in-progress',l:'进行中'},{v:'completed',l:'已完成'},{v:'overdue',l:'已逾期'}].forEach(function(s) {
-        stHtml += '<label class="px-2 py-1 rounded border text-xs cursor-pointer hover:bg-blue-50"><input type="checkbox" class="export-status-cb" value="'+s.v+'"> '+s.l+'</label>';
-      });
-      document.getElementById('export-status-filters').innerHTML = stHtml;
-      // Build priority checkboxes
-      var prHtml = '';
-      [{v:'high',l:'高'},{v:'medium',l:'中'},{v:'low',l:'低'}].forEach(function(p) {
-        prHtml += '<label class="px-2 py-1 rounded border text-xs cursor-pointer hover:bg-blue-50"><input type="checkbox" class="export-pri-cb" value="'+p.v+'"> '+p.l+'</label>';
-      });
-      document.getElementById('export-priority-filters').innerHTML = prHtml;
-      
-      function updateCount() {
-        var catChecked = modal.querySelectorAll('.export-cat-cb:checked');
-        var stChecked = modal.querySelectorAll('.export-status-cb:checked');
-        var prChecked = modal.querySelectorAll('.export-pri-cb:checked');
-        var cnt = 0;
-        var catIds = Array.from(catChecked).map(function(cb) { return parseInt(cb.value); });
-        var stVals = Array.from(stChecked).map(function(cb) { return cb.value; });
-        var prVals = Array.from(prChecked).map(function(cb) { return cb.value; });
-        categories.forEach(function(cat) {
-          if (cat.isRecycle) return;
-          if (catIds.length > 0 && catIds.indexOf(cat.id) === -1) return;
-          cat.tasks.forEach(function(t) {
-            if (stVals.length > 0 && stVals.indexOf(t.status) === -1) return;
-            if (prVals.length > 0 && prVals.indexOf(t.priority||'medium') === -1) return;
-            cnt++;
-          });
-        });
-        document.getElementById('export-count').textContent = '共 ' + cnt + ' 条任务';
-      }
-      
-      modal.querySelectorAll('.export-cat-cb, .export-status-cb, .export-pri-cb').forEach(function(cb) {
-        cb.addEventListener('change', updateCount);
-      });
-      document.getElementById('export-sel-all').onclick = function() {
-        modal.querySelectorAll('input[type=checkbox]').forEach(function(cb) { cb.checked = true; });
-        updateCount();
-      };
-      document.getElementById('export-sel-none').onclick = function() {
-        modal.querySelectorAll('input[type=checkbox]').forEach(function(cb) { cb.checked = false; });
-        updateCount();
-      };
-      document.getElementById('export-confirm-btn').onclick = function() {
-        var fmt = modal.querySelector('input[name="export-format"]:checked');
-        var catChecked = modal.querySelectorAll('.export-cat-cb:checked');
-        var stChecked = modal.querySelectorAll('.export-status-cb:checked');
-        var prChecked = modal.querySelectorAll('.export-pri-cb:checked');
-        var catIds = Array.from(catChecked).map(function(cb) { return parseInt(cb.value); });
-        var stVals = Array.from(stChecked).map(function(cb) { return cb.value; });
-        var prVals = Array.from(prChecked).map(function(cb) { return cb.value; });
-        exportFilteredData(fmt ? fmt.value : 'json', catIds, stVals, prVals);
-        modal.classList.add('hidden');
-        document.body.style.overflow = '';
-      };
-      
-      updateCount();
-      modal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function exportFilteredData(format, catIds, stVals, prVals) {
-      var tasks = [];
-      var catMap = {};
-      categories.forEach(function(cat) {
-        if (cat.isRecycle) return;
-        if (catIds.length > 0 && catIds.indexOf(cat.id) === -1) return;
-        cat.tasks.forEach(function(t) {
-          if (stVals.length > 0 && stVals.indexOf(t.status) === -1) return;
-          if (prVals.length > 0 && prVals.indexOf(t.priority||'medium') === -1) return;
-          if (!catMap[cat.name]) catMap[cat.name] = { name: cat.name, tasks: [] };
-          catMap[cat.name].tasks.push(t);
-          tasks.push({ catName: cat.name, task: t });
-        });
-      });
+    function exportDataToFile(type) {
       try {
-        if (format === 'json') {
-          // Produce import-compatible format: { categories: [...], nextCategoryId, nextTaskId }
-          var exportCats = [];
-          var cid = 3; // start after default(1) and recycle(2)
-          var tid = 1;
-          for (var name in catMap) {
-            var mappedTasks = catMap[name].tasks.map(function(t) {
-              return { id: tid++, title: t.title, dept: t.dept||'', description: t.description||'', dueDate: t.dueDate||'', priority: t.priority||'medium', status: t.status||'pending', createdAt: t.createdAt||'', completedAt: t.completedAt||'' };
-            });
-            exportCats.push({ id: cid++, name: name, tasks: mappedTasks, isDefault: false });
-          }
-          // Add default and recycle system categories
-          exportCats.push({ id: 1, name: '默认', tasks: [], isDefault: true });
-          exportCats.push({ id: 2, name: '回收站', tasks: [], isRecycle: true });
-          var d = { categories: exportCats, nextCategoryId: cid, nextTaskId: tid };
-          var blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
-          var url = URL.createObjectURL(blob);
-          var a = document.createElement('a');
-          a.href = url; a.download = 'todo_export_' + new Date().toISOString().slice(0,10) + '.json';
+        if (type === 'json') {
+          const d = { categories, nextCategoryId, nextTaskId };
+          const blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `todo_backup_${new Date().toISOString().slice(0,10)}.json`;
           document.body.appendChild(a); a.click(); document.body.removeChild(a);
           URL.revokeObjectURL(url);
         } else {
-          var data = [['区块','标题','部门','描述','截止日期','重要性','状态']];
-          tasks.forEach(function(x) {
-            var st = {pending:'待处理','in-progress':'进行中',completed:'已完成',overdue:'已逾期'}[x.task.status];
-            var pr = {high:'高',medium:'中',low:'低'}[x.task.priority||'medium'];
-            data.push([x.catName, x.task.title, x.task.dept||'', x.task.description||'', x.task.dueDate||'', pr, st]);
+          const data = [];
+          data.push(['分类','标题','部门','备注','截止日期','重要性','状态']);
+          categories.forEach(cat => {
+            if (cat.isRecycle) return;
+            cat.tasks.forEach(t => {
+              const status = {pending:'待处理','in-progress':'进行中',completed:'已完成',overdue:'已逾期'}[t.status];
+              const pr = {high:'高',medium:'中',low:'低'}[t.priority||'medium'];
+              data.push([cat.name, t.title, t.dept||'', t.description||'', t.dueDate||'', pr, status]);
+            });
           });
-          var wb = XLSX.utils.book_new();
-          var ws = XLSX.utils.aoa_to_sheet(data);
-          XLSX.utils.book_append_sheet(wb, ws, '任务');
-          XLSX.writeFile(wb, 'todo_' + new Date().toISOString().slice(0,10) + '.xlsx');
+          const wb = XLSX.utils.book_new();
+          const ws = XLSX.utils.aoa_to_sheet(data);
+          XLSX.utils.book_append_sheet(wb, ws,'任务');
+          XLSX.writeFile(wb,`todo_${new Date().toISOString().slice(0,10)}.xlsx`);
         }
       } catch(e) { console.error('导出失败',e); }
-    }
-
-    function exportDataToFile(type) {
-      exportFilteredData(type, [], [], []);
     }
 
     function handleFileSelect(e, type) {
@@ -1419,72 +1219,11 @@
             data = convertExcelToData(json);
           }
           importedFileContent = {data, type};
-          // Build preview
-          var preview = buildImportPreview(data);
-          var html = '';
-          html += '<div class="flex gap-4 mb-3">';
-          html += '<div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg px-3 py-2 text-center flex-1"><div class="text-lg font-bold text-blue-600">'+preview.taskCount+'</div><div class="text-xs text-gray-500">任务总数</div></div>';
-          html += '<div class="bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2 text-center flex-1"><div class="text-lg font-bold text-green-600">'+preview.catCount+'</div><div class="text-xs text-gray-500">区块数</div></div>';
-          html += '<div class="bg-purple-50 dark:bg-purple-900/20 rounded-lg px-3 py-2 text-center flex-1"><div class="text-lg font-bold text-purple-600">'+preview.newCatCount+'</div><div class="text-xs text-gray-500">新建区块</div></div>';
-          html += '</div>';
-          // Category breakdown
-          html += '<div class="text-xs text-gray-500 mb-1">各区块任务分布：</div>';
-          html += '<div class="flex flex-wrap gap-1 mb-2">';
-          preview.cats.forEach(function(c) {
-            html += '<span class="px-2 py-0.5 rounded text-xs '+(c.isNew?'bg-purple-100 text-purple-700 dark:bg-purple-900/30':'bg-gray-100 text-gray-600 dark:bg-gray-700')+'">'+escapeHTML(c.name)+' ('+c.count+')</span>';
-          });
-          html += '</div>';
-          if (preview.newCatCount > 0) {
-            html += '<div class="text-xs text-purple-500">&#9432; 将新建 '+preview.newCatCount+' 个区块</div>';
-          }
-          document.getElementById('import-preview-content').innerHTML = html;
-          // Duplicate info
-          var dupInfo = document.getElementById('import-dup-info');
-          if (preview.dupCount > 0) {
-            dupInfo.textContent = '检测到 ' + preview.dupCount + ' 条与现有任务重复（同名+同截止日期）';
-            dupInfo.classList.remove('hidden');
-          } else {
-            dupInfo.classList.add('hidden');
-          }
-          // Show/hide append options based on radio
-          updateImportAppendOpts();
           elements.importConfirmModal.classList.remove('hidden');
-        } catch(e) { console.error('解析失败',e); alert('文件解析失败：' + e.message); }
+        } catch(e) { console.error('解析失败',e); }
       };
       type === 'json' ? r.readAsText(f) : r.readAsBinaryString(f);
       e.target.value = '';
-    }
-
-    function buildImportPreview(data) {
-      var cats = data.categories || [];
-      var taskCount = 0, catCount = 0, newCatCount = 0, dupCount = 0;
-      var catList = [];
-      var existingCatNames = categories.filter(function(c){return !c.isRecycle;}).map(function(c){return c.name;});
-      // Build existing task lookup for dedup check
-      var existingTasks = {};
-      categories.forEach(function(c) {
-        if (c.isRecycle) return;
-        c.tasks.forEach(function(t) {
-          var key = (t.title||'') + '|' + (t.dueDate||'');
-          existingTasks[key] = true;
-        });
-      });
-      cats.forEach(function(cat) {
-        if (cat.isRecycle || cat.isDefault && cat.name === '默认') { return; }
-        var cnt = (cat.tasks || []).length;
-        if (cnt === 0) return;
-        taskCount += cnt;
-        catCount++;
-        var isNew = existingCatNames.indexOf(cat.name) === -1;
-        if (isNew) newCatCount++;
-        catList.push({ name: cat.name, count: cnt, isNew: isNew });
-        // Count duplicates
-        (cat.tasks || []).forEach(function(t) {
-          var key = (t.title||'') + '|' + (t.dueDate||'');
-          if (existingTasks[key]) dupCount++;
-        });
-      });
-      return { taskCount: taskCount, catCount: catCount, newCatCount: newCatCount, dupCount: dupCount, cats: catList };
     }
 
     function convertExcelToData(json) {
@@ -1637,7 +1376,7 @@
         </div>
         <div class="category-content p-2" data-cat="${cat.id}">
           ${addBtn}
-          ${displayTasks.length ? displayTasks.map(t => createTaskHtml(t, cat.id)).join('') : '<div class="text-center text-xs py-6 text-gray-400 empty-hint">暂无任务</div>'}
+          ${displayTasks.length ? displayTasks.map(t => createTaskHtml(t, cat.id)).join('') : '<div class="text-center text-xs py-6 text-gray-400">暂无任务</div>'}
           ${total > limit ? `<div class="text-center text-xs text-blue-600 mt-1 cursor-pointer view-tasks-btn" data-cat="${cat.id}">查看全部 ${total} 项</div>` : ''}
         </div>
       `;
@@ -1694,7 +1433,7 @@
           animation: 150,
           ghostClass: 'sortable-ghost',
           chosenClass: 'sortable-chosen',
-          filter: '.add-task, .empty-hint, .recycle .task-card',
+          filter: '.recycle .task-card',
           preventOnFilter: true,
           onEnd: function(evt) {
             const taskId = parseInt(evt.item.dataset.id);
@@ -1802,7 +1541,7 @@
     }
 
     function initModals() {
-      [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal')].forEach(m => m.classList.add('hidden'));
+      [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, elements.settingsModal, elements.recycleModal, elements.helpModal].forEach(m => m.classList.add('hidden'));
       
       elements.closeModalButtons.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -1810,10 +1549,9 @@
           const listVisible = parent && (parent.id === 'task-modal' || parent.id === 'confirm-modal' || parent.id === 'import-confirm-modal') && currentViewCatId;
           if (listVisible) {
             parent.classList.add('hidden');
-            document.body.style.overflow = '';
           } else {
             if (!elements.taskListModal.classList.contains('hidden')) currentViewCatId = null;
-            [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal')].forEach(m => m.classList.add('hidden'));
+            [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, elements.settingsModal, elements.recycleModal, elements.helpModal].forEach(m => m.classList.add('hidden'));
             document.body.style.overflow = '';
           }
         });
@@ -1857,10 +1595,7 @@
       
       elements.confirmImportBtn.addEventListener('click', () => {
         if (importedFileContent) {
-          var mode = document.querySelector('input[name="import-mode"]:checked');
-          var isAppend = mode && mode.value === 'append';
-          var skipDupes = isAppend && document.getElementById('import-skip-dupes').checked;
-          importData(importedFileContent.data, isAppend, skipDupes);
+          importData(importedFileContent.data);
           importedFileContent = null;
           elements.importConfirmModal.classList.add('hidden');
           document.body.style.overflow = '';
@@ -2234,7 +1969,6 @@
         
         let html = `<div class="overflow-x-auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg table-striped">
           <thead class="bg-gray-100 dark:bg-gray-700"><tr>
-<th class="px-2 py-3 text-left w-8">#</th>
 <th class="px-2 py-3 text-left w-8"><input type="checkbox" id="batch-check-page" ${list.length > 0 && list.every(t => batchSelected.has(t.id)) ? 'checked' : ''}></th>
 <th class="px-4 py-3 text-left">状态</th>
 <th class="px-4 py-3 text-left">重要性</th>
@@ -2245,13 +1979,12 @@
 <th class="px-4 py-3 text-left">操作</th>
 </tr></thead><tbody class="divide-y">`;
         
-        list.forEach(function(t, idx) {
-          var globalIdx = (p-1)*pageSize + idx + 1;
+        list.forEach(t => {
           const st = {pending:'待处理','in-progress':'进行中',completed:'已完成',overdue:'已逾期'}[t.status];
           const cls = {pending:'orange','in-progress':'blue',completed:'green',overdue:'red'}[t.status];
           const pr = {high:'高',medium:'中',low:'低'}[t.priority||'medium'];
           const prCls = {high:'text-red-500 font-bold',medium:'text-yellow-600',low:'text-gray-400'}[t.priority||'medium'];
-          html += `<tr class="text-xs"><td class="px-2 py-3 text-gray-400">${globalIdx}</td><td class="px-2 py-3"><input type="checkbox" class="batch-cb" data-tid="${t.id}" ${batchSelected.has(t.id) ? 'checked' : ''}></td>
+          html += `<tr class="text-xs"><td class="px-2 py-3"><input type="checkbox" class="batch-cb" data-tid="${t.id}" ${batchSelected.has(t.id) ? 'checked' : ''}></td>
 <td class="px-4 py-3 text-${cls}-500 font-medium">${st}</td>
 <td class="px-4 py-3 ${prCls}">${pr}</td>
 <td class="px-4 py-3">${escapeHTML(t.title)}</td>
@@ -2265,9 +1998,6 @@
         });
         
         html += `</tbody></table></div>`;
-        var startIdx = total > 0 ? (p-1)*pageSize + 1 : 0;
-        var endIdx = Math.min(p*pageSize, total);
-        html += `<div class="text-xs text-gray-400 mt-2 mb-1">共 ${total} 项${total>0?', 第 '+startIdx+' 至 '+endIdx+' 项':''}</div>`;
         html += `<div class="pagination">`;
         for(let i=1;i<=totalPages;i++){
           html += `<button class="page-btn ${i===p?'active':''}" data-p="${i}">${i}</button>`;
@@ -2396,85 +2126,79 @@
       
       const completionRate = total > 0 ? Math.round(completed / total * 100) : 0;
       
-      const statCard = (label, val, color, bg, icon) =>
-        '<div style="background:'+bg+';border:1px solid '+color+'22;border-radius:12px;padding:16px 14px;text-align:center;min-width:90px;flex:1">'+
-          '<div style="font-size:11px;color:#64748b;margin-bottom:6px">'+icon+' '+label+'</div>'+
-          '<div style="font-size:28px;font-weight:700;color:'+color+';line-height:1">'+val+'</div>'+
-        '</div>';
+      const card = (label, val, color, icon) =>
+        `<div style="flex:1;min-width:80px;background:white;border-radius:8px;padding:14px 12px;text-align:center;border-left:3px solid ${color};box-shadow:0 1px 3px rgba(0,0,0,0.06)">
+          <div style="font-size:24px;font-weight:700;color:${color};margin-bottom:2px">${val}</div>
+          <div style="font-size:11px;color:#64748b">${icon||''} ${label}</div>
+        </div>`;
       
-      const bar = function(v, max, c) { return max > 0 ? '<span style="width:'+(v/max*100).toFixed(1)+'%;height:100%;background:'+c+';border-radius:4px;display:block;transition:width 0.5s"></span>' : ''; };
-
-      var html = '<div style="display:flex;flex-direction:column;gap:24px">';
+      const catBar = (s) => {
+        const w = (v) => s.t > 0 ? (v/s.t*100).toFixed(1) : '0';
+        return `<div style="height:6px;background:#e2e8f0;border-radius:3px;margin-top:4px;overflow:hidden;display:flex">
+          <span style="width:${w(s.c)}%;height:100%;background:#22c55e"></span>
+          <span style="width:${w(s.ip)}%;height:100%;background:#3b82f6"></span>
+          <span style="width:${w(s.p)}%;height:100%;background:#f59e0b"></span>
+          <span style="width:${w(s.o)}%;height:100%;background:#ef4444"></span>
+        </div>`;
+      };
       
-      html += '<div>';
-      html += '<h3 style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:10px;display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:4px;height:16px;background:#3b82f6;border-radius:2px"></span>整体概览</h3>';
-      html += '<div style="display:flex;flex-wrap:wrap;gap:8px">';
-      html += statCard('总任务', total, '#6366f1', '#eef2ff', '📋');
-      html += statCard('完成率', completionRate+'%', '#22c55e', '#f0fdf4', '✅');
-      html += statCard('待处理', pending, '#f59e0b', '#fffbeb', '🟡');
-      html += statCard('进行中', progress, '#3b82f6', '#eff6ff', '🔵');
-      html += statCard('已完成', completed, '#22c55e', '#f0fdf4', '🟢');
-      html += statCard('已逾期', overdue, '#ef4444', '#fef2f2', '🔴');
-      html += '</div></div>';
+      let html = '<div style="display:flex;flex-direction:column;gap:20px">';
       
-      html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:16px">';
-      html += '<div style="font-size:12px;font-weight:600;color:#475569;margin-bottom:8px">进度总览</div>';
-      html += '<div style="height:10px;background:#f1f5f9;border-radius:5px;overflow:hidden;display:flex">';
-      html += bar(completed, total, '#22c55e'); html += bar(progress, total, '#3b82f6');
-      html += bar(pending, total, '#f59e0b'); html += bar(overdue, total, '#ef4444');
-      html += '</div>';
-      html += '<div style="display:flex;gap:14px;margin-top:8px;font-size:10px;color:#94a3b8">';
-      html += '<span style="color:#22c55e">● 已完成 '+completed+'</span>';
-      html += '<span style="color:#3b82f6">● 进行中 '+progress+'</span>';
-      html += '<span style="color:#f59e0b">● 待处理 '+pending+'</span>';
-      html += '<span style="color:#ef4444">● 已逾期 '+overdue+'</span>';
-      html += '</div></div>';
+      // === 概览卡片 ===
+      html += `<div>
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <span style="display:inline-block;width:4px;height:18px;background:#3b82f6;border-radius:2px"></span>整体概览
+        </h3>
+        <div class="stats-card" style="display:flex;flex-wrap:wrap;gap:8px">
+          ${card('总任务', total, '#6366f1', '📋')}
+          ${card('完成率', completionRate+'%', '#22c55e', '✅')}
+          ${card('待处理', pending, '#f59e0b', '🟡')}
+          ${card('进行中', progress, '#3b82f6', '🔵')}
+          ${card('已逾期', overdue, '#ef4444', '🔴')}
+        </div>
+      </div>`;
       
-      html += '<div>';
-      html += '<h3 style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:10px;display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:4px;height:16px;background:#8b5cf6;border-radius:2px"></span>各区块统计</h3>';
-      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px">';
-      catStats.forEach(function(s) {
-        if (s.t === 0) return;
-        var w = function(v) { return s.t > 0 ? (v/s.t*100).toFixed(1) : '0'; };
-        html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px">';
-        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
-        html += '<b style="font-size:13px;color:#1e293b">'+escapeHTML(s.name)+'</b>';
-        html += '<span style="font-size:11px;color:#94a3b8;background:#f8fafc;padding:2px 8px;border-radius:10px">'+s.t+' 项</span>';
-        html += '</div>';
-        html += '<div style="height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden;display:flex;margin-bottom:8px">';
-        html += bar(s.c, s.t, '#22c55e'); html += bar(s.ip, s.t, '#3b82f6');
-        html += bar(s.p, s.t, '#f59e0b'); html += bar(s.o, s.t, '#ef4444');
-        html += '</div>';
-        html += '<div style="display:flex;gap:12px;font-size:10px;color:#94a3b8">';
-        html += '<span style="color:#22c55e">✅ '+s.c+'</span>';
-        html += '<span style="color:#3b82f6">🔄 '+s.ip+'</span>';
-        html += '<span style="color:#f59e0b">⏳ '+s.p+'</span>';
-        html += '<span style="color:#ef4444">⚠ '+s.o+'</span>';
-        html += '</div></div>';
+      // === 各区块统计 ===
+      html += `<div>
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <span style="display:inline-block;width:4px;height:18px;background:#8b5cf6;border-radius:2px"></span>各区块统计
+        </h3>
+        <div class="stats-card" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">`;
+      
+      catStats.forEach(s => {
+        html += `<div style="background:white;border-radius:8px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,0.06)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <b style="font-size:13px">${escapeHTML(s.name)}</b>
+            <span style="font-size:11px;color:#64748b">共 ${s.t} 项</span>
+          </div>
+          ${catBar(s)}
+          <div style="display:flex;gap:10px;margin-top:6px;font-size:10px;color:#94a3b8">
+            <span style="color:#22c55e">完 ${s.c}</span>
+            <span style="color:#3b82f6">进 ${s.ip}</span>
+            <span style="color:#f59e0b">待 ${s.p}</span>
+            <span style="color:#ef4444">逾 ${s.o}</span>
+          </div>
+        </div>`;
       });
-      if (catStats.length === 0 || catStats.every(function(c){return c.t===0;})) html += '<div style="color:#94a3b8;font-size:12px;padding:20px;text-align:center">暂无数据</div>';
-      html += '</div></div>';
+      html += `</div></div>`;
       
-      if (Object.keys(deptStats).length > 0) {
-        html += '<div>';
-        html += '<h3 style="font-size:13px;font-weight:600;color:#1e293b;margin-bottom:10px;display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:4px;height:16px;background:#06b6d4;border-radius:2px"></span>部门分布</h3>';
-        html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
-        var maxDept = Math.max.apply(null, Object.values(deptStats));
-        Object.entries(deptStats).sort(function(a,b) { return b[1]-a[1]; }).forEach(function(e) {
-          var pct = maxDept > 0 ? (e[1]/maxDept*100).toFixed(0) : 0;
-          html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;min-width:100px;flex:1">';
-          html += '<div style="font-size:18px;font-weight:700;color:#6366f1;margin-bottom:2px">'+e[1]+'</div>';
-          html += '<div style="font-size:11px;color:#475569;margin-bottom:4px">'+escapeHTML(e[0])+'</div>';
-          html += '<div style="height:4px;background:#f1f5f9;border-radius:2px;overflow:hidden"><div style="width:'+pct+'%;height:100%;background:#6366f1;border-radius:2px"></div></div>';
-          html += '</div>';
-        });
-        html += '</div></div>';
-      }
+      // === 部门统计 ===
+      html += `<div>
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <span style="display:inline-block;width:4px;height:18px;background:#06b6d4;border-radius:2px"></span>部门统计
+        </h3>
+        <div class="stats-card" style="display:flex;flex-wrap:wrap;gap:8px">`;
+      Object.entries(deptStats).sort((a,b) => b[1] - a[1]).forEach(([d,n]) => {
+        html += `<div style="background:white;border-radius:8px;padding:10px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.06);display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px;font-weight:700;color:#6366f1;min-width:28px">${n}</span>
+          <span style="font-size:12px;color:#475569">${escapeHTML(d)}</span>
+        </div>`;
+      });
+      html += `</div></div>`;
       
-      html += '</div>';
+      html += `</div>`;
       elements.statsContent.innerHTML = html;
       elements.statsModal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
     }
 
     function showAllTasksModal() {
@@ -2488,7 +2212,6 @@
       var ps = appSettings.pageSize || 15;
       var page = 1;
       var sel = {};
-      var statusActive = {};
       
       function refreshBar(list) {
         var cnt = Object.keys(sel).length;
@@ -2498,8 +2221,7 @@
         h += '<span class="text-gray-300 mx-1">|</span><span class="text-gray-500">按状态:</span>';
         ['pending','in-progress','completed','overdue'].forEach(function(st) {
           var lb = {pending:'待处理','in-progress':'进行中',completed:'已完成',overdue:'已逾期'}[st];
-          var act = statusActive[st];
-          h += '<button class="ba2-st px-2 py-1 rounded border text-xs" style="'+(act?'background:#3b82f6;color:#fff;border-color:#3b82f6':'')+'" data-s="'+st+'">'+lb+'</button>';
+          h += '<button class="ba2-st px-2 py-1 rounded border text-xs hover:bg-blue-50" data-s="'+st+'">'+lb+'</button>';
         });
         if (cnt > 0) {
           h += '<span class="text-gray-300 mx-1">|</span><span class="text-gray-500">已选 <b class="text-blue-600">'+cnt+'</b> 项</span>';
@@ -2519,13 +2241,7 @@
         document.querySelectorAll('.ba2-st').forEach(function(b) {
           b.onclick = function() {
             var s = this.getAttribute('data-s');
-            if (statusActive[s]) {
-              list.filter(function(t){return t.status===s;}).forEach(function(t){ delete sel[t.id]; });
-              statusActive[s] = false;
-            } else {
-              list.filter(function(t){return t.status===s;}).forEach(function(t){ sel[t.id]=true; });
-              statusActive[s] = true;
-            }
+            list.filter(function(t){return t.status===s;}).forEach(function(t){ if(sel[t.id]) delete sel[t.id]; else sel[t.id]=true; });
             renderP(page);
           };
         });
@@ -2542,14 +2258,14 @@
             setTimeout(function(){document.addEventListener('click',function cd(e){if(!w.contains(e.target)){dd.remove();document.removeEventListener('click',cd);}});},0);
           }
           el = document.getElementById('ba2-mv'); if(el) el.onclick = function(e) { e.stopPropagation(); var oc = categories.filter(function(c){return !c.isRecycle;}).map(function(c){return {v:c.id,l:c.name};});
-            ddToggle('ba2-mv-w', oc, function(v) { batchDo('move',v); rebuildAll(); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
+            ddToggle('ba2-mv-w', oc, function(v) { batchDo('move',v); sel={}; renderP(page); renderCategories(); }); };
           el = document.getElementById('ba2-sts'); if(el) el.onclick = function(e) { e.stopPropagation();
-            ddToggle('ba2-sts-w', [{v:'pending',l:'待处理'},{v:'in-progress',l:'进行中'},{v:'completed',l:'已完成'}], function(v) { batchDo('status',v); rebuildAll(); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
+            ddToggle('ba2-sts-w', [{v:'pending',l:'待处理'},{v:'in-progress',l:'进行中'},{v:'completed',l:'已完成'}], function(v) { batchDo('status',v); sel={}; renderP(page); renderCategories(); }); };
           el = document.getElementById('ba2-pr'); if(el) el.onclick = function(e) { e.stopPropagation();
-            ddToggle('ba2-pr-w', [{v:'high',l:'高'},{v:'medium',l:'中'},{v:'low',l:'低'}], function(v) { batchDo('priority',v); rebuildAll(); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
-          el = document.getElementById('ba2-dt'); if(el) el.onclick = function() { var d = prompt('新截止日期 YYYY-MM-DD：', new Date().toISOString().split('T')[0]); if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) { batchDo('date',d); rebuildAll(); sel={}; statusActive={}; renderP(page); renderCategories(); } else if (d) { alert('格式错误'); } };
-          el = document.getElementById('ba2-del'); if(el) el.onclick = function() { batchDo('delete'); rebuildAll(); sel={}; statusActive={}; renderP(page); renderCategories(); };
-          el = document.getElementById('ba2-clr'); if(el) el.onclick = function() { sel={}; statusActive={}; renderP(page); };
+            ddToggle('ba2-pr-w', [{v:'high',l:'高'},{v:'medium',l:'中'},{v:'low',l:'低'}], function(v) { batchDo('priority',v); sel={}; renderP(page); renderCategories(); }); };
+          el = document.getElementById('ba2-dt'); if(el) el.onclick = function() { var d = prompt('新截止日期 YYYY-MM-DD：', new Date().toISOString().split('T')[0]); if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) { batchDo('date',d); sel={}; renderP(page); renderCategories(); } else if (d) { alert('格式错误'); } };
+          el = document.getElementById('ba2-del'); if(el) el.onclick = function() { batchDo('delete'); sel={}; renderP(page); renderCategories(); };
+          el = document.getElementById('ba2-clr'); if(el) el.onclick = function() { sel={}; renderP(page); };
         }
       }
       
@@ -2568,15 +2284,6 @@
         });
         saveDataToStorage();
       }
-      
-      function rebuildAll() {
-        all = [];
-        categories.forEach(function(cat) {
-          if (cat.isRecycle) return;
-          cat.tasks.forEach(function(t) { all.push({ id: t.id, title: t.title, dept: t.dept, dueDate: t.dueDate, status: t.status, priority: t.priority||'medium', catName: cat.name, catId: cat.id, completedAt: t.completedAt }); });
-        });
-        all.sort(function(a,b) { return a.status === 'completed' ? 1 : -1; });
-      }
 
       function renderP(p) {
         var total = all.length;
@@ -2588,18 +2295,16 @@
         refreshBar(list);
         
         var h = '<div class="overflow-x-auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg table-striped"><thead class="bg-gray-100 dark:bg-gray-700"><tr>';
-        h += '<th class="px-2 py-3 text-left w-8">#</th>';
         h += '<th class="px-2 py-3 text-left w-8"><input type="checkbox" id="ba2-cp" '+(list.length>0&&list.every(function(t){return sel[t.id];})?'checked':'')+'></th>';
         h += '<th class="px-4 py-3 text-left">状态</th><th class="px-4 py-3 text-left">重要性</th><th class="px-4 py-3 text-left">标题</th><th class="px-4 py-3 text-left">区块</th><th class="px-4 py-3 text-left">部门</th><th class="px-4 py-3 text-left">截止日期</th><th class="px-4 py-3 text-left">操作</th>';
         h += '</tr></thead><tbody class="divide-y">';
         
-        list.forEach(function(t, idx) {
-          var gidx = (p-1)*ps + idx + 1;
+        list.forEach(function(t) {
           var st = {pending:'待处理','in-progress':'进行中',completed:'已完成',overdue:'已逾期'}[t.status];
           var cl = {pending:'orange','in-progress':'blue',completed:'green',overdue:'red'}[t.status];
           var pr = {high:'高',medium:'中',low:'低'}[t.priority||'medium'];
           var pcl = {high:'text-red-500 font-bold',medium:'text-yellow-600',low:'text-gray-400'}[t.priority||'medium'];
-          h += '<tr class="text-xs"><td class="px-2 py-3 text-gray-400">'+gidx+'</td><td class="px-2 py-3"><input type="checkbox" class="ba2-cb" data-tid="'+t.id+'" '+(sel[t.id]?'checked':'')+'></td>';
+          h += '<tr class="text-xs"><td class="px-2 py-3"><input type="checkbox" class="ba2-cb" data-tid="'+t.id+'" '+(sel[t.id]?'checked':'')+'></td>';
           h += '<td class="px-4 py-3 text-'+cl+'-500 font-medium">'+st+'</td>';
           h += '<td class="px-4 py-3 '+pcl+'">'+pr+'</td>';
           h += '<td class="px-4 py-3">'+escapeHTML(t.title)+'</td>';
@@ -2609,11 +2314,7 @@
           h += '<td class="px-4 py-3"><button class="edit-list-2 text-blue-500 mr-2 px-1 py-0.5">编辑</button><button class="del-list-2 text-red-500 px-1 py-0.5">删除</button></td></tr>';
         });
         
-        h += '</tbody></table></div>';
-        var startIdx = total > 0 ? (p-1)*ps + 1 : 0;
-        var endIdx = Math.min(p*ps, total);
-        h += '<div class="text-xs text-gray-400 mt-2 mb-1">共 '+total+' 项'+(total>0?', 第 '+startIdx+' 至 '+endIdx+' 项':'')+'</div>';
-        h += '<div class="pagination">';
+        h += '</tbody></table></div><div class="pagination">';
         for (var i=1; i<=totalPages; i++) { h += '<button class="page-btn'+(i===p?' active':'')+'" data-p="'+i+'">'+i+'</button>'; }
         h += '</div>';
         if (all.length === 0) { h = '<div class="text-center py-8 text-gray-400 text-sm">暂无任务</div>'; }
@@ -2633,51 +2334,15 @@
       elements.taskListTitle.textContent = '全部任务';
       elements.taskListBatchBar.classList.add('hidden');
       sel = {};
-      statusActive = {};
       renderP(1);
       elements.taskListModal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
 
-    function importData(data, isAppend, skipDupes) {
-      var newData = data.categories || [];
-      var newNextCid = data.nextCategoryId || 1;
-      var newNextTid = data.nextTaskId || 1;
-      
-      if (isAppend) {
-        var existingCatNames = {};
-        categories.forEach(function(c) { existingCatNames[c.name] = c; });
-        var maxCid = categories.reduce(function(m, c) { return Math.max(m, c.id); }, 0);
-        var maxTid = categories.reduce(function(m, c) { 
-          return Math.max(m, c.tasks.reduce(function(mm, t) { return Math.max(mm, t.id); }, 0));
-        }, 0);
-        newData.forEach(function(newCat) {
-          if (newCat.isRecycle || newCat.isDefault && newCat.name === '默认') return;
-          if (existingCatNames[newCat.name]) {
-            var target = existingCatNames[newCat.name];
-            (newCat.tasks || []).forEach(function(t) {
-              if (skipDupes && target.tasks.some(function(ex) { return ex.title === t.title && ex.dueDate === t.dueDate; })) {
-                return; // skip duplicate
-              }
-              target.tasks.push(Object.assign({}, t, { id: ++maxTid }));
-            });
-          } else {
-            var newC = { id: ++maxCid, name: newCat.name, tasks: [] };
-            (newCat.tasks || []).forEach(function(t) {
-              newC.tasks.push(Object.assign({}, t, { id: ++maxTid }));
-            });
-            var recycleIdx = categories.findIndex(function(c) { return c.isRecycle; });
-            categories.splice(recycleIdx, 0, newC);
-            existingCatNames[newC.name] = newC;
-          }
-        });
-        nextTaskId = maxTid + 1;
-        nextCategoryId = maxCid + 1;
-      } else {
-        categories = newData;
-        nextCategoryId = newNextCid;
-        nextTaskId = newNextTid;
-      }
+    function importData(data) {
+      categories = data.categories || [];
+      nextCategoryId = data.nextCategoryId || 1;
+      nextTaskId = data.nextTaskId || 1;
       
       let defaultCat = categories.find(c => c.name === DEFAULT_CATEGORY_NAME);
       if (!defaultCat) {
@@ -2772,230 +2437,14 @@
     function deleteTaskForever(tid) { const r = categories.find(c => c.isRecycle); r.tasks = r.tasks.filter(t => t.id !== tid); saveDataToStorage(); }
     function escapeHTML(str) { return str?.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) || ''; }
 
-    function refreshDedupStatus() {
-      var groups = getDupeGroups();
-      var count = groups.reduce(function(s,g) { return s + g.tasks.length - 1; }, 0);
-      document.getElementById('dedup-status').textContent = '检测到 ' + groups.length + ' 组重复，共 ' + count + ' 条多余任务';
-      var btn = document.getElementById('dedup-btn');
-      var detailBtn = document.getElementById('dedup-detail-btn');
-      btn.disabled = count === 0;
-      btn.style.opacity = count === 0 ? '0.4' : '1';
-      detailBtn.disabled = count === 0;
-      detailBtn.style.opacity = count === 0 ? '0.4' : '1';
-    }
-    
-    function getDupeGroups() {
-      var groups = [];
-      categories.forEach(function(cat) {
-        if (cat.isRecycle) return;
-        var map = {};
-        cat.tasks.forEach(function(t) {
-          var key = (t.title||'').trim() + '|' + (t.dueDate||'');
-          if (!map[key]) { map[key] = { catName: cat.name, catId: cat.id, key: key, tasks: [] }; }
-          map[key].tasks.push(t);
-        });
-        for (var k in map) {
-          if (map[k].tasks.length > 1) groups.push(map[k]);
-        }
-      });
-      return groups;
-    }
-    
-    function countDupes() {
-      return getDupeGroups().reduce(function(s,g) { return s + g.tasks.length - 1; }, 0);
-    }
-    
-    function showDedupModal() {
-      var allGroups = getDupeGroups();
-      var modal = document.getElementById('dedup-modal');
-      var content = document.getElementById('dedup-detail-content');
-      
-      // Populate filter dropdowns
-      var catSel = document.getElementById('dedup-filter-cat');
-      var deptSel = document.getElementById('dedup-filter-dept');
-      var catNames = [], deptNames = [];
-      allGroups.forEach(function(g) {
-        if (catNames.indexOf(g.catName) === -1) catNames.push(g.catName);
-        g.tasks.forEach(function(t) {
-          var d = t.dept || '未分配';
-          if (deptNames.indexOf(d) === -1) deptNames.push(d);
-        });
-      });
-      catSel.innerHTML = '<option value="">全部区块</option>' + catNames.map(function(n){return '<option value="'+n+'">'+n+'</option>';}).join('');
-      deptSel.innerHTML = '<option value="">全部部门</option>' + deptNames.map(function(n){return '<option value="'+n+'">'+n+'</option>';}).join('');
-      document.getElementById('dedup-filter-status').value = '';
-      
-      var prMap = {high:'高',medium:'中',low:'低'};
-      var stMap = {pending:'待处理','in-progress':'进行中',completed:'已完成',overdue:'已逾期'};
-      
-      function renderFilteredGroups(groups) {
-        if (groups.length === 0) {
-          content.innerHTML = '<div class="text-center py-8 text-gray-400 text-sm">无匹配的重复任务</div>';
-          document.getElementById('dedup-filter-count').textContent = '0 组';
-          document.getElementById('dedup-sel-count').textContent = '已选 0 项';
-          return;
-        }
-        var html = '';
-        groups.forEach(function(g, gi) {
-          html += '<div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:8px">';
-          html += '<div style="font-size:11px;color:#64748b;margin-bottom:6px">';
-          html += '<span style="background:#f1f5f9;padding:1px 6px;border-radius:4px;margin-right:8px">'+escapeHTML(g.catName)+'</span>';
-          html += '第 '+(gi+1)+' 组 · '+(g.tasks.length-1)+' 条重复</div>';
-          g.tasks.forEach(function(t, ti) {
-            var isFirst = ti === 0;
-            html += '<label style="display:flex;align-items:flex-start;gap:6px;padding:6px 8px;border-radius:6px;cursor:pointer;margin-bottom:4px;'+(isFirst?'background:#f8fafc;opacity:0.6':'background:#fff;border:1px solid #e2e8f0')+'">';
-            html += '<input type="checkbox" class="dedup-cb" style="margin-top:2px" data-cat="'+g.catId+'" data-tid="'+t.id+'" data-grp="'+gi+'" '+((ti>0)?'checked':'')+' '+(isFirst?'disabled':'')+'>';
-            html += '<div style="flex:1;min-width:0">';
-            html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">';
-            html += '<span style="font-size:12px;font-weight:500;color:'+(isFirst?'#94a3b8':'#1e293b')+'">'+escapeHTML(t.title)+'</span>';
-            if (isFirst) html += '<span style="font-size:10px;color:#22c55e;background:#f0fdf4;padding:0 4px;border-radius:3px;flex-shrink:0">保留</span>';
-            html += '</div>';
-            html += '<div style="display:flex;gap:6px;flex-wrap:wrap;font-size:10px;color:#64748b">';
-            html += '<span>部门：'+(t.dept||'未分配')+'</span>';
-            html += '<span>状态：'+(stMap[t.status]||t.status)+'</span>';
-            html += '<span>优先级：'+(prMap[t.priority]||t.priority||'中')+'</span>';
-            html += '<span>截止：'+(t.dueDate||'无')+'</span>';
-            if (t.description) html += '<span style="color:#94a3b8">备注：'+escapeHTML(t.description.substring(0,30))+(t.description.length>30?'...':'')+'</span>';
-            html += '</div></div></label>';
-          });
-          html += '</div>';
-        });
-        content.innerHTML = html;
-        document.getElementById('dedup-filter-count').textContent = groups.length + ' 组';
-        var updateSelCount = function() {
-          var cnt = modal.querySelectorAll('.dedup-cb:checked').length;
-          document.getElementById('dedup-sel-count').textContent = '已选 ' + cnt + ' 项';
-        };
-        updateSelCount();
-        modal.querySelectorAll('.dedup-cb').forEach(function(cb) { cb.addEventListener('change', updateSelCount); });
-      }
-      
-      function doFilter() {
-        var fCat = catSel.value;
-        var fStatus = document.getElementById('dedup-filter-status').value;
-        var fDept = deptSel.value;
-        var filtered = [];
-        allGroups.forEach(function(g) {
-          if (fCat && g.catName !== fCat) return;
-          var matching = (fStatus || fDept) ? g.tasks.filter(function(t) {
-            if (fStatus && t.status !== fStatus) return false;
-            if (fDept && (t.dept||'未分配') !== fDept) return false;
-            return true;
-          }) : g.tasks;
-          if (matching.length > 1) {
-            filtered.push({ catName: g.catName, catId: g.catId, tasks: matching });
-          }
-        });
-        renderFilteredGroups(filtered);
-      }
-      
-      catSel.onchange = doFilter;
-      document.getElementById('dedup-filter-status').onchange = doFilter;
-      deptSel.onchange = doFilter;
-      
-      doFilter();
-      modal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-    
-    function dedupSelected() {
-      var cbs = document.querySelectorAll('#dedup-modal .dedup-cb:checked');
-      var removed = 0;
-      cbs.forEach(function(cb) {
-        var catId = parseInt(cb.dataset.cat);
-        var tid = parseInt(cb.dataset.tid);
-        var cat = categories.find(function(c) { return c.id === catId; });
-        if (cat) {
-          cat.tasks = cat.tasks.filter(function(t) { return t.id !== tid; });
-          removed++;
-        }
-      });
-      saveDataToStorage();
-      renderCategories();
-      return removed;
-    }
-    
-    function dedupTasks() {
-      var groups = getDupeGroups();
-      var removed = 0;
-      groups.forEach(function(g) {
-        // Keep first, remove the rest
-        for (var i = 1; i < g.tasks.length; i++) {
-          var cat = categories.find(function(c) { return c.id === g.catId; });
-          if (cat) {
-            cat.tasks = cat.tasks.filter(function(t) { return t.id !== g.tasks[i].id; });
-            removed++;
-          }
-        }
-      });
-      saveDataToStorage();
-      renderCategories();
-      return removed;
-    }
-
-    function updateImportAppendOpts() {
-      var appendRadio = document.querySelector('input[name="import-mode"][value="append"]');
-      var opts = document.getElementById('import-append-opts');
-      if (appendRadio && appendRadio.checked) {
-        opts.classList.remove('hidden');
-      } else {
-        opts.classList.add('hidden');
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      // Listen for import mode radio changes
-      document.querySelectorAll('input[name="import-mode"]').forEach(function(r) {
-        r.addEventListener('change', updateImportAppendOpts);
-      });
-      initApp();
-    });
+    document.addEventListener('DOMContentLoaded', initApp);
   </script>
 
   <div id="task-tooltip" class="task-tooltip hidden"></div>
   <footer class="app-footer">
     <p>yongbing.yang@gmail.com</p>
     <p style="margin-top:2px;">本工具由 AI 辅助生成 · 仅供个人使用 · 数据仅存储于浏览器本地</p>
-    <p style="margin-top:4px;font-size:10px;color:#cbd5e1;">v2026.05.23</p>
+    <p style="margin-top:4px;font-size:10px;color:#cbd5e1;">v2026.05.22</p>
   </footer>
-
-  <div id="dedup-modal" class="modal-backdrop hidden">
-    <div class="modal-content" style="max-width:680px;display:flex;flex-direction:column;max-height:85vh">
-      <div style="flex-shrink:0">
-        <div class="flex justify-between items-center mb-3">
-          <h2 class="text-lg font-bold">重复任务详情</h2>
-          <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
-        </div>
-        <p class="text-xs text-gray-500 mb-2">已勾选的项将在确认后删除。每组至少保留一项。</p>
-        <div class="flex flex-wrap items-center gap-2 mb-2">
-          <select id="dedup-filter-cat" class="form-input text-xs" style="width:auto;padding:2px 6px">
-            <option value="">全部区块</option>
-          </select>
-          <select id="dedup-filter-status" class="form-input text-xs" style="width:auto;padding:2px 6px">
-            <option value="">全部状态</option>
-            <option value="pending">待处理</option>
-            <option value="in-progress">进行中</option>
-            <option value="completed">已完成</option>
-            <option value="overdue">已逾期</option>
-          </select>
-          <select id="dedup-filter-dept" class="form-input text-xs" style="width:auto;padding:2px 6px">
-            <option value="">全部部门</option>
-          </select>
-          <span id="dedup-filter-count" class="text-xs text-gray-400"></span>
-        </div>
-        <div class="flex gap-2 mb-3">
-          <button id="dedup-sel-dupes" class="text-xs text-blue-500 hover:underline">勾选全部重复</button>
-          <button id="dedup-sel-none" class="text-xs text-gray-400 hover:underline">取消全部勾选</button>
-          <span id="dedup-sel-count" class="text-xs text-gray-500 ml-auto"></span>
-        </div>
-      </div>
-      <div id="dedup-detail-content" style="overflow-y:auto;flex:1;min-height:0"></div>
-      <div style="flex-shrink:0;margin-top:0.75rem" class="flex justify-end gap-3">
-        <button type="button" class="btn btn-secondary close-modal">取消</button>
-        <button type="button" id="dedup-confirm-btn" class="btn btn-danger">删除勾选项</button>
-      </div>
-    </div>
-  </div>
-
 </body>
 </html>
