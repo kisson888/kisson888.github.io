@@ -384,6 +384,12 @@
     body.dark-mode .cal-task-item { color: #e2e8f0; }
     .cal-weekday { text-align: center; font-size: 10px; font-weight: 600; color: #64748b; padding: 4px 0; background: #f8fafc; }
     body.dark-mode .cal-weekday { background: #1e293b; color: #94a3b8; }
+
+    .sort-opt { display:inline-flex;align-items:center;justify-content:center;width:14px;height:15px;cursor:pointer;border-radius:1px;color:#94a3b8;font-size:9px;line-height:1; }
+    .sort-opt:hover { background:#e2e8f0; }
+    .sort-opt.active { color:#3b82f6;font-weight:600;background:#eff6ff; }
+    body.dark-mode .sort-opt.active { background:#1e3a5f;color:#93c5fd; }
+    body.dark-mode .sort-opt:hover { background:#334155; }
   </style>
 </head>
 <body>
@@ -1345,16 +1351,16 @@
       document.getElementById('reminder-icon-btn').addEventListener('click', () => {
         const upcoming = getUpcomingTasks();
         if (upcoming.length === 0) { alert('暂无近期到期任务'); return; }
-        let html = '<div style="padding:0"><table style="width:100%;border-collapse:collapse;font-size:13px">';
-        html += '<thead><tr style="border-bottom:2px solid #e2e8f0;color:#94a3b8;font-size:11px"><th style="padding:8px 10px;text-align:left;font-weight:500">任务</th><th style="padding:8px 10px;text-align:center;font-weight:500">截止</th><th style="padding:8px 10px;text-align:right;font-weight:500">时限</th></tr></thead><tbody>';
+        let html = '<div class="overflow-x-auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg table-striped"><thead class="bg-gray-100 dark:bg-gray-700"><tr>';
+        html += '<th class="px-3 py-2 text-left text-xs">任务</th><th class="px-3 py-2 text-left text-xs">区块</th><th class="px-3 py-2 text-left text-xs">截止日期</th><th class="px-3 py-2 text-right text-xs">时限</th>';
+        html += '</tr></thead><tbody class="divide-y">';
         const nowStr = new Date().toISOString().split('T')[0];
         upcoming.forEach(t => {
           const due = t.dueDate.split('T')[0];
           const diff = Math.round((new Date(due) - new Date(nowStr)) / 86400000);
           const label = diff === 0 ? '今天' : diff === 1 ? '明天' : diff + '天后';
-          const bg = diff <= 1 ? '#fef2f2' : diff <= 3 ? '#fffbeb' : '#fff';
           const c = diff <= 1 ? '#dc2626' : diff <= 3 ? '#d97706' : '#6366f1';
-          html += '<tr style="border-bottom:1px solid #f1f5f9;background:' + bg + '"><td style="padding:7px 10px"><span style="color:#1e293b;font-size:13px">' + escapeHTML(t.title.substring(0,20)) + '</span><span style="color:#94a3b8;font-size:11px;margin-left:8px">' + escapeHTML(t.catName) + '</span></td><td style="padding:7px 10px;text-align:center;color:#64748b;font-size:12px">' + due + '</td><td style="padding:7px 10px;text-align:right;color:' + c + ';font-weight:600;font-size:13px">' + label + '</td></tr>';
+          html += '<tr class="text-xs"><td class="px-3 py-2" style="color:' + c + ';font-weight:' + (diff<=1?'600':'400') + '">' + escapeHTML(t.title.substring(0,24)) + '</td><td class="px-3 py-2 text-gray-500">' + escapeHTML(t.catName) + '</td><td class="px-3 py-2">' + due + '</td><td class="px-3 py-2 text-right" style="color:' + c + ';font-weight:600">' + label + '</td></tr>';
         });
         html += '</tbody></table></div>';
         elements.taskListTitle.textContent = '近期到期 (' + upcoming.length + ')';
@@ -1983,7 +1989,13 @@
               <span class="status-tag in-progress" data-status="in-progress">进:${cnt.ip}</span>
               <span class="status-tag completed" data-status="completed">完:${cnt.c}</span>
               <span class="status-tag overdue" data-status="overdue">逾:${cnt.o}</span>
-              <span class="sort-cycle-btn" data-cid="${cat.id}" style="margin-left:3px;padding-left:4px;border-left:1px solid #d1d5db;cursor:pointer;color:#6b7280;user-select:none" title="点击切换排序方式">${cat.sortBy==='default'?'默认':cat.sortBy==='dueDate'?'日期':cat.sortBy==='priority'?'重要':cat.sortBy==='dept'?'部门':'标题'} ${cat.sortOrder === 'asc' ? '↑' : '↓'}</span>
+              <span style="margin-left:3px;padding-left:4px;border-left:1px solid #d1d5db;display:inline-flex;gap:1px;align-items:center">
+                <span class="sort-opt ${cat.sortBy==='default'?'active':''}" data-cid="${cat.id}" data-sort="default" title="默认排序">↕</span>
+                <span class="sort-opt ${cat.sortBy==='title'?'active':''}" data-cid="${cat.id}" data-sort="title" title="按标题排序">题${cat.sortBy==='title'?(cat.sortOrder==='asc'?'↑':'↓'):''}</span>
+                <span class="sort-opt ${cat.sortBy==='dueDate'?'active':''}" data-cid="${cat.id}" data-sort="dueDate" title="按日期排序">期${cat.sortBy==='dueDate'?(cat.sortOrder==='asc'?'↑':'↓'):''}</span>
+                <span class="sort-opt ${cat.sortBy==='priority'?'active':''}" data-cid="${cat.id}" data-sort="priority" title="按重要性排序">要${cat.sortBy==='priority'?(cat.sortOrder==='asc'?'↑':'↓'):''}</span>
+                <span class="sort-opt ${cat.sortBy==='dept'?'active':''}" data-cid="${cat.id}" data-sort="dept" title="按部门排序">部${cat.sortBy==='dept'?(cat.sortOrder==='asc'?'↑':'↓'):''}</span>
+              </span>
             </div>
           </div>
           <div>${btns}</div>
@@ -2198,21 +2210,21 @@
       });
 
 
-      // Sort: bind directly to each .sort-cycle-btn
-      document.querySelectorAll('.sort-cycle-btn').forEach(function(el) {
+      // Sort: bind directly to each .sort-opt
+      document.querySelectorAll('.sort-opt').forEach(function(el) {
         el.onclick = function() {
           var cid = parseInt(this.getAttribute('data-cid'));
+          var sort = this.getAttribute('data-sort');
           var cat = null;
           for (var ci = 0; ci < categories.length; ci++) {
             if (categories[ci].id === cid) { cat = categories[ci]; break; }
           }
           if (!cat) return;
-          var order = ['default','dueDate','priority','dept','title'];
-          var idx = order.indexOf(cat.sortBy);
-          if (idx === -1 || idx === order.length - 1) {
+          if (cat.sortBy === sort) {
             cat.sortOrder = cat.sortOrder === 'asc' ? 'desc' : 'asc';
           } else {
-            cat.sortBy = order[idx + 1];
+            cat.sortBy = sort;
+            cat.sortOrder = 'asc';
           }
           saveDataToStorage();
           renderCategories();
