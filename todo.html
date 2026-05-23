@@ -56,12 +56,13 @@
     
     .category-card {
       background: white;
-      border-radius: 0.75rem;
-      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+      border-radius: 4px;
+      box-shadow: none;
       height: 26rem;
       display: flex;
       flex-direction: column;
-      border-bottom: 4px solid #3b82f6;
+      border: 1px solid #e2e8f0;
+      border-top: 3px solid #3b82f6;
       transition: all 0.2s ease;
       margin-bottom: 1rem;
       width: 100%;
@@ -69,25 +70,25 @@
       min-width: 0;
     }
     .category-card.defaultCat { 
-      border-bottom-color: #64748b; 
-      background: #f8fafc;
+      border-top-color: #64748b; 
+      background: #fafafa;
     }
     .category-card.recycle { 
-      border-bottom-color: #933ea; 
+      border-top-color: #9333ea; 
       background: #faf5ff;
     }
     body.dark-mode .category-card.defaultCat { background: #334155; }
     body.dark-mode .category-card.recycle { background: #4c1d95; }
-    .category-card:hover { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); }
+    .category-card:hover { box-shadow: 0 1px 3px rgba(0,0,0,.08); }
     .category-card.draggable { cursor: grab; }
     .category-card.draggable:active { cursor: grabbing; }
     .category-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.75rem;
-      background: #f8fafc;
-      border-radius: 0.75rem 0.75rem 0 0;
+      padding: 0.625rem 0.75rem;
+      background: #fff;
+      border-radius: 4px 4px 0 0;
       border-bottom: 1px solid #e2e8f0;
       flex-shrink: 0;
     }
@@ -104,13 +105,14 @@
     .category-content { padding: 0.5rem; flex: 1; overflow-y: auto; scrollbar-width: thin; }
     
     .task-card {
-      background: #f8fafc;
+      background: #fafafa;
       padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
+      border-radius: 2px;
       margin-bottom: 0.25rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
       border: 1px solid #e2e8f0;
+      border-left-width: 2px;
       display: flex;
       align-items: center;
       gap: 0.375rem;
@@ -153,6 +155,7 @@
     .task-card.priority-high { border-left: 3px solid #ef4444; }
     .task-card.priority-medium { border-left: 3px solid #f59e0b; }
     .task-card.priority-low { border-left: 3px solid #94a3b8; }
+    .recurrence-badge { font-size: 8px; color: #6366f1; background: #eef2ff; padding: 0 3px; border-radius: 2px; flex-shrink: 0; }
     .priority-tag { font-size: 8px; padding: 0 3px; border-radius: 2px; color: white; flex-shrink: 0; }
     .priority-tag.high { background: #ef4444; }
     .priority-tag.medium { background: #f59e0b; }
@@ -167,9 +170,9 @@
     .task-date { font-size: 9px; color: #666; margin-left: 4px; flex-shrink: 0; }
     .task-dept { font-size: 9px; color: #888; margin-left: 4px; flex-shrink: 0; }
     
-    .filter-btn { padding: 0.25rem 0.625rem; font-size: 0.75rem; border-radius: 0.375rem; transition: all 0.2s; }
+    .filter-btn { padding: 0.25rem 0.625rem; font-size: 0.75rem; border-radius: 2px; transition: all 0.2s; }
     .filter-btn.active { background: #3b82f6; color: white; }
-    .btn { padding: 0.375rem 0.75rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 500; display: flex; align-items: center; gap: 0.375rem; cursor: pointer !important; }
+    .btn { padding: 0.375rem 0.75rem; border-radius: 2px; font-size: 0.75rem; font-weight: 500; display: flex; align-items: center; gap: 0.375rem; cursor: pointer !important; }
     .btn-sep { width: 1px; background: #cbd5e1; margin: 0 2px; align-self: stretch; }
     body.dark-mode .btn-sep { background: #475569; }
     .btn-primary { background: #3b82f6; color: white; }
@@ -178,10 +181,10 @@
     .btn-recycle { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; border: none; box-shadow: 0 1px 3px rgba(220,38,38,0.3); transition: all 0.2s; }
     .btn-recycle:hover { box-shadow: 0 4px 12px rgba(220,38,38,0.45); transform: translateY(-1px); }
     .btn-default { background: #64748b; color: white; }
-    .btn-icon { padding: 0.25rem; border-radius: 9999px; font-size: 10px; flex-shrink: 0; cursor: pointer !important; }
+    .btn-icon { padding: 0.25rem; border-radius: 2px; font-size: 10px; flex-shrink: 0; cursor: pointer !important; }
     .btn-icon:hover { background: #e2e8f0; }
     
-    .form-input { width: 100%; padding: 0.375rem 0.75rem; font-size: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.375rem; }
+    .form-input { width: 100%; padding: 0.375rem 0.75rem; font-size: 0.75rem; border: 1px solid #e2e8f0; border-radius: 2px; }
     .form-input:focus { outline: none; box-shadow: 0 0 0 2px rgba(59, 132, 246, 0.5); }
     .form-label { font-size: 0.75rem; font-weight: 500; color: #334155; margin-bottom: 0.25rem; display: block; }
     .form-group { margin-bottom: 0.75rem; }
@@ -203,8 +206,8 @@
     }
     .modal-content {
       background: white; 
-      border-radius: 0.75rem; 
-      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); 
+      border-radius: 4px; 
+      box-shadow: 0 2px 8px rgba(0,0,0,.15); 
       width: 100%; 
       max-width: 28rem; 
       padding: 1.25rem;
@@ -234,7 +237,7 @@
     }
     
     body.dark-mode { background: #0f172a; color: #f8fafc; }
-    body.dark-mode .category-card { background: #1e293b; border-bottom-color: #3b82f6; }
+    body.dark-mode .category-card { background: #1e293b; border-top-color: #3b82f6; }
     body.dark-mode .category-header { background: #1e293b; border-bottom-color: #334155; }
     body.dark-mode .task-card { background: #334155; border-color: #475569; }
     body.dark-mode .task-title { color: #f8fafc; }
@@ -247,7 +250,7 @@
     
     .settings-panel {
       background: white;
-      border-radius: 0.75rem;
+      border-radius: 4px;
       padding: 1.5rem;
       max-width: 800px;
       width: 90%;
@@ -280,7 +283,7 @@
       gap: 0.5rem;
       margin-bottom: 0.5rem;
       padding: 0.5rem;
-      border-radius: 0.375rem;
+      border-radius: 2px;
       cursor: pointer;
     }
     .layout-option:hover { background: #f1f5f9; }
@@ -319,13 +322,13 @@
     }
 
     .pagination { display: flex; gap: 4px; margin-top: 12px; justify-content: center; }
-    .page-btn { padding: 4px 8px; font-size: 12px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+    .page-btn { padding: 4px 8px; font-size: 12px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer; }
     .page-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
 
     .app-footer { text-align: center; padding: 1.5rem 1rem; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; margin-top: 2rem; }
     body.dark-mode .app-footer { color: #64748b; border-top-color: #334155; }
 
-    #task-list-batch-bar { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 0.5rem; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; }
+    #task-list-batch-bar { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 2px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; }
     body.dark-mode #task-list-batch-bar { background: #0c1929; border-color: #1e3a5f; }
     .batch-move-dropdown { max-height: 200px; overflow-y: auto; }
     .form-input:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -342,6 +345,43 @@
     @media (max-width: 600px) {
       #categories-container { grid-template-columns: repeat(1, 1fr) !important; }
     }
+
+    .reminder-bar { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 2px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; font-size: 12px; }
+    body.dark-mode .reminder-bar { background: #2d1f0a; border-color: #78350f; }
+    .reminder-bar.hidden-bar { display: none; }
+    .reminder-item { background: #fff; border: 1px solid #fdba74; border-radius: 2px; padding: 1px 6px; font-size: 11px; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+    .reminder-item:hover { background: #ffedd5; }
+    body.dark-mode .reminder-item { background: #422006; border-color: #9a3412; }
+    body.dark-mode .reminder-item:hover { background: #5c2a0a; }
+    .reminder-close { cursor: pointer; color: #9ca3af; font-size: 14px; margin-left: auto; }
+    .reminder-close:hover { color: #ef4444; }
+
+    .tag-badge { display: inline-flex; align-items: center; font-size: 8px; padding: 0 3px; border-radius: 2px; color: #fff; line-height: 14px; flex-shrink: 0; max-width: 48px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tag-filter-btn { padding: 1px 6px; border-radius: 2px; font-size: 10px; cursor: pointer; transition: opacity 0.15s; opacity: 0.7; }
+    .tag-filter-btn.active { opacity: 1; box-shadow: 0 0 0 1px white; }
+    .tag-filter-btn:hover { opacity: 1; }
+    .tag-mgmt-list { max-height: 200px; overflow-y: auto; }
+    .tag-mgmt-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-bottom: 1px solid #e2e8f0; }
+    body.dark-mode .tag-mgmt-item { border-bottom-color: #334155; }
+
+    .cal-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .cal-nav button { padding: 2px 8px; border: 1px solid #e2e8f0; border-radius: 2px; background: transparent; cursor: pointer; font-size: 12px; }
+    .cal-nav button:hover { background: #f1f5f9; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #e2e8f0; border: 1px solid #e2e8f0; }
+    .cal-cell { background: #fff; min-height: 60px; padding: 2px; font-size: 10px; cursor: pointer; position: relative; }
+    body.dark-mode .cal-cell { background: #1e293b; }
+    .cal-cell.other-month { background: #f8fafc; }
+    body.dark-mode .cal-cell.other-month { background: #0f172a; }
+    .cal-cell.today { background: #eff6ff; }
+    body.dark-mode .cal-cell.today { background: #1e3a5f; }
+    .cal-cell .day-num { font-weight: 600; color: #475569; padding: 1px 3px; font-size: 10px; }
+    body.dark-mode .cal-cell .day-num { color: #94a3b8; }
+    .cal-cell.has-tasks { background: #fef3c7; }
+    body.dark-mode .cal-cell.has-tasks { background: #451a03; }
+    .cal-task-item { font-size: 8px; padding: 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #1e293b; border-radius: 1px; line-height: 14px; }
+    body.dark-mode .cal-task-item { color: #e2e8f0; }
+    .cal-weekday { text-align: center; font-size: 10px; font-weight: 600; color: #64748b; padding: 4px 0; background: #f8fafc; }
+    body.dark-mode .cal-weekday { background: #1e293b; color: #94a3b8; }
   </style>
 </head>
 <body>
@@ -359,7 +399,9 @@
             <button id="export-data-btn" class="btn btn-secondary"><i class="fa fa-download"></i> 导出</button>
             <span class="btn-sep"></span>
             <button id="stats-btn" class="btn btn-secondary"><i class="fa fa-bar-chart"></i> 统计</button>
+            <button id="calendar-btn" class="btn btn-secondary"><i class="fa fa-calendar"></i> 日历</button>
             <button id="recycle-bin-btn" class="btn btn-recycle"><i class="fa fa-trash"></i> 回收站</button>
+            <button id="archive-btn" class="btn btn-secondary"><i class="fa fa-archive"></i> 归档</button>
             <button id="settings-btn" class="btn btn-secondary"><i class="fa fa-cog"></i> 设置</button>
             <button id="help-btn" class="btn btn-secondary"><i class="fa fa-question-circle"></i> 使用说明</button>
             <span class="btn-sep"></span>
@@ -376,6 +418,7 @@
           <button class="filter-btn" data-filter="completed">已完成</button>
           <button class="filter-btn" data-filter="overdue">已逾期</button>
         </div>
+        <div id="tag-filter-bar" class="flex flex-wrap gap-1 mb-3" style="min-height:20px"></div>
         <div class="relative max-w-lg">
           <input type="text" id="search-input" placeholder="搜索任务..." class="form-input pl-8">
           <i class="fa fa-search absolute left-2.5 top-2 text-slate-400"></i>
@@ -385,6 +428,7 @@
   </div>
 
   <div class="container">
+    <div id="reminder-bar" class="reminder-bar hidden-bar"></div>
     <main id="categories-container"></main>
   </div>
 
@@ -452,6 +496,20 @@
             <option value="completed">已完成</option>
           </select>
         </div>
+        <div class="form-group">
+          <label class="form-label">标签 <span class="text-xs text-gray-400">（逗号分隔）</span></label>
+          <input type="text" id="task-tags" class="form-input" placeholder="例如：紧急、会议、汇报">
+        </div>
+        <div class="form-group">
+          <label class="form-label">重复周期</label>
+          <select id="task-recurrence" class="form-input">
+            <option value="">不重复</option>
+            <option value="daily">每天</option>
+            <option value="weekly">每周</option>
+            <option value="monthly">每月</option>
+            <option value="yearly">每年</option>
+          </select>
+        </div>
         <div class="flex justify-end gap-3 mt-6">
           <button type="button" class="btn btn-secondary close-modal">取消</button>
           <button type="submit" class="btn btn-primary">保存</button>
@@ -478,6 +536,16 @@
         <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
       </div>
       <div id="stats-content"></div>
+    </div>
+  </div>
+
+  <div id="calendar-modal" class="modal-backdrop hidden">
+    <div class="modal-content" style="max-width:600px">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold">任务日历</h2>
+        <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
+      </div>
+      <div id="calendar-content"></div>
     </div>
   </div>
 
@@ -533,6 +601,18 @@
       </div>
       
       <div class="settings-group">
+        <h3 class="settings-title">任务提醒</h3>
+        <div class="flex items-center gap-2 mb-2">
+          <input type="checkbox" id="reminder-enabled" checked class="form-input w-auto">
+          <label for="reminder-enabled">开启近期到期任务提醒</label>
+        </div>
+        <div class="flex items-center gap-2">
+          <label>提前提醒天数：</label>
+          <input type="number" id="reminder-days" value="3" min="1" max="14" class="form-input w-auto" style="width:60px">
+        </div>
+      </div>
+      
+      <div class="settings-group">
         <h3 class="settings-title">自动备份设置</h3>
         <div class="flex items-center gap-2 mb-2">
           <input type="checkbox" id="auto-backup-enabled" checked class="form-input w-auto">
@@ -567,6 +647,17 @@
           <button type="button" id="dedup-btn" class="btn btn-secondary text-xs"><i class="fa fa-filter"></i> 一键快速去重</button>
         </div>
         <span id="dedup-result" class="text-xs text-green-600 mt-1 block hidden"></span>
+      </div>
+      
+      <div class="settings-group">
+        <h3 class="settings-title">标签管理</h3>
+        <p class="text-xs text-gray-500 mb-2">为常用标签设置颜色，方便识别。</p>
+        <div class="flex gap-1 items-center mb-2">
+          <input type="text" id="tag-mgmt-input" class="form-input w-auto" placeholder="标签名" style="width:120px">
+          <input type="color" id="tag-mgmt-color" class="form-input w-auto" style="width:32px;height:28px;padding:1px" value="#3b82f6">
+          <button type="button" id="tag-mgmt-add" class="btn btn-primary text-xs"><i class="fa fa-plus"></i> 添加</button>
+        </div>
+        <div id="tag-mgmt-list" class="tag-mgmt-list"></div>
       </div>
       
       </div>
@@ -750,15 +841,20 @@
     let currentViewCatId = null;
     let batchSelected = new Set();
     let categoryFilters = {};
+    let allTags = [];
+    let tagFilter = '';
     
     const RECYCLE_BIN_NAME = "任务回收站";
     const DEFAULT_CATEGORY_NAME = "默认区块";
+    const ARCHIVE_NAME = "已归档";
     let recycleBinId = null;
     let defaultCategoryId = null;
     
     let recycleBinVisible = false;
     let lastBackupData = '';
     let autoBackupTimer = null;
+    let pageTitle = '高效待办事项管理';
+    let archivedTasksVisible = false;
     
     let appSettings = {
       layoutColumns: 4,
@@ -770,7 +866,10 @@
       autoBackupEnabled: true,
       backupMaxCount: 50,
       backupInterval: 60,
-      backupStorageKey: 'todo_auto_backups'
+      backupStorageKey: 'todo_auto_backups',
+      reminderEnabled: true,
+      reminderDays: 3,
+      tagFilter: []
     };
 
     const elements = {
@@ -782,9 +881,11 @@
       toggleDarkModeBtn: document.getElementById('toggle-dark-mode'),
       allTasksBtn: document.getElementById('all-tasks-btn'),
       statsBtn: document.getElementById('stats-btn'),
+      calendarBtn: document.getElementById('calendar-btn'),
       settingsBtn: document.getElementById('settings-btn'),
       helpBtn: document.getElementById('help-btn'),
       recycleBinBtn: document.getElementById('recycle-bin-btn'),
+      archiveBtn: document.getElementById('archive-btn'),
       saveSettingsBtn: document.getElementById('save-settings-btn'),
       confirmDeleteBtn: document.getElementById('confirm-delete'),
       confirmImportBtn: document.getElementById('confirm-import'),
@@ -814,6 +915,8 @@
       taskDueDateInput: document.getElementById('task-due-date'),
       taskPriorityInput: document.getElementById('task-priority'),
       taskStatusInput: document.getElementById('task-status'),
+      taskTagsInput: document.getElementById('task-tags'),
+      taskRecurrenceInput: document.getElementById('task-recurrence'),
       taskCategorySelect: document.getElementById('task-category-select'),
       taskModalTitle: document.getElementById('task-modal-title'),
       confirmMessage: document.getElementById('confirm-message'),
@@ -824,7 +927,12 @@
       taskListBatchBar: document.getElementById('task-list-batch-bar'),
       recycleContent: document.getElementById('recycle-content'),
       statsContent: document.getElementById('stats-content'),
-      layoutOptions: document.querySelectorAll('.layout-option')
+      layoutOptions: document.querySelectorAll('.layout-option'),
+      reminderBar: document.getElementById('reminder-bar'),
+      tagMgmtInput: document.getElementById('tag-mgmt-input'),
+      tagMgmtColor: document.getElementById('tag-mgmt-color'),
+      tagMgmtAdd: document.getElementById('tag-mgmt-add'),
+      tagMgmtList: document.getElementById('tag-mgmt-list')
     };
 
     function initApp() {
@@ -833,14 +941,20 @@
       loadDataFromStorage();
       initDefaultCategory();
       initRecycleBin();
+      initArchive();
       renderCategories();
+      renderReminderBar();
       initSortable();
       setupEventListeners();
       initAutoBackup();
       checkOverdueTasks();
       initTooltip();
       document.querySelector('.page-title').addEventListener('input', function() {
-        document.title = this.textContent.trim() || '高效待办事项管理';
+        pageTitle = this.textContent.trim() || '高效待办事项管理';
+        document.title = pageTitle;
+      });
+      document.querySelector('.page-title').addEventListener('blur', function() {
+        saveDataToStorage();
       });
     }
 
@@ -908,6 +1022,72 @@
       }
     }
 
+    function initArchive() {
+      let archive = categories.find(c => c.name === ARCHIVE_NAME);
+      if (!archive) {
+        const newArchive = {
+          id: nextCategoryId++,
+          name: ARCHIVE_NAME,
+          tasks: [],
+          isArchive: true
+        };
+        categories.push(newArchive);
+        saveDataToStorage();
+      }
+    }
+
+    function moveTaskToArchive(cid, tid) {
+      const cat = categories.find(c => c.id === +cid);
+      const archive = categories.find(c => c.isArchive);
+      if (!cat || !archive || cat.isRecycle || cat.isArchive) return;
+      const task = cat.tasks.find(t => t.id === +tid);
+      if (task && task.status === 'completed') {
+        cat.tasks = cat.tasks.filter(t => t.id !== +tid);
+        archive.tasks.push(task);
+        saveDataToStorage();
+        renderCategories();
+      }
+    }
+
+    function restoreTaskFromArchive(tid) {
+      const archive = categories.find(c => c.isArchive);
+      if (!archive) return;
+      const task = archive.tasks.find(t => t.id === tid);
+      if (!task) return;
+      let targetCat = categories.find(c => c.isDefault);
+      archive.tasks = archive.tasks.filter(t => t.id !== tid);
+      targetCat.tasks.push(task);
+      saveDataToStorage();
+      renderCategories();
+    }
+
+    function showArchiveModal() {
+      const archive = categories.find(c => c.isArchive);
+      if (!archive) return;
+      let html = '<div class="overflow-x-auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg"><thead class="bg-gray-100 dark:bg-gray-700"><tr><th class="px-4 py-2 text-left text-xs">#</th><th class="px-4 py-2 text-left text-xs">任务标题</th><th class="px-4 py-2 text-left text-xs">主责部门</th><th class="px-4 py-2 text-left text-xs">完成时间</th><th class="px-4 py-2 text-right text-xs">操作</th></tr></thead><tbody class="divide-y">';
+      if (archive.tasks.length === 0) {
+        html += '<tr><td colspan="5" class="text-center py-8">暂无归档任务</td></tr>';
+      } else {
+        archive.tasks.forEach(function(task, idx) {
+          html += '<tr><td class="px-4 py-3 text-xs text-gray-400">' + (idx+1) + '</td><td class="px-4 py-3 text-sm">' + escapeHTML(task.title) + '</td><td class="px-4 py-3 text-sm">' + escapeHTML(task.dept || '-') + '</td><td class="px-4 py-3 text-sm">' + (task.completedAt ? new Date(task.completedAt).toLocaleString() : '-') + '</td><td class="px-4 py-3 text-sm text-right"><button class="restore-archive-btn text-green-600 mr-2" data-taskid="' + task.id + '"><i class="fa fa-undo"></i> 恢复</button></td></tr>';
+        });
+      }
+      html += '</tbody></table></div>';
+      // Reuse recycle modal with different title
+      elements.taskListTitle.textContent = '已归档任务';
+      elements.taskListContent.innerHTML = html;
+      elements.taskListModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      
+      elements.taskListContent.querySelectorAll('.restore-archive-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          restoreTaskFromArchive(parseInt(btn.dataset.taskid));
+          elements.taskListModal.classList.add('hidden');
+          document.body.style.overflow = '';
+        });
+      });
+    }
+
     function loadSettings() {
       try {
         const saved = localStorage.getItem('todoApp-settings');
@@ -937,6 +1117,9 @@
           document.getElementById('backup-max-count').value = appSettings.backupMaxCount || 50;
           document.getElementById('backup-interval').value = appSettings.backupInterval || 60;
           toggleBackupDeps(backupEnabled);
+          
+          document.getElementById('reminder-enabled').checked = appSettings.reminderEnabled !== false;
+          document.getElementById('reminder-days').value = appSettings.reminderDays || 3;
         }
       } catch (e) {
         console.error('加载设置失败:', e);
@@ -953,6 +1136,8 @@
       appSettings.backupStorageKey = document.getElementById('backup-storage-key').value.trim() || 'todo_auto_backups';
       appSettings.backupMaxCount = parseInt(document.getElementById('backup-max-count').value) || 50;
       appSettings.backupInterval = parseInt(document.getElementById('backup-interval').value) || 60;
+      appSettings.reminderEnabled = document.getElementById('reminder-enabled').checked;
+      appSettings.reminderDays = parseInt(document.getElementById('reminder-days').value) || 3;
       localStorage.setItem('todoApp-settings', JSON.stringify(appSettings));
       elements.categoriesContainer.style.gridTemplateColumns = `repeat(${appSettings.layoutColumns}, 1fr)`;
       restartAutoBackup();
@@ -1030,6 +1215,7 @@
       elements.settingsBtn.addEventListener('click', () => {
         refreshBackupStatus();
         refreshDedupStatus();
+        renderTagMgmtList();
         elements.settingsModal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
       });
@@ -1120,11 +1306,34 @@
       document.getElementById('auto-backup-enabled').addEventListener('change', function() {
         toggleBackupDeps(this.checked);
       });
+
+      // Tag management events
+      if (elements.tagMgmtAdd) {
+        elements.tagMgmtAdd.addEventListener('click', () => {
+          const name = elements.tagMgmtInput.value.trim();
+          if (!name) { alert('请输入标签名'); return; }
+          if (allTags.some(t => t.name === name)) { alert('标签已存在'); return; }
+          allTags.push({ name, color: elements.tagMgmtColor.value });
+          elements.tagMgmtInput.value = '';
+          saveDataToStorage();
+          renderTagMgmtList();
+          renderCategories();
+        });
+        elements.tagMgmtInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') elements.tagMgmtAdd.click();
+        });
+      }
       
       elements.recycleBinBtn.addEventListener('click', () => {
         showRecycleModal();
         document.body.style.overflow = 'hidden';
       });
+
+      if (elements.archiveBtn) {
+        elements.archiveBtn.addEventListener('click', () => {
+          showArchiveModal();
+        });
+      }
       
       elements.restoreAllBtn.addEventListener('click', () => {
         restoreAllRecycleTasks();
@@ -1265,7 +1474,7 @@
     function moveTaskToRecycle(cid, tid) {
       const cat = categories.find(c => c.id === +cid);
       const recycleBin = categories.find(c => c.id === recycleBinId);
-      if (!cat || !recycleBin || cat.isRecycle) return;
+      if (!cat || !recycleBin || cat.isRecycle || cat.isArchive) return;
       
       const task = cat.tasks.find(t => t.id === +tid);
       if (task) {
@@ -1283,7 +1492,7 @@
       // Build category checkboxes
       var catHtml = '';
       categories.forEach(function(cat) {
-        if (cat.isRecycle) return;
+        if (cat.isRecycle || cat.isArchive) return;
         catHtml += '<label class="px-2 py-1 rounded border text-xs cursor-pointer hover:bg-blue-50"><input type="checkbox" class="export-cat-cb" value="'+cat.id+'"> '+escapeHTML(cat.name)+'</label>';
       });
       document.getElementById('export-cat-filters').innerHTML = catHtml;
@@ -1309,7 +1518,7 @@
         var stVals = Array.from(stChecked).map(function(cb) { return cb.value; });
         var prVals = Array.from(prChecked).map(function(cb) { return cb.value; });
         categories.forEach(function(cat) {
-          if (cat.isRecycle) return;
+          if (cat.isRecycle || cat.isArchive) return;
           if (catIds.length > 0 && catIds.indexOf(cat.id) === -1) return;
           cat.tasks.forEach(function(t) {
             if (stVals.length > 0 && stVals.indexOf(t.status) === -1) return;
@@ -1353,7 +1562,7 @@
       var tasks = [];
       var catMap = {};
       categories.forEach(function(cat) {
-        if (cat.isRecycle) return;
+        if (cat.isRecycle || cat.isArchive) return;
         if (catIds.length > 0 && catIds.indexOf(cat.id) === -1) return;
         cat.tasks.forEach(function(t) {
           if (stVals.length > 0 && stVals.indexOf(t.status) === -1) return;
@@ -1459,18 +1668,18 @@
       var cats = data.categories || [];
       var taskCount = 0, catCount = 0, newCatCount = 0, dupCount = 0;
       var catList = [];
-      var existingCatNames = categories.filter(function(c){return !c.isRecycle;}).map(function(c){return c.name;});
+      var existingCatNames = categories.filter(function(c){return !c.isRecycle && !c.isArchive;}).map(function(c){return c.name;});
       // Build existing task lookup for dedup check
       var existingTasks = {};
       categories.forEach(function(c) {
-        if (c.isRecycle) return;
+        if (c.isRecycle || c.isArchive) return;
         c.tasks.forEach(function(t) {
           var key = (t.title||'') + '|' + (t.dueDate||'');
           existingTasks[key] = true;
         });
       });
       cats.forEach(function(cat) {
-        if (cat.isRecycle || cat.isDefault && cat.name === '默认') { return; }
+        if (cat.isRecycle || cat.isArchive || cat.isDefault && cat.name === '默认') { return; }
         var cnt = (cat.tasks || []).length;
         if (cnt === 0) return;
         taskCount += cnt;
@@ -1529,9 +1738,11 @@
     function renderCategories() {
       const savedFilters = { ...categoryFilters };
       elements.categoriesContainer.innerHTML = '';
-      const normal = categories.filter(c => !c.isDefault && !c.isRecycle);
+      const normal = categories.filter(c => !c.isDefault && !c.isRecycle && !c.isArchive);
       const def = categories.find(c => c.isDefault);
       const rec = categories.find(c => c.isRecycle);
+      renderReminderBar();
+      renderTagFilter();
       
       normal.forEach(cat => {
         if (appSettings.showEmptyCategories || cat.tasks.length) {
@@ -1579,18 +1790,131 @@
       addBtns.forEach(b => { b.style.display = (status !== 'all') ? 'none' : ''; });
     }
 
+    function renderTagFilter() {
+      const bar = document.getElementById('tag-filter-bar');
+      if (!bar) return;
+      const allTaskTags = new Set();
+      categories.forEach(cat => {
+        if (cat.isRecycle || cat.isArchive) return;
+        cat.tasks.forEach(t => {
+          if (!t.tags) return;
+          t.tags.forEach(tag => {
+            if (tag) allTaskTags.add(tag);
+          });
+        });
+      });
+      if (allTaskTags.size === 0) { bar.innerHTML = ''; return; }
+      let html = '<span class="text-xs text-gray-400 mr-1" style="line-height:18px">标签：</span>';
+      const sorted = [...allTaskTags].sort();
+      sorted.forEach(tag => {
+        const tc = getTagColor(tag);
+        const active = tagFilter === tag;
+        html += `<span class="tag-filter-btn${active?' active':''}" data-tag="${escapeHTML(tag)}" style="background:${tc}">${escapeHTML(tag)}</span>`;
+      });
+      if (tagFilter) {
+        html += `<span id="tag-filter-clear" class="text-xs text-gray-400 ml-1 cursor-pointer hover:text-red-500" style="line-height:18px">✕ 清除</span>`;
+      }
+      bar.innerHTML = html;
+      bar.querySelectorAll('.tag-filter-btn').forEach(el => {
+        el.addEventListener('click', () => {
+          const t = el.dataset.tag;
+          tagFilter = (tagFilter === t) ? '' : t;
+          renderCategories();
+        });
+      });
+      const clearEl = document.getElementById('tag-filter-clear');
+      if (clearEl) {
+        clearEl.addEventListener('click', () => {
+          tagFilter = '';
+          renderCategories();
+        });
+      }
+    }
+
+    function renderTagMgmtList() {
+      const list = elements.tagMgmtList;
+      if (!list) return;
+      if (allTags.length === 0) {
+        list.innerHTML = '<div class="text-xs text-gray-400 py-2">暂无标签，请在上方添加</div>';
+        return;
+      }
+      let html = '';
+      allTags.forEach((tag, idx) => {
+        html += '<div class="tag-mgmt-item">';
+        html += '<span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:' + (tag.color || getTagColor(tag.name)) + ';flex-shrink:0"></span>';
+        html += '<span class="text-xs flex-1">' + escapeHTML(tag.name) + '</span>';
+        html += '<input type="color" class="tag-mgmt-color-edit" data-idx="' + idx + '" value="' + (tag.color || getTagColor(tag.name)) + '" style="width:24px;height:20px;padding:0;border:none;cursor:pointer">';
+        html += '<button class="tag-mgmt-del text-red-500 text-xs px-1" data-idx="' + idx + '"><i class="fa fa-times"></i></button>';
+        html += '</div>';
+      });
+      list.innerHTML = html;
+      
+      list.querySelectorAll('.tag-mgmt-color-edit').forEach(input => {
+        input.addEventListener('input', () => {
+          const idx = parseInt(input.dataset.idx);
+          if (allTags[idx]) {
+            allTags[idx].color = input.value;
+            saveDataToStorage();
+            renderTagMgmtList();
+            renderCategories();
+          }
+        });
+      });
+      list.querySelectorAll('.tag-mgmt-del').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = parseInt(btn.dataset.idx);
+          const tagName = allTags[idx]?.name;
+          if (tagName) {
+            // Remove from all tasks
+            categories.forEach(cat => {
+              cat.tasks.forEach(t => {
+                if (t.tags) {
+                  t.tags = t.tags.filter(tg => tg !== tagName);
+                }
+              });
+            });
+            allTags.splice(idx, 1);
+            saveDataToStorage();
+            renderTagMgmtList();
+            renderCategories();
+          }
+        });
+      });
+    }
+
     function createCategoryElement(cat, draggable) {
       const el = document.createElement('div');
       el.className = `category-card ${draggable ? 'draggable' : ''} ${cat.isDefault ? 'defaultCat' : ''}`;
       el.dataset.id = cat.id;
       
+      // Initialize sort defaults
+      if (!cat.sortBy) cat.sortBy = 'default';
+      if (!cat.sortOrder) cat.sortOrder = 'asc';
+      
       let allTasks = [...cat.tasks];
       if (currentFilter !== 'all') allTasks = allTasks.filter(t => t.status === currentFilter);
       if (searchQuery) allTasks = allTasks.filter(t => t.title.toLowerCase().includes(searchQuery.toLowerCase()));
+      if (tagFilter) allTasks = allTasks.filter(t => (t.tags || []).includes(tagFilter));
       
+      const prioVal = {high:3, medium:2, low:1};
+      const order = cat.sortOrder === 'desc' ? -1 : 1;
       allTasks.sort((a,b) => {
-        if (a.status === 'completed' && b.status !== 'completed') return 1;
-        if (a.status !== 'completed' && b.status === 'completed') return -1;
+        if (cat.sortBy === 'default') {
+          if (a.status === 'completed' && b.status !== 'completed') return 1;
+          if (a.status !== 'completed' && b.status === 'completed') return -1;
+          return 0;
+        } else if (cat.sortBy === 'dueDate') {
+          if (!a.dueDate && !b.dueDate) return 0;
+          if (!a.dueDate) return 1; if (!b.dueDate) return -1;
+          return (a.dueDate < b.dueDate ? -1 : 1) * order;
+        } else if (cat.sortBy === 'priority') {
+          return ((prioVal[a.priority||'medium']||0) - (prioVal[b.priority||'medium']||0)) * order;
+        } else if (cat.sortBy === 'dept') {
+          const da = (a.dept||''), db = (b.dept||'');
+          return da.localeCompare(db) * order;
+        } else if (cat.sortBy === 'title') {
+          return (a.title||'').localeCompare(b.title||'') * order;
+        }
         return 0;
       });
       
@@ -1635,6 +1959,17 @@
           </div>
           <div>${btns}</div>
         </div>
+        <div style="display:flex;gap:4px;padding:2px 8px 4px;flex-shrink:0;align-items:center">
+          <span style="font-size:9px;color:#94a3b8">排序</span>
+          <select class="sort-select" data-cid="${cat.id}" style="font-size:9px;padding:0 2px;border:1px solid #e2e8f0;border-radius:2px;background:transparent;color:#475569;width:52px">
+            <option value="default" ${cat.sortBy==='default'?'selected':''}>默认</option>
+            <option value="dueDate" ${cat.sortBy==='dueDate'?'selected':''}>日期</option>
+            <option value="priority" ${cat.sortBy==='priority'?'selected':''}>重要</option>
+            <option value="dept" ${cat.sortBy==='dept'?'selected':''}>部门</option>
+            <option value="title" ${cat.sortBy==='title'?'selected':''}>标题</option>
+          </select>
+          <button class="sort-order-btn" data-cid="${cat.id}" style="font-size:9px;padding:0 4px;border:1px solid #e2e8f0;border-radius:2px;cursor:pointer;background:transparent;color:#475569">${cat.sortOrder === 'asc' ? '↑' : '↓'}</button>
+        </div>
         <div class="category-content p-2" data-cat="${cat.id}">
           ${addBtn}
           ${displayTasks.length ? displayTasks.map(t => createTaskHtml(t, cat.id)).join('') : '<div class="text-center text-xs py-6 text-gray-400 empty-hint">暂无任务</div>'}
@@ -1664,8 +1999,14 @@
       
       if (cat?.isRecycle) {
         action = `<div class="ml-auto"><button class="btn-icon restore-task text-purple-500"><i class="fa fa-recycle"></i></button></div>`;
+      } else if (cat?.isArchive) {
+        action = `<div class="ml-auto flex gap-1">
+          <button class="btn-icon restore-archive text-green-500" title="恢复"><i class="fa fa-undo"></i></button>
+          <button class="btn-icon delete-task text-red-500"><i class="fa fa-trash"></i></button>
+        </div>`;
       } else {
         action = `<div class="ml-auto flex gap-1">
+          ${task.status === 'completed' ? '<button class="btn-icon archive-task text-gray-500" title="归档"><i class="fa fa-archive"></i></button>' : ''}
           <button class="btn-icon delete-task text-red-500"><i class="fa fa-trash"></i></button>
         </div>`;
       }
@@ -1673,18 +2014,36 @@
       const priority = task.priority || 'medium';
       const priorityLabel = {high:'高',medium:'中',low:'低'}[priority];
       const dateOnly = task.dueDate ? task.dueDate.split('T')[0] || task.dueDate.split(' ')[0] : '';
+      const taskTags = (task.tags || []).filter(Boolean);
+      const tagHtml = taskTags.length > 0 ? taskTags.map(t => {
+        const tc = getTagColor(t);
+        return `<span class="tag-badge" style="background:${tc}">${escapeHTML(t)}</span>`;
+      }).join('') + ' ' : '';
+      const recurrenceLabel = {daily:'每天',weekly:'每周',monthly:'每月',yearly:'每年'}[task.recurrence||''] || '';
+      const recurrenceHtml = recurrenceLabel ? `<span class="recurrence-badge" title="重复: ${recurrenceLabel}"><i class="fa fa-refresh"></i></span>` : '';
       
       return `
         <div class="task-card flex items-center gap-2 text-xs priority-${priority} ${task.status === 'completed' ? 'task-completed' : ''}" data-id="${task.id}" data-cid="${cid}">
           <input type="checkbox" class="task-checkbox w-4 h-4" ${task.status === 'completed' ? 'checked' : ''}>
           <div class="task-title" data-fulltitle="${escapeHTML(task.title)}">${escapeHTML(task.title)}</div>
           <span class="task-dept">${escapeHTML(task.dept || '')}</span>
+          ${tagHtml}
+          ${recurrenceHtml}
           <span class="priority-tag ${priority}">${priorityLabel}</span>
           <span class="task-date">${dateOnly}</span>
           <span class="${statusCls}">${statusText}</span>
           ${action}
         </div>
       `;
+    }
+
+    function getTagColor(tagName) {
+      const found = allTags.find(t => t.name === tagName);
+      if (found && found.color) return found.color;
+      const colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#84cc16','#f97316','#6366f1'];
+      let hash = 0;
+      for (let i = 0; i < tagName.length; i++) { hash = ((hash << 5) - hash) + tagName.charCodeAt(i); hash |= 0; }
+      return colors[Math.abs(hash) % colors.length];
     }
 
     function initTaskDrag() {
@@ -1702,7 +2061,8 @@
             const toCatId = parseInt(evt.to.dataset.cat);
             
             const fromCat = categories.find(c => c.id === fromCatId);
-            if (fromCat?.isRecycle) return;
+            if (fromCat?.isRecycle || fromCat?.isArchive) return;
+            if (fromCatId !== toCatId) {
             
             if (fromCatId !== toCatId) {
               moveTaskToCategory(taskId, fromCatId, toCatId);
@@ -1745,11 +2105,31 @@
       });
 
       document.querySelectorAll('.delete-task').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
           const taskEl = btn.closest('.task-card');
           const tid = parseInt(taskEl.dataset.id);
           const cid = parseInt(taskEl.dataset.cid);
           showConfirmModal({cid, tid}, 'task');
+        });
+      });
+
+      document.querySelectorAll('.archive-task').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const taskEl = btn.closest('.task-card');
+          const tid = parseInt(taskEl.dataset.id);
+          const cid = parseInt(taskEl.dataset.cid);
+          moveTaskToArchive(cid, tid);
+        });
+      });
+
+      document.querySelectorAll('.restore-archive').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const taskEl = btn.closest('.task-card');
+          const tid = parseInt(taskEl.dataset.id);
+          restoreTaskFromArchive(tid);
         });
       });
 
@@ -1799,10 +2179,34 @@
           }
         });
       });
+
+      // Sort controls
+      document.querySelectorAll('.sort-select').forEach(sel => {
+        sel.addEventListener('change', () => {
+          const cid = parseInt(sel.dataset.cid);
+          const cat = categories.find(c => c.id === cid);
+          if (cat) {
+            cat.sortBy = sel.value;
+            saveDataToStorage();
+            renderCategories();
+          }
+        });
+      });
+      document.querySelectorAll('.sort-order-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cid = parseInt(btn.dataset.cid);
+          const cat = categories.find(c => c.id === cid);
+          if (cat) {
+            cat.sortOrder = cat.sortOrder === 'asc' ? 'desc' : 'asc';
+            saveDataToStorage();
+            renderCategories();
+          }
+        });
+      });
     }
 
     function initModals() {
-      [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal')].forEach(m => m.classList.add('hidden'));
+      [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, document.getElementById('calendar-modal'), elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal')].forEach(m => m.classList.add('hidden'));
       
       elements.closeModalButtons.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -1813,7 +2217,7 @@
             document.body.style.overflow = '';
           } else {
             if (!elements.taskListModal.classList.contains('hidden')) currentViewCatId = null;
-            [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal')].forEach(m => m.classList.add('hidden'));
+            [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, document.getElementById('calendar-modal'), elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal')].forEach(m => m.classList.add('hidden'));
             document.body.style.overflow = '';
           }
         });
@@ -1890,6 +2294,13 @@
         document.body.style.overflow = 'hidden';
       });
 
+      if (elements.calendarBtn) {
+        elements.calendarBtn.addEventListener('click', () => {
+          showCalendarModal();
+          document.body.style.overflow = 'hidden';
+        });
+      }
+
       elements.allTasksBtn.addEventListener('click', () => {
         showAllTasksModal();
         document.body.style.overflow = 'hidden';
@@ -1908,11 +2319,15 @@
         elements.taskDueDateInput.value = task.dueDate || '';
         elements.taskPriorityInput.value = task.priority || 'medium';
         elements.taskStatusInput.value = task.status;
+        elements.taskTagsInput.value = (task.tags || []).join(', ');
+        elements.taskRecurrenceInput.value = task.recurrence || '';
         elements.taskModalTitle.textContent = '编辑任务';
       } else {
         elements.taskForm.reset();
         elements.taskIdInput.value = '';
         elements.taskOldCategoryIdInput.value = categoryId;
+        elements.taskTagsInput.value = '';
+        elements.taskRecurrenceInput.value = '';
         elements.taskModalTitle.textContent = '新建任务';
       }
       
@@ -1922,7 +2337,7 @@
 
     function updateCategorySelect(selectedId) {
       elements.taskCategorySelect.innerHTML = '';
-      const normalCats = categories.filter(c => !c.isRecycle);
+      const normalCats = categories.filter(c => !c.isRecycle && !c.isArchive);
       
       normalCats.forEach(cat => {
         const option = document.createElement('option');
@@ -1943,6 +2358,9 @@
       const dueDate = elements.taskDueDateInput.value;
       const priority = elements.taskPriorityInput.value || 'medium';
       const status = elements.taskStatusInput.value || 'in-progress';
+      const tagsStr = elements.taskTagsInput.value.trim();
+      const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [];
+      const recurrence = elements.taskRecurrenceInput.value || '';
       
       if (!title) return;
       
@@ -1955,8 +2373,11 @@
         task.description = description;
         task.dueDate = dueDate;
         task.priority = priority;
+        task.tags = tags;
+        task.recurrence = recurrence;
         if (task.status !== 'completed' && status === 'completed') {
           task.completedAt = new Date().toISOString();
+          if (task.recurrence) createNextRecurrence(task, oldCatId);
         }
         task.status = status;
         
@@ -1973,6 +2394,8 @@
           description: description,
           dueDate: dueDate,
           priority: priority,
+          tags: tags,
+          recurrence: recurrence,
           status: status,
           createdAt: new Date().toISOString()
         };
@@ -2045,10 +2468,39 @@
         task.status = task.status === 'completed' ? 'pending' : 'completed';
         if (was !== 'completed' && task.status === 'completed') {
           task.completedAt = new Date().toISOString();
+          if (task.recurrence) {
+            createNextRecurrence(task, catId);
+          }
         }
         saveDataToStorage();
         renderCategories();
       }
+    }
+
+    function createNextRecurrence(originalTask, catId) {
+      if (!originalTask.dueDate) return;
+      const due = new Date(originalTask.dueDate);
+      const next = new Date(due);
+      if (originalTask.recurrence === 'daily') { next.setDate(next.getDate() + 1); }
+      else if (originalTask.recurrence === 'weekly') { next.setDate(next.getDate() + 7); }
+      else if (originalTask.recurrence === 'monthly') { next.setMonth(next.getMonth() + 1); }
+      else if (originalTask.recurrence === 'yearly') { next.setFullYear(next.getFullYear() + 1); }
+      else return;
+      
+      const cat = categories.find(c => c.id === catId);
+      if (!cat) return;
+      cat.tasks.push({
+        id: nextTaskId++,
+        title: originalTask.title,
+        dept: originalTask.dept || '',
+        description: originalTask.description || '',
+        dueDate: next.toISOString().split('T')[0],
+        priority: originalTask.priority || 'medium',
+        tags: [...(originalTask.tags || [])],
+        recurrence: originalTask.recurrence,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      });
     }
 
     function showTaskListModal(catId) {
@@ -2324,7 +2776,7 @@
     function batchMoveTasks(taskIds, fromCatId, toCatId) {
       const fromCat = categories.find(c => c.id === fromCatId);
       const toCat = categories.find(c => c.id === toCatId);
-      if (!fromCat || !toCat || fromCat.isRecycle) return;
+      if (!fromCat || !toCat || fromCat.isRecycle || fromCat.isArchive) return;
       taskIds.forEach(tid => {
         const idx = fromCat.tasks.findIndex(t => t.id === tid);
         if (idx !== -1) {
@@ -2374,13 +2826,122 @@
       taskIds.forEach(tid => deleteTask(catId, tid));
     }
 
+    function showCalendarModal() {
+      const modal = document.getElementById('calendar-modal');
+      const content = document.getElementById('calendar-content');
+      const now = new Date();
+      let year = now.getFullYear(), month = now.getMonth();
+      
+      function renderCal() {
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const startDay = firstDay.getDay(); // 0=Sun
+        const totalDays = lastDay.getDate();
+        const prevLastDay = new Date(year, month, 0).getDate();
+        
+        // Build task lookup: { 'YYYY-MM-DD': [tasks] }
+        const taskMap = {};
+        categories.forEach(cat => {
+          if (cat.isRecycle || cat.isArchive) return;
+          cat.tasks.forEach(t => {
+            if (!t.dueDate) return;
+            const dd = t.dueDate.split('T')[0];
+            if (!taskMap[dd]) taskMap[dd] = [];
+            taskMap[dd].push({ title: t.title, status: t.status, id: t.id, catId: cat.id });
+          });
+        });
+        
+        const monthNames = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+        let html = '<div class="cal-nav">';
+        html += '<button class="cal-prev"><i class="fa fa-chevron-left"></i></button>';
+        html += '<span style="font-weight:600;font-size:14px">' + year + '年 ' + monthNames[month] + '</span>';
+        html += '<button class="cal-next"><i class="fa fa-chevron-right"></i></button>';
+        html += '</div>';
+        
+        html += '<div class="cal-grid">';
+        ['日','一','二','三','四','五','六'].forEach(d => { html += '<div class="cal-weekday">' + d + '</div>'; });
+        
+        const todayStr = now.toISOString().split('T')[0];
+        
+        // Prev month days
+        for (let i = startDay - 1; i >= 0; i--) {
+          const d = prevLastDay - i;
+          const m = month - 1 < 0 ? 11 : month - 1;
+          const y = month - 1 < 0 ? year - 1 : year;
+          const ds = y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+          const tasks = taskMap[ds] || [];
+          html += '<div class="cal-cell other-month" data-date="' + ds + '"><div class="day-num">' + d + '</div>';
+          tasks.slice(0,2).forEach(t => {
+            html += '<div class="cal-task-item" style="color:' + (t.status==='completed'?'#22c55e':'#ef4444') + '">' + escapeHTML(t.title.substring(0,12)) + '</div>';
+          });
+          if (tasks.length > 2) html += '<div class="cal-task-item" style="color:#94a3b8">+' + (tasks.length-2) + '</div>';
+          html += '</div>';
+        }
+        
+        // Current month days
+        for (let d = 1; d <= totalDays; d++) {
+          const ds = year + '-' + String(month+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+          const tasks = taskMap[ds] || [];
+          const isToday = ds === todayStr;
+          let cls = 'cal-cell';
+          if (tasks.length > 0) cls += ' has-tasks';
+          if (isToday) cls += ' today';
+          html += '<div class="' + cls + '" data-date="' + ds + '"><div class="day-num">' + d;
+          if (isToday) html += '<span style="font-size:7px;color:#3b82f6;margin-left:2px">●</span>';
+          html += '</div>';
+          tasks.slice(0,3).forEach(t => {
+            html += '<div class="cal-task-item" style="color:' + (t.status==='completed'?'#22c55e':'#ef4444') + '" title="' + escapeHTML(t.title) + '">' + escapeHTML(t.title.substring(0,12)) + '</div>';
+          });
+          if (tasks.length > 3) html += '<div class="cal-task-item" style="color:#94a3b8">+' + (tasks.length-3) + '</div>';
+          html += '</div>';
+        }
+        
+        // Next month days
+        const cellsUsed = startDay + totalDays;
+        const remaining = (7 - cellsUsed % 7) % 7;
+        for (let d = 1; d <= remaining; d++) {
+          const m = month + 1 > 11 ? 0 : month + 1;
+          const y = month + 1 > 11 ? year + 1 : year;
+          const ds = y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+          const tasks = taskMap[ds] || [];
+          html += '<div class="cal-cell other-month" data-date="' + ds + '"><div class="day-num">' + d + '</div>';
+          tasks.slice(0,2).forEach(t => {
+            html += '<div class="cal-task-item" style="color:' + (t.status==='completed'?'#22c55e':'#ef4444') + '">' + escapeHTML(t.title.substring(0,12)) + '</div>';
+          });
+          if (tasks.length > 2) html += '<div class="cal-task-item" style="color:#94a3b8">+' + (tasks.length-2) + '</div>';
+          html += '</div>';
+        }
+        
+        html += '</div>';
+        html += '<div class="text-xs text-gray-400 mt-2">点击日期可快速创建任务（截止日期自动设为该日）</div>';
+        content.innerHTML = html;
+        
+        content.querySelector('.cal-prev').addEventListener('click', () => { month--; if (month < 0) { month = 11; year--; } renderCal(); });
+        content.querySelector('.cal-next').addEventListener('click', () => { month++; if (month > 11) { month = 0; year++; } renderCal(); });
+        content.querySelectorAll('.cal-cell').forEach(cell => {
+          cell.addEventListener('click', () => {
+            const dateStr = cell.dataset.date;
+            if (dateStr) {
+              modal.classList.add('hidden');
+              document.body.style.overflow = '';
+              openTaskModal(null, defaultCategoryId);
+              document.getElementById('task-due-date').value = dateStr;
+            }
+          });
+        });
+      }
+      
+      modal.classList.remove('hidden');
+      renderCal();
+    }
+
     function showStatsModal() {
       let total = 0, pending = 0, progress = 0, completed = 0, overdue = 0;
       const deptStats = {};
       const catStats = [];
       
       categories.forEach(cat => {
-        if (cat.isRecycle) return;
+        if (cat.isRecycle || cat.isArchive) return;
         const cc = { name:cat.name, t:0, p:0, ip:0, c:0, o:0 };
         cat.tasks.forEach(t => {
           total++; cc.t++;
@@ -2480,7 +3041,7 @@
     function showAllTasksModal() {
       var all = [];
       categories.forEach(function(cat) {
-        if (cat.isRecycle) return;
+        if (cat.isRecycle || cat.isArchive) return;
         cat.tasks.forEach(function(t) { all.push({ id: t.id, title: t.title, dept: t.dept, dueDate: t.dueDate, status: t.status, priority: t.priority||'medium', catName: cat.name, catId: cat.id, completedAt: t.completedAt }); });
       });
       all.sort(function(a,b) { return a.status === 'completed' ? 1 : -1; });
@@ -2557,7 +3118,7 @@
         Object.keys(sel).forEach(function(tid) {
           tid = parseInt(tid);
           var cat = categories.find(function(c) { return c.tasks.some(function(t) { return t.id === tid; }); });
-          if (!cat || cat.isRecycle) return;
+          if (!cat || cat.isRecycle || cat.isArchive) return;
           var task = cat.tasks.find(function(t) { return t.id === tid; });
           if (!task) return;
           if (action === 'delete') { deleteTask(cat.id, tid); }
@@ -2572,7 +3133,7 @@
       function rebuildAll() {
         all = [];
         categories.forEach(function(cat) {
-          if (cat.isRecycle) return;
+          if (cat.isRecycle || cat.isArchive) return;
           cat.tasks.forEach(function(t) { all.push({ id: t.id, title: t.title, dept: t.dept, dueDate: t.dueDate, status: t.status, priority: t.priority||'medium', catName: cat.name, catId: cat.id, completedAt: t.completedAt }); });
         });
         all.sort(function(a,b) { return a.status === 'completed' ? 1 : -1; });
@@ -2712,22 +3273,36 @@
     function loadDataFromStorage() {
       const d = localStorage.getItem('todoApp-backup');
       if (d) {
-        const data = JSON.parse(d);
-        categories = data.categories || [];
-        nextCategoryId = data.nextCategoryId || 1;
-        nextTaskId = data.nextTaskId || 1;
+        try {
+          const data = JSON.parse(d);
+          categories = data.categories || [];
+          nextCategoryId = data.nextCategoryId || 1;
+          nextTaskId = data.nextTaskId || 1;
+          if (data.title) { pageTitle = data.title; document.querySelector('.page-title').textContent = pageTitle; }
+          if (data.appSettings) { appSettings = { ...appSettings, ...data.appSettings }; }
+          if (data.allTags) { allTags = data.allTags; }
+        } catch(e) {}
       }
     }
 
     function saveDataToStorage() {
-      localStorage.setItem('todoApp-backup', JSON.stringify({categories, nextCategoryId, nextTaskId}));
+      try {
+        localStorage.setItem('todoApp-backup', JSON.stringify({
+          title: pageTitle,
+          appSettings,
+          categories,
+          nextCategoryId,
+          nextTaskId,
+          allTags
+        }));
+      } catch(e) {}
     }
 
     function checkOverdueTasks() {
       const now = new Date().toISOString().split('T')[0];
       let changed = false;
       categories.forEach(cat => {
-        if (cat.isRecycle) return;
+        if (cat.isRecycle || cat.isArchive) return;
         cat.tasks.forEach(task => {
           if (task.dueDate && task.dueDate < now && task.status !== 'completed' && task.status !== 'overdue') {
             task.status = 'overdue';
@@ -2739,6 +3314,51 @@
         saveDataToStorage();
         renderCategories();
       }
+    }
+
+    function getUpcomingTasks() {
+      if (!appSettings.reminderEnabled) return [];
+      const now = new Date();
+      const nowStr = now.toISOString().split('T')[0];
+      const maxDate = new Date(now);
+      maxDate.setDate(maxDate.getDate() + (appSettings.reminderDays || 3) + 1);
+      const maxStr = maxDate.toISOString().split('T')[0];
+      const tasks = [];
+      categories.forEach(cat => {
+        if (cat.isRecycle || cat.isArchive) return;
+        cat.tasks.forEach(task => {
+          if (!task.dueDate) return;
+          if (task.status === 'completed') return;
+          const due = task.dueDate.split('T')[0];
+          if (due >= nowStr && due <= maxStr) {
+            tasks.push({ ...task, catName: cat.name, catId: cat.id });
+          }
+        });
+      });
+      tasks.sort((a,b) => a.dueDate.localeCompare(b.dueDate));
+      return tasks;
+    }
+
+    function renderReminderBar() {
+      const upcoming = getUpcomingTasks();
+      if (!appSettings.reminderEnabled || upcoming.length === 0) {
+        elements.reminderBar.classList.add('hidden-bar');
+        return;
+      }
+      elements.reminderBar.classList.remove('hidden-bar');
+      const dayMap = { '0':'今天', '1':'明天', '2':'后天' };
+      let html = '<span style="font-weight:600;color:#ea580c">⏰ 近期到期：</span>';
+      const nowStr = new Date().toISOString().split('T')[0];
+      upcoming.forEach(t => {
+        const dueDate = t.dueDate.split('T')[0];
+        const diffMs = new Date(dueDate) - new Date(nowStr);
+        const diffDays = Math.round(diffMs / 86400000);
+        const label = dayMap[diffDays] || (diffDays + '天后');
+        const color = diffDays <= 1 ? '#ef4444' : diffDays <= 3 ? '#f59e0b' : '#6366f1';
+        html += '<span class="reminder-item" style="color:' + color + '" onclick="openTaskModal(' + t.id + ', ' + t.catId + '); document.body.style.overflow=\'hidden\'">' + escapeHTML(t.title.substring(0, 18) + (t.title.length > 18 ? '...' : '')) + ' <small>(' + label + ')</small></span>';
+      });
+      html += '<span class="reminder-close" onclick="document.getElementById(\'reminder-bar\').classList.add(\'hidden-bar\')">&times;</span>';
+      elements.reminderBar.innerHTML = html;
     }
 
     function initAutoBackup() {
@@ -2787,7 +3407,7 @@
     function getDupeGroups() {
       var groups = [];
       categories.forEach(function(cat) {
-        if (cat.isRecycle) return;
+        if (cat.isRecycle || cat.isArchive) return;
         var map = {};
         cat.tasks.forEach(function(t) {
           var key = (t.title||'').trim() + '|' + (t.dueDate||'');
