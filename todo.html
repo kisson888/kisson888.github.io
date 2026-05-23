@@ -2062,7 +2062,6 @@
             
             const fromCat = categories.find(c => c.id === fromCatId);
             if (fromCat?.isRecycle || fromCat?.isArchive) return;
-            if (fromCatId !== toCatId) {
             
             if (fromCatId !== toCatId) {
               moveTaskToCategory(taskId, fromCatId, toCatId);
