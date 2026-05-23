@@ -1352,29 +1352,80 @@
         });
       }
 
-      document.getElementById('reminder-icon-btn').addEventListener('click', () => {
-        const upcoming = getUpcomingTasks();
+      var reminderSortBy = 'dueDate', reminderSortOrder = 'asc';
+
+      function showReminderModal() {
+        var upcoming = getUpcomingTasks();
         if (upcoming.length === 0) { alert('暂无近期到期任务'); return; }
-        let html = '<div class="overflow-x-auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg table-striped"><thead class="bg-gray-100 dark:bg-gray-700"><tr>';
+        // Sort
+        var nowStr = new Date().toISOString().split('T')[0];
+        upcoming.sort(function(a,b) {
+          if (reminderSortBy === 'title') return (a.title||'').localeCompare(b.title||'') * (reminderSortOrder === 'asc' ? 1 : -1);
+          if (reminderSortBy === 'catName') return (a.catName||'').localeCompare(b.catName||'') * (reminderSortOrder === 'asc' ? 1 : -1);
+          if (reminderSortBy === 'dueDate') {
+            if (!a.dueDate && !b.dueDate) return 0;
+            if (!a.dueDate) return 1; if (!b.dueDate) return -1;
+            return (a.dueDate < b.dueDate ? -1 : 1) * (reminderSortOrder === 'asc' ? 1 : -1);
+          }
+          if (reminderSortBy === 'urgency') {
+            var da = Math.round((new Date(a.dueDate) - new Date(nowStr)) / 86400000);
+            var db = Math.round((new Date(b.dueDate) - new Date(nowStr)) / 86400000);
+            return (da - db) * (reminderSortOrder === 'asc' ? 1 : -1);
+          }
+          return 0;
+        });
+        
+        // Build sort buttons
+        var sortOpts = [
+          {k:'dueDate',l:'截止'},
+          {k:'title',l:'任务'},
+          {k:'catName',l:'区块'},
+          {k:'urgency',l:'时限'}
+        ];
+        var sortHtml = '<span class="text-xs text-gray-400" style="margin-left:8px">排序</span>';
+        sortOpts.forEach(function(o) {
+          var active = reminderSortBy === o.k;
+          sortHtml += '<span class="sort-opt ' + (active?'active':'') + '" style="width:auto;padding:0 4px" data-rsort="' + o.k + '">' + o.l + (active ? (reminderSortOrder==='asc'?'↑':'↓') : '') + '</span>';
+        });
+        
+        var html = '<div style="display:flex;align-items:center;gap:1px;margin-bottom:8px">' + sortHtml + '</div>';
+        html += '<div class="overflow-x-auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg table-striped"><thead class="bg-gray-100 dark:bg-gray-700"><tr>';
         html += '<th class="px-3 py-2 text-left text-xs">任务</th><th class="px-3 py-2 text-left text-xs">区块</th><th class="px-3 py-2 text-left text-xs">截止日期</th><th class="px-3 py-2 text-right text-xs">时限</th>';
         html += '</tr></thead><tbody class="divide-y">';
-        const nowStr = new Date().toISOString().split('T')[0];
-        upcoming.forEach(t => {
-          const due = t.dueDate.split('T')[0];
-          const diff = Math.round((new Date(due) - new Date(nowStr)) / 86400000);
-          const label = diff === 0 ? '今天' : diff === 1 ? '明天' : diff + '天后';
-          const c = diff <= 1 ? '#dc2626' : diff <= 3 ? '#d97706' : '#6366f1';
+        upcoming.forEach(function(t) {
+          var due = t.dueDate.split('T')[0];
+          var diff = Math.round((new Date(due) - new Date(nowStr)) / 86400000);
+          var label = diff === 0 ? '今天' : diff === 1 ? '明天' : diff + '天后';
+          var c = diff <= 1 ? '#dc2626' : diff <= 3 ? '#d97706' : '#6366f1';
           html += '<tr class="text-xs"><td class="px-3 py-2" style="color:' + c + ';font-weight:' + (diff<=1?'600':'400') + '">' + escapeHTML(t.title.substring(0,24)) + '</td><td class="px-3 py-2 text-gray-500">' + escapeHTML(t.catName) + '</td><td class="px-3 py-2">' + due + '</td><td class="px-3 py-2 text-right" style="color:' + c + ';font-weight:600">' + label + '</td></tr>';
         });
         html += '</tbody></table></div>';
         elements.taskListTitle.textContent = '近期到期 (' + upcoming.length + ')';
         elements.taskListContent.innerHTML = html;
-        // Switch to compact width for reminder popup
+        // Hide batch bar
+        elements.taskListBatchBar.classList.add('hidden');
+        // Set compact width
         var tlContent = elements.taskListModal.querySelector('.modal-content');
         if (tlContent) { tlContent.classList.add('compact'); tlContent.classList.remove('wide'); }
         elements.taskListModal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
-      });
+        
+        // Bind reminder sort buttons
+        elements.taskListContent.querySelectorAll('[data-rsort]').forEach(function(btn) {
+          btn.onclick = function() {
+            var k = this.getAttribute('data-rsort');
+            if (reminderSortBy === k) {
+              reminderSortOrder = reminderSortOrder === 'asc' ? 'desc' : 'asc';
+            } else {
+              reminderSortBy = k;
+              reminderSortOrder = 'asc';
+            }
+            showReminderModal();
+          };
+        });
+      }
+
+      document.getElementById('reminder-icon-btn').addEventListener('click', showReminderModal);
       
       elements.restoreAllBtn.addEventListener('click', () => {
         restoreAllRecycleTasks();
