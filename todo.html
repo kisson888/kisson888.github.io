@@ -221,6 +221,7 @@
       max-height: 90vh;
     }
     .modal-content.task-list.wide { width: 1200px; }
+    .modal-content.task-list.compact { width: 520px; }
     .modal-footer { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
     
     .hidden { display: none !important; }
@@ -1089,6 +1090,9 @@
       // Reuse recycle modal with different title
       elements.taskListTitle.textContent = '已归档任务';
       elements.taskListContent.innerHTML = html;
+      // Set wide for archive view
+      var tlContent = elements.taskListModal.querySelector('.modal-content');
+      if (tlContent) { tlContent.classList.add('wide'); tlContent.classList.remove('compact'); }
       elements.taskListModal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
       
@@ -1365,6 +1369,9 @@
         html += '</tbody></table></div>';
         elements.taskListTitle.textContent = '近期到期 (' + upcoming.length + ')';
         elements.taskListContent.innerHTML = html;
+        // Switch to compact width for reminder popup
+        var tlContent = elements.taskListModal.querySelector('.modal-content');
+        if (tlContent) { tlContent.classList.add('compact'); tlContent.classList.remove('wide'); }
         elements.taskListModal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
       });
@@ -1980,10 +1987,13 @@
       }
       
       el.innerHTML = `
-        <div class="category-header">
-          <div>
-            <h3 class="text-sm font-semibold category-name" contenteditable="${!cat.isDefault}">${escapeHTML(cat.name)}</h3>
-            <div class="category-header-info">
+        <div class="category-header" style="flex-wrap:nowrap">
+          <div style="flex:1;min-width:0;overflow:hidden">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:4px">
+              <h3 class="text-sm font-semibold category-name" contenteditable="${!cat.isDefault}" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHTML(cat.name)}</h3>
+              <div style="display:flex;gap:2px;flex-shrink:0">${btns}</div>
+            </div>
+            <div class="category-header-info" style="margin-top:1px">
               <span class="status-tag all" data-status="all">总:${cnt.p+cnt.ip+cnt.c+cnt.o}</span>
               <span class="status-tag pending" data-status="pending">待:${cnt.p}</span>
               <span class="status-tag in-progress" data-status="in-progress">进:${cnt.ip}</span>
@@ -1998,7 +2008,6 @@
               </span>
             </div>
           </div>
-          <div>${btns}</div>
         </div>
         <div class="category-content p-2" data-cat="${cat.id}">
           ${addBtn}
@@ -2804,6 +2813,9 @@
       elements.taskListTitle.textContent = `${cat.name} - 全部任务`;
       elements.taskListBatchBar.classList.add('hidden');
       renderPage(1);
+      // Set wide for task list view
+      var tlContent = elements.taskListModal.querySelector('.modal-content');
+      if (tlContent) { tlContent.classList.add('wide'); tlContent.classList.remove('compact'); }
       elements.taskListModal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
@@ -3229,6 +3241,9 @@
       sel = {};
       statusActive = {};
       renderP(1);
+      // Set wide for all-tasks view
+      var tlContent = elements.taskListModal.querySelector('.modal-content');
+      if (tlContent) { tlContent.classList.add('wide'); tlContent.classList.remove('compact'); }
       elements.taskListModal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
