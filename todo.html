@@ -3,6 +3,7 @@
   © 2026 AI Assisted Development
   邮箱: yongbing.yang@gmail.com
   本工具由 AI 辅助生成，仅供个人使用。
+  版本: 2026-05-26
 --><!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -409,7 +410,7 @@
             <span class="btn-sep" style="margin:0 1px"></span>
             <button id="stats-btn" class="btn btn-secondary"><i class="fa fa-bar-chart"></i> 统计</button>
             <button id="recycle-bin-btn" class="btn btn-recycle"><i class="fa fa-trash"></i> 回收站</button>
-            <button id="archive-btn" class="btn btn-secondary"><i class="fa fa-archive"></i> 归档</button>
+            <button id="archive-btn" class="btn btn-secondary" onclick="showArchiveModal()"><i class="fa fa-archive"></i> 归档</button>
             <button id="reminder-icon-btn" class="btn btn-secondary" title="近期到期任务" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-bell-o"></i></button>
             <button id="calendar-btn" class="btn btn-secondary" title="任务日历" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-calendar"></i></button>
             <button id="settings-btn" class="btn btn-secondary" title="设置" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-cog"></i></button>
@@ -2053,21 +2054,16 @@
       const displayTasks = allTasks.slice(0, limit);
       const total = allTasks.length;
       
-      let btns = '';
+            let btns = '';
       if (cat.isDefault) {
-        btns = `<button class="btn-icon view-tasks-btn" data-cat="${cat.id}"><i class="fa fa-list"></i></button>`;
+        btns = '<button class="btn-icon add-task" data-cat="' + cat.id + '" title="添加任务"><i class="fa fa-plus"></i></button><button class="btn-icon view-tasks-btn" data-cat="' + cat.id + '"><i class="fa fa-list"></i></button>';
       } else {
-        btns = `
-          <button class="btn-icon view-tasks-btn" data-cat="${cat.id}"><i class="fa fa-list"></i></button>
+        btns = '
+          <button class="btn-icon add-task" data-cat="' + cat.id + '" title="添加任务"><i class="fa fa-plus"></i></button>
+          <button class="btn-icon view-tasks-btn" data-cat="' + cat.id + '"><i class="fa fa-list"></i></button>
           <button class="btn-icon delete-category"><i class="fa fa-trash-o"></i></button>
-        `;
+        ';
       }
-      
-      let addBtn = '';
-      if (!cat.isRecycle) {
-        addBtn = `<button class="btn btn-secondary w-full text-xs add-task" data-cat="${cat.id}"><i class="fa fa-plus"></i> 添加任务</button>`;
-      }
-      
       el.innerHTML = `
         <div class="category-header" style="flex-wrap:nowrap">
           <div style="flex:1;min-width:0;overflow:hidden">
@@ -2092,7 +2088,6 @@
           </div>
         </div>
         <div class="category-content p-2" data-cat="${cat.id}">
-          ${addBtn}
           ${displayTasks.length ? displayTasks.map(t => createTaskHtml(t, cat.id)).join('') : '<div class="text-center text-xs py-6 text-gray-400 empty-hint">暂无任务</div>'}
           ${total > limit ? `<div class="text-center text-xs text-blue-600 mt-1 cursor-pointer view-tasks-btn" data-cat="${cat.id}">查看全部 ${total} 项</div>` : ''}
         </div>
@@ -3166,14 +3161,19 @@
     }
 
     function showAllTasksModal() {
-      var all = [];
-      categories.forEach(function(cat) {
-        if (cat.isRecycle || cat.isArchive) return;
-        cat.tasks.forEach(function(t) { all.push({ id: t.id, title: t.title, dept: t.dept, dueDate: t.dueDate, status: t.status, priority: t.priority||'medium', catName: cat.name, catId: cat.id, completedAt: t.completedAt }); });
-      });
-      all.sort(function(a,b) { return a.status === 'completed' ? 1 : -1; });
-      
+      var sortBy2 = "status";
+      var sortOrder2 = "asc";
       var ps = appSettings.pageSize || 15;
+      
+      function getSortVal2(t, field) {
+        if (field === "status") return {pending:0,"in-progress":1,completed:2}[t.status] || 0;
+        if (field === "priority") return {high:2,medium:1,low:0}[t.priority] || 1;
+        if (field === "title") return (t.title || "").toLowerCase();
+        if (field === "catName") return (t.catName || "").toLowerCase();
+        if (field === "dept") return (t.dept || "").toLowerCase();
+        if (field === "dueDate") return t.dueDate || "9999-99-99";
+        return "";
+      }
       var page = 1;
       var sel = {};
       var statusActive = {};
@@ -3230,13 +3230,13 @@
             setTimeout(function(){document.addEventListener('click',function cd(e){if(!w.contains(e.target)){dd.remove();document.removeEventListener('click',cd);}});},0);
           }
           el = document.getElementById('ba2-mv'); if(el) el.onclick = function(e) { e.stopPropagation(); var oc = categories.filter(function(c){return !c.isRecycle;}).map(function(c){return {v:c.id,l:c.name};});
-            ddToggle('ba2-mv-w', oc, function(v) { batchDo('move',v); rebuildAll(); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
+            ddToggle('ba2-mv-w', oc, function(v) { batchDo('move',v); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
           el = document.getElementById('ba2-sts'); if(el) el.onclick = function(e) { e.stopPropagation();
-            ddToggle('ba2-sts-w', [{v:'pending',l:'待处理'},{v:'in-progress',l:'进行中'},{v:'completed',l:'已完成'}], function(v) { batchDo('status',v); rebuildAll(); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
+            ddToggle('ba2-sts-w', [{v:'pending',l:'待处理'},{v:'in-progress',l:'进行中'},{v:'completed',l:'已完成'}], function(v) { batchDo('status',v); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
           el = document.getElementById('ba2-pr'); if(el) el.onclick = function(e) { e.stopPropagation();
-            ddToggle('ba2-pr-w', [{v:'high',l:'高'},{v:'medium',l:'中'},{v:'low',l:'低'}], function(v) { batchDo('priority',v); rebuildAll(); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
-          el = document.getElementById('ba2-dt'); if(el) el.onclick = function() { var d = prompt('新截止日期 YYYY-MM-DD：', new Date().toISOString().split('T')[0]); if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) { batchDo('date',d); rebuildAll(); sel={}; statusActive={}; renderP(page); renderCategories(); } else if (d) { alert('格式错误'); } };
-          el = document.getElementById('ba2-del'); if(el) el.onclick = function() { batchDo('delete'); rebuildAll(); sel={}; statusActive={}; renderP(page); renderCategories(); };
+            ddToggle('ba2-pr-w', [{v:'high',l:'高'},{v:'medium',l:'中'},{v:'low',l:'低'}], function(v) { batchDo('priority',v); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
+          el = document.getElementById('ba2-dt'); if(el) el.onclick = function() { var d = prompt('新截止日期 YYYY-MM-DD：', new Date().toISOString().split('T')[0]); if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) { batchDo('date',d); sel={}; statusActive={}; renderP(page); renderCategories(); } else if (d) { alert('格式错误'); } };
+          el = document.getElementById('ba2-del'); if(el) el.onclick = function() { batchDo('delete'); sel={}; statusActive={}; renderP(page); renderCategories(); };
           el = document.getElementById('ba2-clr'); if(el) el.onclick = function() { sel={}; statusActive={}; renderP(page); };
         }
       }
@@ -3257,29 +3257,36 @@
         saveDataToStorage();
       }
       
-      function rebuildAll() {
-        all = [];
+      function getAllTasks() {
+        var arr = [];
         categories.forEach(function(cat) {
           if (cat.isRecycle || cat.isArchive) return;
-          cat.tasks.forEach(function(t) { all.push({ id: t.id, title: t.title, dept: t.dept, dueDate: t.dueDate, status: t.status, priority: t.priority||'medium', catName: cat.name, catId: cat.id, completedAt: t.completedAt }); });
+          cat.tasks.forEach(function(t) { arr.push({ id: t.id, title: t.title, dept: t.dept, dueDate: t.dueDate, status: t.status, priority: t.priority||'medium', catName: cat.name, catId: cat.id, completedAt: t.completedAt }); });
         });
-        all.sort(function(a,b) { return a.status === 'completed' ? 1 : -1; });
+        return arr;
       }
 
       function renderP(p) {
+        var all = getAllTasks();
+        var sortAll = all.sort(function(a,b) {
+          var va = getSortVal2(a, sortBy2);
+          var vb = getSortVal2(b, sortBy2);
+          if (va < vb) return sortOrder2 === "asc" ? -1 : 1;
+          if (va > vb) return sortOrder2 === "asc" ? 1 : -1;
+          return 0;
+        });
         var total = all.length;
         var totalPages = Math.ceil(total / ps) || 1;
         p = Math.max(1, Math.min(p, totalPages));
         page = p;
-        var list = all.slice((p-1)*ps, p*ps);
+        var list = sortAll.slice((p-1)*ps, p*ps);
         
         refreshBar(list);
         
         var h = '<div class="overflow-x-auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg table-striped"><thead class="bg-gray-100 dark:bg-gray-700"><tr>';
         h += '<th class="px-2 py-3 text-left w-8">#</th>';
         h += '<th class="px-2 py-3 text-left w-8"><input type="checkbox" id="ba2-cp" '+(list.length>0&&list.every(function(t){return sel[t.id];})?'checked':'')+'></th>';
-        h += '<th class="px-4 py-3 text-left">状态</th><th class="px-4 py-3 text-left">重要性</th><th class="px-4 py-3 text-left">标题</th><th class="px-4 py-3 text-left">区块</th><th class="px-4 py-3 text-left">部门</th><th class="px-4 py-3 text-left">截止日期</th><th class="px-4 py-3 text-left">操作</th>';
-        h += '</tr></thead><tbody class="divide-y">';
+h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:pointer;">状态 <span class="sort-arrow" style="font-size:9px;color:#999;">↕</span></th><th class="px-4 py-3 text-left sort-th" data-sort="priority" style="cursor:pointer;">重要性 <span class="sort-arrow" style="font-size:9px;color:#999;">↕</span></th><th class="px-4 py-3 text-left sort-th" data-sort="title" style="cursor:pointer;">标题 <span class="sort-arrow" style="font-size:9px;color:#999;">↕</span></th><th class="px-4 py-3 text-left sort-th" data-sort="catName" style="cursor:pointer;">区块 <span class="sort-arrow" style="font-size:9px;color:#999;">↕</span></th><th class="px-4 py-3 text-left sort-th" data-sort="dept" style="cursor:pointer;">部门 <span class="sort-arrow" style="font-size:9px;color:#999;">↕</span></th><th class="px-4 py-3 text-left sort-th" data-sort="dueDate" style="cursor:pointer;">截止日期 <span class="sort-arrow" style="font-size:9px;color:#999;">↕</span></th><th class="px-4 py-3 text-left">操作</th>';        h += '</tr></thead><tbody class="divide-y">';
         
         list.forEach(function(t, idx) {
           var gidx = (p-1)*ps + idx + 1;
@@ -3304,10 +3311,19 @@
         h += '<div class="pagination">';
         for (var i=1; i<=totalPages; i++) { h += '<button class="page-btn'+(i===p?' active':'')+'" data-p="'+i+'">'+i+'</button>'; }
         h += '</div>';
-        if (all.length === 0) { h = '<div class="text-center py-8 text-gray-400 text-sm">暂无任务</div>'; }
+        if (total === 0) { h = '<div class="text-center py-8 text-gray-400 text-sm">暂无任务</div>'; }
         
         elements.taskListContent.innerHTML = h;
-        
+
+        // 全部任务表头排序
+        elements.taskListContent.querySelectorAll('.sort-th').forEach(function(th) {
+          th.addEventListener('click', function() {
+            var field = this.dataset.sort;
+            if (sortBy2 === field) { sortOrder2 = sortOrder2 === "asc" ? "desc" : "asc"; }
+            else { sortBy2 = field; sortOrder2 = "asc"; }
+            renderP(1);
+          });
+        });        
         var pc = document.getElementById('ba2-cp');
         if (pc) pc.onchange = function() { if (this.checked) { list.forEach(function(t){sel[t.id]=true;}); } else { list.forEach(function(t){delete sel[t.id];}); } renderP(page); };
         document.querySelectorAll('.ba2-cb').forEach(function(cb) {
@@ -3328,9 +3344,7 @@
       if (tlContent) { tlContent.classList.add('wide'); tlContent.classList.remove('compact'); }
       elements.taskListModal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
-    }
-
-    function importData(data, isAppend, skipDupes) {
+    }function importData(data, isAppend, skipDupes) {
       var newData = data.categories || [];
       var newNextCid = data.nextCategoryId || 1;
       var newNextTid = data.nextTaskId || 1;
@@ -3400,18 +3414,74 @@
       renderCategories();
     }
 
+    function seedSampleData() {
+      var sampleCats = [
+        { id: 1, name: "工作项目", tasks: [
+          { id: 1, title: "完成Q2项目报告", dept: "运营部", dueDate: "2026-05-28", status: "in-progress", priority: "high", tags: "报告", createdAt: "2026-05-20T08:00:00" },
+          { id: 2, title: "客户会议准备", dept: "运营部", dueDate: "2026-05-27", status: "pending", priority: "high", tags: "会议", createdAt: "2026-05-21T09:00:00" },
+          { id: 3, title: "团队周报汇总", dept: "运营部", dueDate: "2026-05-30", status: "pending", priority: "medium", tags: "报告", createdAt: "2026-05-22T10:00:00" },
+          { id: 4, title: "预算审批流程优化", dept: "财务部", dueDate: "2026-06-05", status: "pending", priority: "medium", tags: "", createdAt: "2026-05-20T11:00:00" },
+          { id: 5, title: "供应商合同续签", dept: "采购部", dueDate: "2026-06-01", status: "in-progress", priority: "high", tags: "", createdAt: "2026-05-19T08:30:00" },
+          { id: 6, title: "新员工入职培训", dept: "人事部", dueDate: "2026-06-10", status: "pending", priority: "low", tags: "", createdAt: "2026-05-23T09:00:00" },
+          { id: 7, title: "安全审计整改追踪", dept: "运营部", dueDate: "2026-05-25", status: "overdue", priority: "high", tags: "报告", createdAt: "2026-05-15T10:00:00" },
+          { id: 8, title: "数据分析看板迭代", dept: "技术部", dueDate: "2026-06-08", status: "in-progress", priority: "medium", tags: "技术", createdAt: "2026-05-18T15:00:00" },
+          { id: 9, title: "CRM 系统升级测试", dept: "技术部", dueDate: "2026-06-20", status: "pending", priority: "low", tags: "技术", createdAt: "2026-05-21T16:00:00" },
+          { id: 10, title: "市场活动方案", dept: "市场部", dueDate: "2026-05-31", status: "pending", priority: "medium", tags: "", createdAt: "2026-05-22T09:30:00" },
+          { id: 11, title: "提交季度税务申报", dept: "财务部", dueDate: "2026-06-30", status: "pending", priority: "high", tags: "", createdAt: "2026-05-20T08:00:00" }
+        ], isDefault: false },
+        { id: 2, name: "个人事务", tasks: [
+          { id: 12, title: "预约体检", dept: "个人", dueDate: "2026-05-26", status: "pending", priority: "high", tags: "", createdAt: "2026-05-20T10:00:00" },
+          { id: 13, title: "车辆年检", dept: "个人", dueDate: "2026-06-15", status: "pending", priority: "medium", tags: "", createdAt: "2026-05-22T11:00:00" },
+          { id: 14, title: "整理书房书架", dept: "个人", dueDate: "2026-06-05", status: "in-progress", priority: "low", tags: "", createdAt: "2026-05-23T14:00:00" },
+          { id: 15, title: "续费宽带套餐", dept: "个人", dueDate: "2026-05-30", status: "pending", priority: "medium", tags: "", createdAt: "2026-05-21T15:00:00" },
+          { id: 16, title: "周末户外徒步活动", dept: "家庭", dueDate: "2026-06-01", status: "pending", priority: "low", tags: "", createdAt: "2026-05-24T10:00:00" },
+          { id: 17, title: "银行理财到期处理", dept: "财务", dueDate: "2026-06-10", status: "pending", priority: "medium", tags: "", createdAt: "2026-05-19T14:00:00" }
+        ], isDefault: false },
+        { id: 3, name: "学习提升", tasks: [
+          { id: 18, title: "阅读《系统设计面试》", dept: "学习", dueDate: "2026-05-29", status: "in-progress", priority: "medium", tags: "", createdAt: "2026-05-22T20:00:00" },
+          { id: 19, title: "完成数据分析课程", dept: "学习", dueDate: "2026-06-15", status: "pending", priority: "medium", tags: "技术", createdAt: "2026-05-23T21:00:00" },
+          { id: 20, title: "整理前端知识笔记", dept: "学习", dueDate: "2026-06-20", status: "pending", priority: "low", tags: "技术", createdAt: "2026-05-24T19:00:00" },
+          { id: 21, title: "LeetCode 刷题 5 道", dept: "学习", dueDate: "2026-06-02", status: "completed", priority: "medium", tags: "", completedAt: "2026-05-25T22:00:00", createdAt: "2026-05-18T20:00:00" }
+        ], isDefault: false }
+      ];
+      categories = sampleCats;
+      categories.push({ id: 4, name: "已归档", tasks: [
+        { id: 22, title: "完成Q1总结报告", dept: "运营部", dueDate: "2026-04-15", status: "completed", priority: "high", tags: "", originalCategoryId: 1, completedAt: "2026-04-14T17:00:00", createdAt: "2026-04-01T08:00:00" },
+        { id: 23, title: "读《深入理解计算机系统》", dept: "学习", dueDate: "2026-04-30", status: "completed", priority: "medium", tags: "技术", originalCategoryId: 3, completedAt: "2026-04-28T21:00:00", createdAt: "2026-03-15T20:00:00" }
+      ], isArchive: true });
+      categories.push({ id: 5, name: "回收站", tasks: [], isRecycle: true });
+      nextCategoryId = 6;
+      nextTaskId = 24;
+      defaultCategoryId = 1;
+      allTags = [
+        { name: "报告", color: "#3b82f6" },
+        { name: "会议", color: "#8b5cf6" },
+        { name: "技术", color: "#06b6d4" },
+        { name: "数据", color: "#10b981" },
+        { name: "财务", color: "#f59e0b" },
+        { name: "活动", color: "#ef4444" }
+      ];
+      saveDataToStorage();
+    }
+
     function loadDataFromStorage() {
       const d = localStorage.getItem('todoApp-backup');
       if (d) {
         try {
           const data = JSON.parse(d);
-          categories = data.categories || [];
-          nextCategoryId = data.nextCategoryId || 1;
-          nextTaskId = data.nextTaskId || 1;
-          if (data.title) { pageTitle = data.title; document.querySelector('.page-title').textContent = pageTitle; }
-          if (data.appSettings) { appSettings = { ...appSettings, ...data.appSettings }; }
-          if (data.allTags) { allTags = data.allTags; }
-        } catch(e) {}
+          if (data.categories && data.categories.length > 0) {
+            categories = data.categories || [];
+            nextCategoryId = data.nextCategoryId || 1;
+            nextTaskId = data.nextTaskId || 1;
+            if (data.title) { pageTitle = data.title; document.querySelector('.page-title').textContent = pageTitle; }
+            if (data.appSettings) { appSettings = { ...appSettings, ...data.appSettings }; }
+            if (data.allTags) { allTags = data.allTags; }
+          } else {
+            seedSampleData();
+          }
+        } catch(e) { seedSampleData(); }
+      } else {
+        seedSampleData();
       }
     }
 
