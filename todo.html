@@ -2058,11 +2058,11 @@
       if (cat.isDefault) {
         btns = '<button class="btn-icon add-task" data-cat="' + cat.id + '" title="添加任务"><i class="fa fa-plus"></i></button><button class="btn-icon view-tasks-btn" data-cat="' + cat.id + '"><i class="fa fa-list"></i></button>';
       } else {
-        btns = '
-          <button class="btn-icon add-task" data-cat="' + cat.id + '" title="添加任务"><i class="fa fa-plus"></i></button>
-          <button class="btn-icon view-tasks-btn" data-cat="' + cat.id + '"><i class="fa fa-list"></i></button>
+        btns = `
+          <button class="btn-icon add-task" data-cat="${cat.id}" title="添加任务"><i class="fa fa-plus"></i></button>
+          <button class="btn-icon view-tasks-btn" data-cat="${cat.id}"><i class="fa fa-list"></i></button>
           <button class="btn-icon delete-category"><i class="fa fa-trash-o"></i></button>
-        ';
+        `;
       }
       el.innerHTML = `
         <div class="category-header" style="flex-wrap:nowrap">
