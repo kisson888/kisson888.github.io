@@ -1311,11 +1311,61 @@
       }
     }
 
+    function showConfirmDialog(msg, btn1, btn2) {
+      // 自定义确认弹窗，替代原生 confirm，支持自定义按钮文字和颜色
+      return new Promise(resolve => {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center';
+        
+        const box = document.createElement('div');
+        const isDark = document.documentElement.classList.contains('dark');
+        box.style.cssText = 'background:'+(isDark?'#2d2d2d':'#fff')+';border-radius:12px;padding:24px 28px;min-width:300px;box-shadow:0 8px 30px rgba(0,0,0,0.18);text-align:center';
+        
+        const p = document.createElement('p');
+        p.style.cssText = 'margin:0 0 20px 0;font-size:14px;color:'+(isDark?'#ddd':'#333')+';line-height:1.6';
+        p.textContent = msg;
+        
+        const btnWrap = document.createElement('div');
+        btnWrap.style.cssText = 'display:flex;gap:12px;justify-content:center';
+        
+        const btn1El = document.createElement('button');
+        btn1El.textContent = btn1.text;
+        btn1El.style.cssText = 'padding:8px 20px;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:500;color:#fff;background:'+btn1.color+';transition:opacity 0.2s';
+        btn1El.onmouseover = () => btn1El.style.opacity = '0.85';
+        btn1El.onmouseout = () => btn1El.style.opacity = '1';
+        
+        const btn2El = document.createElement('button');
+        btn2El.textContent = btn2.text;
+        btn2El.style.cssText = 'padding:8px 20px;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:500;color:#fff;background:'+btn2.color+';transition:opacity 0.2s';
+        btn2El.onmouseover = () => btn2El.style.opacity = '0.85';
+        btn2El.onmouseout = () => btn2El.style.opacity = '1';
+        
+        const close = result => {
+          document.body.removeChild(overlay);
+          resolve(result);
+        };
+        
+        btn1El.onclick = () => close(true);
+        btn2El.onclick = () => close(false);
+        
+        btnWrap.appendChild(btn1El);
+        btnWrap.appendChild(btn2El);
+        box.appendChild(p);
+        box.appendChild(btnWrap);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+      });
+    }
+
     async function logoutUser() {
       const sb = getSupabase();
       if (!sb) return;
 
-      const keepData = confirm('退出登录后，是否保留本地待办数据？\n\n· 确定 — 保留本地数据\n· 取消 — 清除本地数据');
+      const keepData = await showConfirmDialog(
+        '退出登录后，是否保留本地待办数据？',
+        { text: '保留数据', color: '#22c55e' },
+        { text: '清除数据', color: '#ef4444' }
+      );
 
       if (!keepData) {
         // 用户选择不保留，清除本地数据
