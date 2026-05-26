@@ -1397,7 +1397,7 @@
         function showStep3() {
           render('确定要放弃本地 '+taskCount+' 条待办数据吗？\n此操作不可恢复！', [
             { text: '确定放弃', color: '#ef4444', onclick: () => { overlay.remove(); resolve('cloud'); } },
-            { text: '取消', color: '#9ca3af', onclick: () => { overlay.remove(); resolve(null); } }
+            { text: '取消', color: '#9ca3af', onclick: showStep2 }
           ]);
         }
 
@@ -1633,9 +1633,17 @@
 
       // 如果本地有数据，询问用户是否同步合并
       const localTaskCount = categories.reduce((sum, c) => sum + (c.tasks || []).length, 0);
+      let syncAction = null;
       if (localTaskCount > 0 && !localStorage.getItem('todo_sync_done')) {
-        let action = await showSyncDecisionDialog(localTaskCount);
-        if (!action) return; // 用户取消
+        syncAction = await showSyncDecisionDialog(localTaskCount);
+        if (!syncAction) return; // 用户取消
+        localStorage.setItem('todo_sync_done', '1');
+        // 如果选择云端覆盖（放弃本地），先清空本地数据
+        if (syncAction === 'cloud') {
+          categories = [];
+        }
+      } else {
+        // 没有本地数据或已决策过，直接标记同步完成
         localStorage.setItem('todo_sync_done', '1');
       }
       try {
