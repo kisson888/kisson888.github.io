@@ -1768,6 +1768,9 @@
         console.warn('从云端拉取数据失败:', e);
       } finally {
         window._pullFromCloudRunning = false;
+        // 同步完成后刷新可能已打开的回收站/归档弹窗
+        if (!elements.recycleModal.classList.contains('hidden')) showRecycleModal();
+        if (!elements.taskListModal.classList.contains('hidden') && elements.taskListTitle.textContent === '已归档任务') showArchiveModal();
       }
     }
 
