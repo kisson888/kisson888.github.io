@@ -3076,7 +3076,7 @@
     function getTagColor(tagName) {
       const found = allTags.find(t => t.name === tagName);
       if (found && found.color) return found.color;
-      const colors = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#84cc16','#f97316','#6366f1'];
+      const colors = ['#4a7ddb','#57a773','#c98a2e','#c25a50','#7c5cbf','#c0568a','#3da0b0','#7fa84a','#cc7a3a','#5f6bc0'];
       let hash = 0;
       for (let i = 0; i < tagName.length; i++) { hash = ((hash << 5) - hash) + tagName.charCodeAt(i); hash |= 0; }
       return colors[Math.abs(hash) % colors.length];
@@ -4445,12 +4445,12 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       nextTaskId = 24;
       defaultCategoryId = 1;
       allTags = [
-        { name: "报告", color: "#3b82f6" },
-        { name: "会议", color: "#8b5cf6" },
-        { name: "技术", color: "#06b6d4" },
-        { name: "数据", color: "#10b981" },
-        { name: "财务", color: "#f59e0b" },
-        { name: "活动", color: "#ef4444" }
+        { name: "报告", color: "#4a7ddb" },
+        { name: "会议", color: "#7c5cbf" },
+        { name: "技术", color: "#3da0b0" },
+        { name: "数据", color: "#57a773" },
+        { name: "财务", color: "#c98a2e" },
+        { name: "活动", color: "#c25a50" }
       ];
       saveDataToStorage();
     }
