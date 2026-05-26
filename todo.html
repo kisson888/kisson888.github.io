@@ -1633,13 +1633,16 @@
 
     async function pullFromCloud() {
       if (!currentUser || !getSupabase()) return;
+      // 防止并发执行：登录时可能 300ms 和 500ms 各触发一次
+      if (window._pullFromCloudRunning) return;
+      window._pullFromCloudRunning = true;
 
       // 如果本地有数据，询问用户是否同步合并
       const localTaskCount = categories.reduce((sum, c) => sum + (c.tasks || []).length, 0);
       let syncAction = null;
       if (localTaskCount > 0 && !localStorage.getItem('todo_sync_done')) {
         syncAction = await showSyncDecisionDialog(localTaskCount);
-        if (!syncAction) return; // 用户取消
+        if (!syncAction) { window._pullFromCloudRunning = false; return; } // 用户取消
         localStorage.setItem('todo_sync_done', '1');
         // 如果选择云端覆盖（放弃本地），先清空本地数据
         if (syncAction === 'cloud') {
@@ -1749,6 +1752,8 @@
         }
       } catch(e) {
         console.warn('从云端拉取数据失败:', e);
+      } finally {
+        window._pullFromCloudRunning = false;
       }
     }
 
