@@ -1584,18 +1584,28 @@
         const choice = await showConfirmDialog(
           '检测到本地已有 '+localTaskCount+' 条待办数据。\n是否与云端数据进行同步合并？',
           { text: '同步合并', color: '#22c55e' },
-          { text: '保留本地', color: '#9ca3af' }
+          { text: '不与云端合并', color: '#9ca3af' }
         );
         if (!choice) {
-          // 选择保留本地 — 先询问是否需要存档备份
+          // 选择不与云端合并 → 先问是否备份
           const backup = await showConfirmDialog(
-            '已保留本地数据，未同步云端。\n是否需要先将本地数据导出存档？',
+            '选择「不与云端合并」后将使用云端数据覆盖本地。\n是否需要先导出本地数据存档？',
             { text: '导出存档', color: '#4a7ddb' },
-            { text: '不需要', color: '#9ca3af' }
+            { text: '放弃本地数据', color: '#ef4444' }
           );
-          if (backup) downloadLocalBackup();
-          showToast('已保留本地数据，未同步云端');
-          return;
+          if (backup) {
+            downloadLocalBackup();
+            showToast('已导出本地备份，即将加载云端数据');
+          } else {
+            // 选放弃本地数据 → 再确认一次
+            const sure = await showConfirmDialog(
+              '确定要放弃本地 '+localTaskCount+' 条待办数据吗？\n此操作不可恢复！',
+              { text: '确定放弃', color: '#ef4444' },
+              { text: '取消', color: '#9ca3af' }
+            );
+            if (!sure) return;
+          }
+          // 继续走下去会加载云端数据覆盖本地
         }
       }
       try {
