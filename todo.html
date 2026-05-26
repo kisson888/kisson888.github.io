@@ -1565,18 +1565,35 @@
       return dedupedIds.size;
     }
 
+    function downloadLocalBackup() {
+      // 导出本地数据为 JSON 文件供下载存档
+      var blob = new Blob([JSON.stringify({ categories, nextCategoryId, nextTaskId, allTags, title: pageTitle, appSettings }, null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'todo_本地备份_' + new Date().toISOString().slice(0,10) + '.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
     async function pullFromCloud() {
       if (!currentUser || !getSupabase()) return;
 
       // 如果本地有数据，询问用户是否同步合并
       const localTaskCount = categories.reduce((sum, c) => sum + (c.tasks || []).length, 0);
       if (localTaskCount > 0) {
-        const ok = await showConfirmDialog(
+        const choice = await showConfirmDialog(
           '检测到本地已有 '+localTaskCount+' 条待办数据。\n是否与云端数据进行同步合并？',
           { text: '同步合并', color: '#22c55e' },
           { text: '保留本地', color: '#9ca3af' }
         );
-        if (!ok) {
+        if (!choice) {
+          // 选择保留本地 — 先询问是否需要存档备份
+          const backup = await showConfirmDialog(
+            '已保留本地数据，未同步云端。\n是否需要先将本地数据导出存档？',
+            { text: '导出存档', color: '#4a7ddb' },
+            { text: '不需要', color: '#9ca3af' }
+          );
+          if (backup) downloadLocalBackup();
           showToast('已保留本地数据，未同步云端');
           return;
         }
