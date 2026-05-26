@@ -1682,10 +1682,13 @@
             });
           }
 
-          // 合并前快照，用于统计差异
-          const localCatIds = new Set(categories.map(c => c.id));
+          // 合并前快照（排除回收站/归档，只反映可见数据变化）
+          const localCatIds = new Set(categories.filter(c => !c.isRecycle && !c.isArchive).map(c => c.id));
           const localTaskIds = new Set();
-          categories.forEach(c => (c.tasks || []).forEach(t => localTaskIds.add(t.id)));
+          categories.forEach(c => {
+            if (c.isRecycle || c.isArchive) return;
+            (c.tasks || []).forEach(t => localTaskIds.add(t.id));
+          });
 
           // 逐项合并：任务按 updatedAt，分类按 updatedAt，ID 自增取大值
           backfillUpdatedAt();
@@ -1697,27 +1700,29 @@
           nextCategoryId = Math.max(nextCategoryId, cloud.nextCategoryId || 1);
           nextTaskId = Math.max(nextTaskId, cloud.nextTaskId || 1);
 
-          // 合并后统计
-          const newCatIds = new Set(categories.map(c => c.id));
+          // 合并后统计（排除回收站和归档）
+          const newCatIds = new Set(categories.filter(c => !c.isRecycle && !c.isArchive).map(c => c.id));
           const newTaskIds = new Set();
-          categories.forEach(c => (c.tasks || []).forEach(t => newTaskIds.add(t.id)));
+          categories.forEach(c => {
+            if (c.isRecycle || c.isArchive) return;
+            (c.tasks || []).forEach(t => newTaskIds.add(t.id));
+          });
           const addedCats = [...newCatIds].filter(id => !localCatIds.has(id)).length;
           const addedTasks = [...newTaskIds].filter(id => !localTaskIds.has(id)).length;
           let updatedTasks = 0;
-          cloud.categories && cloud.categories.forEach(c => (c.tasks || []).forEach(t => {
-            if (localTaskIds.has(t.id)) {
-              // 云端有同 ID 但 updatedAt 不同，说明被更新了
-              const localT = categories.find(cc => (cc.tasks || []).find(tt => tt.id === t.id));
-              // 简化判断：只要云端 ID 本地也有，且合并后的版本来自云端
-            }
-          }));
-          // 用更简单的方式：统计云端这个 ID 的 updatedAt 比本地新
+          // 统计更新数：云端有同 ID 且 updatedAt 不同的任务
           const localTaskMap = {};
-          categories.forEach(c => (c.tasks || []).forEach(t => { localTaskMap[t.id] = t; }));
-          cloud.categories && cloud.categories.forEach(c => (c.tasks || []).forEach(t => {
-            const lt = localTaskMap[t.id];
-            if (lt && (t.updatedAt || t.createdAt || '0') !== (lt.updatedAt || lt.createdAt || '0')) updatedTasks++;
-          }));
+          categories.forEach(c => {
+            if (c.isRecycle || c.isArchive) return;
+            (c.tasks || []).forEach(t => { localTaskMap[t.id] = t; });
+          });
+          cloud.categories && cloud.categories.forEach(c => {
+            if (c.isRecycle || c.isArchive) return;
+            (c.tasks || []).forEach(t => {
+              const lt = localTaskMap[t.id];
+              if (lt && (t.updatedAt || t.createdAt || '0') !== (lt.updatedAt || lt.createdAt || '0')) updatedTasks++;
+            });
+          });
 
           if (cloud.title) {
             pageTitle = cloud.title;
