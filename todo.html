@@ -1361,14 +1361,15 @@
 
         function render(msg, buttons) {
           p.textContent = msg;
-          btnWrap.innerHTML = '';
-          buttons.forEach((b, i) => {
+          // 逐个移除旧按钮，再逐个创建新按钮，避免 innerHTML = '' 导致事件时序问题
+          while (btnWrap.firstChild) btnWrap.firstChild.remove();
+          buttons.forEach((b) => {
             const el = document.createElement('button');
             el.textContent = b.text;
             el.style.cssText = 'padding:8px 20px;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:500;color:#fff;background:'+b.color+';transition:opacity 0.2s';
             el.onmouseover = () => el.style.opacity = '0.85';
             el.onmouseout = () => el.style.opacity = '1';
-            el.onclick = b.onclick;
+            el.addEventListener('click', b.onclick);
             btnWrap.appendChild(el);
           });
         }
