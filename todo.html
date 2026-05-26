@@ -1417,13 +1417,16 @@
       );
 
       if (!keepData) {
-        // 用户选择不保留，清除本地数据
+        // 用户选择不保留，清除本地数据并标记同步已完成（下次登录直接拉云端）
         localStorage.removeItem('todoApp-backup');
         categories = [];
         allTags = [];
         renderCategories();
+        localStorage.setItem('todo_sync_done', '1');
+      } else {
+        // 保留数据，清除同步标记，下次登录重新询问
+        localStorage.removeItem('todo_sync_done');
       }
-      localStorage.removeItem('todo_sync_done');
 
       await sb.auth.signOut();
       currentUser = null;
