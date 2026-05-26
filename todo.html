@@ -1088,8 +1088,8 @@
         <div class="mb-4 flex justify-between items-center">
           <p class="text-sm text-gray-600 dark:text-gray-300">回收站中的任务可恢复或永久删除</p>
           <div class="flex gap-2">
-            <button id="restore-all-btn" class="btn btn-secondary text-sm" onclick="if(typeof restoreAllRecycleTasks==='function'){ restoreAllRecycleTasks(); setTimeout(showRecycleModal,50); }"><i class="fa fa-recycle"></i> 恢复全部</button>
-            <button id="delete-all-btn" class="btn btn-danger text-sm" onclick="emptyRecycleBin();setTimeout(showRecycleModal,50)"><i class="fa fa-trash"></i> 清空回收站</button>
+            <button id="restore-all-btn" class="btn btn-secondary text-sm"><i class="fa fa-recycle"></i> 恢复全部</button>
+            <button id="delete-all-btn" class="btn btn-danger text-sm"><i class="fa fa-trash"></i> 清空回收站</button>
           </div>
         </div>
       </div>
@@ -2376,12 +2376,20 @@
 
       document.getElementById('reminder-icon-btn').addEventListener('click', showReminderModal);
       
-      elements.restoreAllBtn.addEventListener('click', () => {
+      elements.restoreAllBtn.addEventListener('click', async () => {
+        var count = (categories.find(c => c.id === recycleBinId)?.tasks||[]).length;
+        if (!count) return;
+        var ok = await showConfirmDialog('确定要恢复全部 '+count+' 条任务到原区块吗？', { text: '恢复全部', color: '#4a7ddb' }, { text: '取消', color: '#9ca3af' });
+        if (!ok) return;
         restoreAllRecycleTasks();
         showRecycleModal();
       });
       
-      elements.deleteAllBtn.addEventListener('click', () => {
+      elements.deleteAllBtn.addEventListener('click', async () => {
+        var count = (categories.find(c => c.id === recycleBinId)?.tasks||[]).length;
+        if (!count) return;
+        var ok = await showConfirmDialog('确定要清空回收站吗？共 '+count+' 条任务将被永久删除，不可恢复。', { text: '清空回收站', color: '#ef4444' }, { text: '取消', color: '#9ca3af' });
+        if (!ok) return;
         emptyRecycleBin();
         showRecycleModal();
       });
