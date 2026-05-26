@@ -4588,6 +4588,26 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       });
     }
 
+    function askSampleData() {
+      // 首次使用时询问是否加载示例数据
+      // 已经初始化的状态下不会进入此函数
+      if (categories.length > 0) return;
+      var el = document.createElement('div');
+      el.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);z-index:10001;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 16px rgba(0,0,0,0.2)';
+      el.innerHTML = '<span>首次使用，是否加载示例数据快速体验？</span>';
+      var yesBtn = document.createElement('button');
+      yesBtn.textContent = '加载示例';
+      yesBtn.style.cssText = 'padding:4px 12px;border:none;border-radius:4px;background:#22c55e;color:#fff;font-size:12px;cursor:pointer';
+      yesBtn.onclick = function() { el.remove(); seedSampleData(); normalizeIds(); renderCategories(); };
+      var noBtn = document.createElement('button');
+      noBtn.textContent = '自己创建';
+      noBtn.style.cssText = 'padding:4px 12px;border:none;border-radius:4px;background:rgba(255,255,255,0.15);color:#fff;font-size:12px;cursor:pointer';
+      noBtn.onclick = function() { el.remove(); };
+      el.appendChild(yesBtn);
+      el.appendChild(noBtn);
+      document.body.appendChild(el);
+    }
+
     function loadDataFromStorage() {
       const d = localStorage.getItem('todoApp-backup');
       if (d) {
@@ -4601,12 +4621,14 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
             if (data.title) { pageTitle = data.title; document.querySelector('.page-title').textContent = pageTitle; }
             if (data.appSettings) { appSettings = { ...appSettings, ...data.appSettings }; }
             if (data.allTags) { allTags = data.allTags; }
-          } else {
-            seedSampleData();
           }
-        } catch(e) { seedSampleData(); }
-      } else {
-        seedSampleData();
+        } catch(e) {}
+      }
+      // 如果没有数据（首次使用），提示客户选择
+      if (categories.length === 0) {
+        categories = [];
+        // 延迟到弹窗可用后再询问
+        setTimeout(askSampleData, 100);
       }
       // 确保所有 ID 一致为字符串（新数据 UUID，老数据数字→字符串转换）
       normalizeIds();
