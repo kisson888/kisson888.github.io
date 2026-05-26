@@ -1585,6 +1585,9 @@
               cat.id = String(cat.id);
               (cat.tasks || []).forEach(t => {
                 t.id = String(t.id);
+                if (typeof t.tags === 'string') {
+                  t.tags = t.tags ? t.tags.split(',').map(tt => tt.trim()).filter(Boolean) : [];
+                }
                 if (t.originalCategoryId) t.originalCategoryId = String(t.originalCategoryId);
               });
             });
@@ -4457,6 +4460,10 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
         cat.id = String(cat.id);
         (cat.tasks || []).forEach(task => {
           task.id = String(task.id);
+          // tags 统一转为数组：老数据存的是逗号分隔的字符串
+          if (typeof task.tags === 'string') {
+            task.tags = task.tags ? task.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+          }
           if (task.originalCategoryId) task.originalCategoryId = String(task.originalCategoryId);
         });
       });
