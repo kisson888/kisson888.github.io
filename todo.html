@@ -393,6 +393,49 @@
     .sort-opt.active { color:#3b82f6;font-weight:600;background:#eff6ff; }
     body.dark-mode .sort-opt.active { background:#1e3a5f;color:#93c5fd; }
     body.dark-mode .sort-opt:hover { background:#334155; }
+
+    /* === 登录弹窗样式 === */
+    .auth-modal-content { box-shadow:0 20px 60px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.05); }
+    body.dark-mode .auth-modal-content { box-shadow:0 20px 60px rgba(0,0,0,0.4); }
+    .auth-modal-inner { display:flex;min-height:380px; }
+    /* 左侧装饰区 */
+    .auth-deco { position:relative;width:180px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden; }
+    .auth-deco-bg { position:absolute;inset:0;background:linear-gradient(135deg,#6366f1,#8b5cf6,#a855f7); }
+    .auth-deco-bg::before { content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,0.15) 0%,transparent 60%),radial-gradient(circle at 70% 80%,rgba(255,255,255,0.1) 0%,transparent 50%); }
+    .auth-deco-bg::after { content:'';position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.06);top:-40px;right:-60px; }
+    .auth-deco-content { position:relative;z-index:1;text-align:center;padding:24px;color:#fff; }
+    .auth-deco-icon { font-size:36px;margin-bottom:8px;opacity:0.9; }
+    .auth-deco-icon i { filter:drop-shadow(0 2px 8px rgba(0,0,0,0.2)); }
+    .auth-deco-title { font-size:16px;font-weight:700;margin-bottom:4px;letter-spacing:0.5px; }
+    .auth-deco-sub { font-size:11px;opacity:0.8;margin-bottom:20px; }
+    .auth-deco-features { display:flex;flex-direction:column;gap:8px;font-size:11px; }
+    .auth-deco-features span { opacity:0.85;display:flex;align-items:center;gap:6px;justify-content:center; }
+    .auth-deco-features i { width:14px;text-align:center;font-size:10px; }
+    body.dark-mode .auth-deco-bg { background:linear-gradient(135deg,#4f46e5,#7c3aed,#9333ea); }
+    /* 右侧表单区 */
+    .auth-form-area { flex:1;padding:32px 28px;position:relative;background:#fff; }
+    body.dark-mode .auth-form-area { background:#1e293b; }
+    .auth-form-inner { max-width:300px;margin:0 auto; }
+    /* OAuth 按钮 */
+    .auth-oauth-btns { display:flex;gap:10px;margin-bottom:16px; }
+    .auth-oauth-btn { flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s; }
+    .auth-oauth-btn:hover { transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+    .auth-oauth-btn i { font-size:16px; }
+    .google-btn { color:#ea4335;border-color:#fde8e8; }
+    .google-btn:hover { border-color:#ea4335;background:#fef2f2; }
+    .github-btn { color:#333;border-color:#e2e8f0; }
+    .github-btn:hover { border-color:#333;background:#f8fafc; }
+    body.dark-mode .auth-oauth-btn { background:#334155;border-color:#475569;color:#e2e8f0; }
+    body.dark-mode .google-btn { color:#fc8181;border-color:#7f1d1d; }
+    body.dark-mode .google-btn:hover { background:#451a1a;border-color:#fc8181; }
+    body.dark-mode .github-btn { color:#cbd5e1;border-color:#475569; }
+    body.dark-mode .github-btn:hover { background:#475569;border-color:#94a3b8; }
+    /* 分隔线 */
+    .auth-divider { display:flex;align-items:center;margin-bottom:16px;gap:12px; }
+    .auth-divider::before,.auth-divider::after { content:'';flex:1;height:1px;background:#e2e8f0; }
+    body.dark-mode .auth-divider::before,body.dark-mode .auth-divider::after { background:#475569; }
+    .auth-divider span { font-size:11px;color:#94a3b8;white-space:nowrap; }
+    body.dark-mode .auth-divider span { color:#64748b; }
   </style>
 </head>
 <body>
@@ -537,30 +580,66 @@
 
   <!-- 登录/注册弹窗 -->
   <div id="auth-modal" class="modal-backdrop hidden">
-    <div class="modal-content" style="max-width:360px">
-      <div class="flex justify-between items-center mb-4">
-        <h2 id="auth-modal-title" class="text-lg font-bold">登录</h2>
-        <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
+    <div class="modal-content auth-modal-content" style="max-width:520px;padding:0;overflow:hidden;border-radius:16px">
+      <div class="auth-modal-inner">
+        <!-- 左侧装饰区 -->
+        <div class="auth-deco">
+          <div class="auth-deco-bg"></div>
+          <div class="auth-deco-content">
+            <div class="auth-deco-icon"><i class="fa fa-check-circle"></i></div>
+            <div class="auth-deco-title">待办管理</div>
+            <div class="auth-deco-sub">高效管理你的每一天</div>
+            <div class="auth-deco-features">
+              <span><i class="fa fa-cloud-upload"></i> 云端同步</span>
+              <span><i class="fa fa-shield"></i> 安全加密</span>
+              <span><i class="fa fa-mobile"></i> 多端访问</span>
+            </div>
+          </div>
+        </div>
+        <!-- 右侧表单区 -->
+        <div class="auth-form-area">
+          <button class="btn-icon auth-close-btn close-modal" style="position:absolute;top:12px;right:12px;z-index:2"><i class="fa fa-times"></i></button>
+          <div class="auth-form-inner">
+            <h2 id="auth-modal-title" class="text-lg font-bold" style="margin-bottom:4px">登录</h2>
+            <p class="text-xs text-gray-500" style="margin-bottom:16px">登录后数据将自动同步到云端</p>
+
+            <!-- OAuth 按钮 -->
+            <div class="auth-oauth-btns">
+              <button type="button" id="auth-google-btn" class="auth-oauth-btn google-btn">
+                <i class="fa fa-google"></i> Google
+              </button>
+              <button type="button" id="auth-github-btn" class="auth-oauth-btn github-btn">
+                <i class="fa fa-github"></i> GitHub
+              </button>
+            </div>
+
+            <div class="auth-divider"><span>或使用邮箱</span></div>
+
+            <form id="auth-form">
+              <div class="form-group">
+                <label class="form-label">邮箱</label>
+                <input type="email" id="auth-email-input" class="form-input" required placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label class="form-label">密码</label>
+                <input type="password" id="auth-password-input" class="form-input" required minlength="6" placeholder="至少6位">
+              </div>
+              <div class="flex justify-end" style="margin-top:-4px;margin-bottom:8px">
+                <button type="button" id="auth-forgot-btn" class="text-xs" style="color:#6366f1;background:none;border:none;cursor:pointer">忘记密码？</button>
+              </div>
+              <div id="auth-error" class="text-xs mb-2 hidden" style="padding:6px 10px;border-radius:6px;background:#fef2f2;color:#ef4444"></div>
+              <div id="auth-loading" class="text-xs hidden" style="padding:6px 10px;border-radius:6px;background:#eef2ff;color:#6366f1;margin-bottom:8px"><i class="fa fa-spinner fa-spin"></i> 处理中...</div>
+              <div class="flex justify-between items-center gap-3 mt-2">
+                <button type="button" id="auth-switch-btn" class="btn btn-secondary" style="font-size:11px">注册新账号</button>
+                <button type="submit" id="auth-submit-btn" class="btn btn-primary" style="min-width:80px">登录</button>
+              </div>
+              <div class="flex justify-center mt-3">
+                <button type="button" id="auth-logout-btn" class="btn btn-secondary hidden" style="font-size:11px;color:#ef4444;border-color:#fecaca"><i class="fa fa-sign-out"></i> 退出登录</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
-      <form id="auth-form">
-        <div class="form-group">
-          <label class="form-label">邮箱</label>
-          <input type="email" id="auth-email-input" class="form-input" required placeholder="your@email.com">
-        </div>
-        <div class="form-group">
-          <label class="form-label">密码</label>
-          <input type="password" id="auth-password-input" class="form-input" required minlength="6" placeholder="至少6位">
-        </div>
-        <div id="auth-error" class="text-xs text-red-500 mb-2 hidden"></div>
-        <div id="auth-loading" class="text-xs text-blue-500 mb-2 hidden"><i class="fa fa-spinner fa-spin"></i> 处理中...</div>
-        <div class="flex justify-end gap-3 mt-4">
-          <button type="button" id="auth-switch-btn" class="btn btn-secondary" style="font-size:11px">注册新账号</button>
-          <button type="submit" id="auth-submit-btn" class="btn btn-primary" style="min-width:80px">登录</button>
-        </div>
-        <div class="flex justify-center mt-3">
-          <button type="button" id="auth-logout-btn" class="btn btn-secondary hidden" style="font-size:11px;color:#ef4444"><i class="fa fa-sign-out"></i> 退出登录</button>
-        </div>
-      </form>
     </div>
   </div>
 
@@ -1072,6 +1151,25 @@
       return true;
     }
 
+    async function loginWithOAuth(provider) {
+      const sb = getSupabase();
+      if (!sb) { showAuthError('Supabase 未初始化'); return false; }
+      try {
+        const { data, error } = await sb.auth.signInWithOAuth({
+          provider: provider,
+          options: {
+            redirectTo: window.location.origin + window.location.pathname
+          }
+        });
+        if (error) throw error;
+        // OAuth 会跳转到第三方登录页面，登录后会重定向回来
+        // 重定向后 Supabase SDK 会自动处理 session
+      } catch(e) {
+        showAuthError('OAuth 登录失败: ' + e.message);
+      }
+      return false;
+    }
+
     async function registerUser(email, password) {
       const sb = getSupabase();
       if (!sb) { showAuthError('Supabase 未初始化'); return false; }
@@ -1079,6 +1177,23 @@
       if (error) { showAuthError(error.message); return false; }
       showAuthError('注册成功！请检查邮箱确认后登录。', 'text-green-500');
       return true;
+    }
+
+    async function resetPassword(email) {
+      const sb = getSupabase();
+      if (!sb) { showAuthError('Supabase 未初始化'); return false; }
+      if (!email) { showAuthError('请输入邮箱地址'); return false; }
+      try {
+        const { error } = await sb.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + window.location.pathname
+        });
+        if (error) throw error;
+        showAuthError('密码重置链接已发送到您的邮箱，请查收并按指引操作。', 'text-green-500');
+        return true;
+      } catch(e) {
+        showAuthError('发送重置邮件失败: ' + e.message);
+        return false;
+      }
     }
 
     async function logoutUser() {
@@ -1115,6 +1230,15 @@
       document.getElementById('auth-submit-btn').textContent = '登录';
       document.getElementById('auth-switch-btn').textContent = '注册新账号';
       document.getElementById('auth-logout-btn').classList.add('hidden');
+      // 显示 OAuth 和邮箱登录部分
+      document.querySelectorAll('.auth-oauth-btns, .auth-divider').forEach(function(el) {
+        el.classList.remove('hidden');
+      });
+      document.getElementById('auth-forgot-btn').classList.remove('hidden');
+      document.getElementById('auth-email-input').parentElement.classList.remove('hidden');
+      document.getElementById('auth-password-input').parentElement.classList.remove('hidden');
+      document.getElementById('auth-submit-btn').classList.remove('hidden');
+      document.getElementById('auth-switch-btn').classList.remove('hidden');
     }
 
     function hideAuthModal() {
@@ -1124,7 +1248,12 @@
     function showAuthError(msg, cls) {
       const el = document.getElementById('auth-error');
       el.textContent = msg;
+      el.style.cssText = ''; // 清除内联样式
       el.className = 'text-xs mb-2 ' + (cls || 'text-red-500');
+      if (cls === 'text-green-500') {
+        el.style.background = '#f0fdf4';
+        el.style.color = '#22c55e';
+      }
       el.classList.remove('hidden');
     }
 
@@ -1234,12 +1363,21 @@
       // 登录按钮点击
       document.getElementById('auth-btn').addEventListener('click', function() {
         if (currentUser) {
-          // 已登录：显示登出选项
+          // 已登录：显示登出选项，隐藏其他
           document.getElementById('auth-modal-title').textContent = '账号信息';
           document.getElementById('auth-submit-btn').classList.add('hidden');
           document.getElementById('auth-switch-btn').classList.add('hidden');
           document.getElementById('auth-email-input').parentElement.classList.add('hidden');
           document.getElementById('auth-password-input').parentElement.classList.add('hidden');
+          document.getElementById('auth-forgot-btn').classList.add('hidden');
+          // 隐藏 OAuth 部分
+          document.querySelectorAll('.auth-oauth-btns, .auth-divider').forEach(function(el) {
+            el.classList.add('hidden');
+          });
+          // 显示邮箱
+          document.getElementById('auth-email-input').value = currentUser.email || '';
+          document.getElementById('auth-email-input').parentElement.classList.remove('hidden');
+          document.getElementById('auth-email-input').setAttribute('disabled', 'disabled');
           document.getElementById('auth-error').classList.add('hidden');
           document.getElementById('auth-logout-btn').classList.remove('hidden');
           document.getElementById('auth-modal').classList.remove('hidden');
@@ -1267,16 +1405,19 @@
       // 切换登录/注册
       document.getElementById('auth-switch-btn').addEventListener('click', function() {
         const isLogin = document.getElementById('auth-submit-btn').textContent === '登录';
+        document.getElementById('auth-error').classList.add('hidden');
         if (isLogin) {
           document.getElementById('auth-modal-title').textContent = '注册';
           document.getElementById('auth-submit-btn').textContent = '注册';
           document.getElementById('auth-switch-btn').textContent = '已有账号？去登录';
+          // 注册模式不需要"忘记密码"
+          document.getElementById('auth-forgot-btn').classList.add('hidden');
         } else {
           document.getElementById('auth-modal-title').textContent = '登录';
           document.getElementById('auth-submit-btn').textContent = '登录';
           document.getElementById('auth-switch-btn').textContent = '注册新账号';
+          document.getElementById('auth-forgot-btn').classList.remove('hidden');
         }
-        document.getElementById('auth-error').classList.add('hidden');
       });
 
       // 退出登录
@@ -1284,10 +1425,31 @@
         logoutUser();
         hideAuthModal();
         // 重置弹窗状态下次打开时恢复
-        document.getElementById('auth-submit-btn').classList.remove('hidden');
-        document.getElementById('auth-switch-btn').classList.remove('hidden');
-        document.getElementById('auth-email-input').parentElement.classList.remove('hidden');
-        document.getElementById('auth-password-input').parentElement.classList.remove('hidden');
+        showAuthModal();
+        // 恢复被禁用的邮箱输入框
+        document.getElementById('auth-email-input').removeAttribute('disabled');
+      });
+
+      // Google OAuth 登录
+      document.getElementById('auth-google-btn').addEventListener('click', function() {
+        loginWithOAuth('google');
+      });
+
+      // GitHub OAuth 登录
+      document.getElementById('auth-github-btn').addEventListener('click', function() {
+        loginWithOAuth('github');
+      });
+
+      // 忘记密码
+      document.getElementById('auth-forgot-btn').addEventListener('click', async function() {
+        const email = document.getElementById('auth-email-input').value.trim();
+        if (!email) {
+          showAuthError('请先输入邮箱地址');
+          return;
+        }
+        showAuthLoading(true);
+        await resetPassword(email);
+        showAuthLoading(false);
       });
     }
 
@@ -1303,6 +1465,25 @@
           setTimeout(pullFromCloud, 300);
         }
       });
+      // 监听认证状态变化（OAuth 重定向回来时自动触发）
+      try {
+        const sb = getSupabase();
+        if (sb) {
+          sb.auth.onAuthStateChange(function(event, session) {
+            if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+              currentUser = session.user;
+              updateAuthUI();
+              hideAuthModal();
+              setTimeout(pullFromCloud, 300);
+            } else if (event === 'SIGNED_OUT') {
+              currentUser = null;
+              updateAuthUI();
+            }
+          });
+        }
+      } catch(e) {
+        console.warn('Auth 监听器设置失败:', e);
+      }
       // 设置认证相关事件
       setupAuthEvents();
       
