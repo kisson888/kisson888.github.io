@@ -4661,7 +4661,7 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       });
     }
 
-    function saveDataToStorage() {
+    async function saveDataToStorage() {
       try {
         backfillUpdatedAt();
         localStorage.setItem('todoApp-backup', JSON.stringify({
@@ -4672,8 +4672,8 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
           nextTaskId,
           allTags
         }));
-        // 同步到云端（静默执行，失败不影响本地使用）
-        syncToCloud();
+        // 同步到云端，等待完成确保数据已上传
+        await syncToCloud();
       } catch(e) {}
     }
 
