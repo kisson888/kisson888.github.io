@@ -1637,8 +1637,11 @@
       if (window._pullFromCloudRunning) return;
       window._pullFromCloudRunning = true;
 
-      // 如果本地有数据，询问用户是否同步合并
-      const localTaskCount = categories.reduce((sum, c) => sum + (c.tasks || []).length, 0);
+      // 如果本地有数据，询问用户是否同步合并（排除回收站和归档）
+      const localTaskCount = categories.reduce((sum, c) => {
+        if (c.isRecycle || c.isArchive) return sum;
+        return sum + (c.tasks || []).length;
+      }, 0);
       let syncAction = null;
       if (localTaskCount > 0 && !localStorage.getItem('todo_sync_done')) {
         syncAction = await showSyncDecisionDialog(localTaskCount);
