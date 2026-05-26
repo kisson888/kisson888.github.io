@@ -1912,7 +1912,7 @@
           currentUser = user;
           updateAuthUI();
           // 如果已经登录且在 loadDataFromStorage 之后才完成认证，再尝试拉取云端数据
-          setTimeout(pullFromCloud, 300);
+          setTimeout(pullFromCloud, 0);
         }
       });
       // 监听认证状态变化（OAuth 重定向回来时自动触发）
@@ -1924,7 +1924,7 @@
               currentUser = session.user;
               updateAuthUI();
               hideAuthModal();
-              setTimeout(pullFromCloud, 300);
+              setTimeout(pullFromCloud, 0);
             } else if (event === 'PASSWORD_RECOVERY') {
               // 密码重置：显示设置新密码界面
               currentUser = session.user;
@@ -2117,6 +2117,9 @@
         });
       }
       html += '</tbody></table></div>';
+      // 归档模式：隐藏标准批量操作栏，显示恢复全部按钮
+      elements.taskListBatchBar.innerHTML = '<div class="flex items-center gap-2"><span class="text-xs text-gray-500">共 ' + archive.tasks.length + ' 条归档任务</span><button id="restore-all-archive-btn" class="btn btn-secondary text-xs" style="margin-left:auto"><i class="fa fa-recycle"></i> 恢复全部</button></div>';
+      elements.taskListBatchBar.classList.remove('hidden');
       // Reuse recycle modal with different title
       elements.taskListTitle.textContent = '已归档任务';
       elements.taskListContent.innerHTML = html;
@@ -2133,6 +2136,31 @@
           document.body.style.overflow = '';
         });
       });
+      
+      // 归档恢复全部
+      var restoreAllArchiveBtn = document.getElementById('restore-all-archive-btn');
+      if (restoreAllArchiveBtn) {
+        restoreAllArchiveBtn.addEventListener('click', () => {
+          const archive = categories.find(c => c.isArchive);
+          if (!archive || archive.tasks.length === 0) return;
+          // 逐个恢复到原区块或默认区块
+          const tasks = [...archive.tasks];
+          tasks.forEach(task => {
+            let targetCat = categories.find(c => c.id === task.originalCategoryId && !c.isRecycle);
+            if (!targetCat) targetCat = categories.find(c => c.isDefault);
+            if (targetCat) {
+              delete task.originalCategory;
+              delete task.originalCategoryId;
+              archive.tasks = archive.tasks.filter(t => t.id !== task.id);
+              targetCat.tasks.push(task);
+            }
+          });
+          saveDataToStorage();
+          renderCategories();
+          elements.taskListModal.classList.add('hidden');
+          document.body.style.overflow = '';
+        });
+      }
     }
 
     function applyTheme() {
