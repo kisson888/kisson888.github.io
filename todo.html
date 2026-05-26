@@ -1328,7 +1328,6 @@
         
         const btns = [btn1, btn2];
         if (btn3) btns.push(btn3);
-        const elList = [];
         
         btns.forEach((b, i) => {
           const el = document.createElement('button');
@@ -1336,7 +1335,7 @@
           el.style.cssText = 'padding:8px 20px;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:500;color:#fff;background:'+b.color+';transition:opacity 0.2s';
           el.onmouseover = () => el.style.opacity = '0.85';
           el.onmouseout = () => el.style.opacity = '1';
-          el.onclick = () => { document.body.removeChild(overlay); resolve(btn3 ? i : (i === 0)); };
+          el.onclick = () => { overlay.remove(); resolve(btn3 ? i : (i === 0)); };
           btnWrap.appendChild(el);
         });
         
