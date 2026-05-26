@@ -38,33 +38,52 @@
   </script>
   
   <style>
+    /* ===== 主题系统 CSS 变量 ===== */
+    body { --bg-body: #f1f5f9; --bg-card: #ffffff; --bg-card-hover: #ffffff; --bg-header: #ffffff; --bg-input: #ffffff; --bg-header-fixed: #f1f5f9; --text-primary: #1e293b; --text-secondary: #64748b; --text-tertiary: #94a3b8; --border-color: #e2e8f0; --border-light: #f1f5f9; --accent: #3b82f6; --accent-hover: #2563eb; --accent-light: #eff6ff; --accent-subtle: #e0f2fe; --card-top: #3b82f6; --card-top-default: #64748b; --card-top-recycle: #9333ea; --card-bg-default: #fafafa; --card-bg-recycle: #faf5ff; --btn-secondary-bg: #e2e8f0; --btn-secondary-text: #1e293b; --btn-primary-bg: #3b82f6; --shadow-sm: 0 1px 3px rgba(0,0,0,.08); --shadow-md: 0 2px 8px rgba(0,0,0,.15); --scrollbar-track: #f1f1f1; --scrollbar-thumb: #cbd5e1; --settings-bg: #ffffff; --footer-bg: #f1f5f9; }
+    body[data-dark="true"] { --bg-body: #0f172a; --bg-card: #1e293b; --bg-card-hover: #1e293b; --bg-header: #1e293b; --bg-input: #334155; --bg-header-fixed: #0f172a; --text-primary: #f8fafc; --text-secondary: #94a3b8; --text-tertiary: #64748b; --border-color: #334155; --border-light: #1e293b; --accent-light: #1e3a5f; --accent-subtle: #1e40af; --card-bg-default: #334155; --card-bg-recycle: #4c1d95; --btn-secondary-bg: #334155; --btn-secondary-text: #e2e8f0; --shadow-md: 0 2px 8px rgba(0,0,0,.4); --scrollbar-track: #1e293b; --scrollbar-thumb: #475569; --settings-bg: #1e293b; --footer-bg: #0f172a; }
+    /* 森林绿 Forest */
+    body[data-theme="forest"] { --accent: #22c55e; --accent-hover: #16a34a; --accent-light: #f0fdf4; --accent-subtle: #dcfce7; --card-top: #22c55e; --btn-primary-bg: #22c55e; }
+    body[data-theme="forest"][data-dark="true"] { --accent-light: #14532d; --accent-subtle: #166534; }
+    /* 樱花粉 Sakura */
+    body[data-theme="sakura"] { --accent: #ec4899; --accent-hover: #db2777; --accent-light: #fdf2f8; --accent-subtle: #fce7f3; --card-top: #ec4899; --btn-primary-bg: #ec4899; }
+    body[data-theme="sakura"][data-dark="true"] { --accent-light: #831843; --accent-subtle: #9d174d; }
+    /* 琥珀橙 Amber */
+    body[data-theme="amber"] { --accent: #f59e0b; --accent-hover: #d97706; --accent-light: #fffbeb; --accent-subtle: #fef3c7; --card-top: #f59e0b; --btn-primary-bg: #f59e0b; }
+    body[data-theme="amber"][data-dark="true"] { --accent-light: #78350f; --accent-subtle: #92400e; }
+    /* 紫罗兰 Purple */
+    body[data-theme="purple"] { --accent: #8b5cf6; --accent-hover: #7c3aed; --accent-light: #f5f3ff; --accent-subtle: #ede9fe; --card-top: #8b5cf6; --btn-primary-bg: #8b5cf6; }
+    body[data-theme="purple"][data-dark="true"] { --accent-light: #4c1d95; --accent-subtle: #5b21b6; }
+    /* 深海靛 Ocean */
+    body[data-theme="ocean"] { --accent: #06b6d4; --accent-hover: #0891b2; --accent-light: #ecfeff; --accent-subtle: #cffafe; --card-top: #06b6d4; --btn-primary-bg: #06b6d4; }
+    body[data-theme="ocean"][data-dark="true"] { --accent-light: #164e63; --accent-subtle: #155e75; }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
-    body { background: #f1f5f9; min-height: 100vh; transition: background 0.3s, color 0.3s; }
+    body { background: var(--bg-body); min-height: 100vh; transition: background 0.3s, color 0.3s; color: var(--text-primary); }
 
     .header-fixed {
       position: sticky;
       top: 0;
       z-index: 40;
-      background: #f1f5f9;
+      background: var(--bg-header-fixed);
       padding: 0.75rem 0;
     }
-    body.dark-mode .header-fixed { background: #0f172a; }
+    body[data-dark="true"] .header-fixed { background: #0f172a; }
 
     .scrollbar-thin { scrollbar-width: thin; }
     .scrollbar-thin::-webkit-scrollbar { width: 5px; height: 5px; }
-    .scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-    .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: var(--scrollbar-track); border-radius: 10px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 10px; }
     
     .category-card {
-      background: white;
+      background: var(--bg-card);
       border-radius: 4px;
       box-shadow: none;
       height: 26rem;
       display: flex;
       flex-direction: column;
-      border: 1px solid #e2e8f0;
-      border-top: 3px solid #3b82f6;
+      border: 1px solid var(--border-color);
+      border-top: 3px solid var(--card-top);
       transition: all 0.2s ease;
       margin-bottom: 1rem;
       width: 100%;
@@ -72,16 +91,16 @@
       min-width: 0;
     }
     .category-card.defaultCat { 
-      border-top-color: #64748b; 
-      background: #fafafa;
+      border-top-color: var(--card-top-default); 
+      background: var(--card-bg-default);
     }
     .category-card.recycle { 
-      border-top-color: #9333ea; 
-      background: #faf5ff;
+      border-top-color: var(--card-top-recycle); 
+      background: var(--card-bg-recycle);
     }
-    body.dark-mode .category-card.defaultCat { background: #334155; }
-    body.dark-mode .category-card.recycle { background: #4c1d95; }
-    .category-card:hover { box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    body[data-dark="true"] .category-card.defaultCat { background: #334155; }
+    body[data-dark="true"] .category-card.recycle { background: #4c1d95; }
+    .category-card:hover { box-shadow: var(--shadow-sm); }
     .category-card.draggable { cursor: grab; }
     .category-card.draggable:active { cursor: grabbing; }
     .category-header {
@@ -89,9 +108,9 @@
       justify-content: space-between;
       align-items: center;
       padding: 0.625rem 0.75rem;
-      background: #fff;
+      background: var(--bg-header);
       border-radius: 4px 4px 0 0;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid var(--border-color);
       flex-shrink: 0;
     }
     .category-header-info { display: flex; gap: 0.5rem; font-size: 10px; margin-top: 2px; flex-wrap: nowrap; }
@@ -107,13 +126,13 @@
     .category-content { padding: 0.5rem; flex: 1; overflow-y: auto; scrollbar-width: thin; }
     
     .task-card {
-      background: #fafafa;
+      background: var(--card-bg-default);
       padding: 0.25rem 0.5rem;
       border-radius: 2px;
       margin-bottom: 0.25rem;
       cursor: pointer;
       transition: all 0.15s ease;
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--border-color);
       border-left-width: 2px;
       display: flex;
       align-items: center;
@@ -123,14 +142,14 @@
       line-height: 1;
       position: relative;
     }
-    .task-card:hover { background: white; }
+    .task-card:hover { background: var(--bg-card); }
     .task-title {
       flex: 1;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       font-size: 11px;
-      color: #1e293b;
+      color: var(--text-primary);
       position: relative;
       min-width: 0;
     }
@@ -152,7 +171,7 @@
       line-height: 1.4;
     }
     .task-completed { opacity: 0.6; background: #f0fdf4; }
-    body.dark-mode .task-completed { background: #14251c; }
+    body[data-dark="true"] .task-completed { background: #14251c; }
     
     .task-card.priority-high { border-left: 3px solid #ef4444; }
     .task-card.priority-medium { border-left: 3px solid #f59e0b; }
@@ -169,27 +188,27 @@
     .status-completed { color: #22c55e !important; }
     .status-overdue { color: #ef4444 !important; font-weight: bold !important; }
     
-    .task-date { font-size: 9px; color: #666; margin-left: 4px; flex-shrink: 0; }
-    .task-dept { font-size: 9px; color: #888; margin-left: 4px; flex-shrink: 0; }
+    .task-date { font-size: 9px; color: var(--text-secondary); margin-left: 4px; flex-shrink: 0; }
+    .task-dept { font-size: 9px; color: var(--text-tertiary); margin-left: 4px; flex-shrink: 0; }
     
     .filter-btn { padding: 0.125rem 0.5rem; font-size: 0.7rem; border-radius: 2px; transition: all 0.2s; }
     .filter-btn.active { background: #3b82f6; color: white; }
     .btn { padding: 0.375rem 0.75rem; border-radius: 2px; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; cursor: pointer !important; }
     .btn-sep { width: 1px; background: #cbd5e1; margin: 0 2px; align-self: stretch; }
-    body.dark-mode .btn-sep { background: #475569; }
-    body.dark-mode .modal-content .task-footer { border-top-color: #334155; }
+    body[data-dark="true"] .btn-sep { background: #475569; }
+    body[data-dark="true"] .modal-content .task-footer { border-top-color: #334155; }
     .btn-primary { background: #3b82f6; color: white; }
-    .btn-secondary { background: #e2e8f0; color: #1e293b; }
+    .btn-secondary { background: var(--btn-secondary-bg); color: var(--btn-secondary-text); }
     .btn-danger { background: #ef4444; color: white; }
     .btn-recycle { background: linear-gradient(135deg, #dc2626, #b91c1c); color: white; border: none; box-shadow: 0 1px 3px rgba(220,38,38,0.3); transition: all 0.2s; }
     .btn-recycle:hover { box-shadow: 0 4px 12px rgba(220,38,38,0.45); transform: translateY(-1px); }
-    .btn-default { background: #64748b; color: white; }
+    .btn-default { background: var(--accent); color: white; }
     .btn-icon { padding: 0.25rem; border-radius: 2px; font-size: 10px; flex-shrink: 0; cursor: pointer !important; }
-    .btn-icon:hover { background: #e2e8f0; }
+    .btn-icon:hover { background: var(--btn-secondary-bg); }
     
-    .form-input { width: 100%; padding: 0.375rem 0.75rem; font-size: 0.75rem; border: 1px solid #e2e8f0; border-radius: 2px; }
+    .form-input { width: 100%; padding: 0.375rem 0.75rem; font-size: 0.75rem; border: 1px solid var(--border-color); border-radius: 2px; background: var(--bg-input); color: var(--text-primary); }
     .form-input:focus { outline: none; box-shadow: 0 0 0 2px rgba(59, 132, 246, 0.5); }
-    .form-label { font-size: 0.75rem; font-weight: 500; color: #334155; margin-bottom: 0.25rem; display: block; }
+    .form-label { font-size: 0.75rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.25rem; display: block; }
     .form-group { margin-bottom: 0.75rem; }
     
     .modal-backdrop {
@@ -208,9 +227,9 @@
       z-index: 60;
     }
     .modal-content {
-      background: white; 
+      background: var(--bg-card); 
       border-radius: 4px; 
-      box-shadow: 0 2px 8px rgba(0,0,0,.15); 
+      box-shadow: var(--shadow-md); 
       width: 100%; 
       max-width: 28rem; 
       padding: 1.25rem;
@@ -228,10 +247,10 @@
     
     .hidden { display: none !important; }
     .task-checkbox { width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; border: 1px solid #e2e8f0; color: #3b82f6; cursor: pointer; flex-shrink: 0; }
-    .count-info { font-size: 10px; color: #64748b; margin-left: 0.25rem; }
+    .count-info { font-size: 10px; color: var(--text-secondary); margin-left: 0.25rem; }
     
     .sortable-ghost { opacity: 0.5; }
-    .sortable-chosen { background: #f1f5f9; }
+    .sortable-chosen { background: var(--btn-secondary-bg); }
     
     .container { max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
     #categories-container {
@@ -241,30 +260,23 @@
       grid-template-columns: repeat(4, 1fr);
     }
     
-    body.dark-mode { background: #0f172a; color: #f8fafc; }
-    body.dark-mode .category-card { background: #1e293b; border-top-color: #3b82f6; }
-    body.dark-mode .category-header { background: #1e293b; border-bottom-color: #334155; }
-    body.dark-mode .task-card { background: #334155; border-color: #475569; }
-    body.dark-mode .task-title { color: #f8fafc; }
-    body.dark-mode .form-input { background: #334155; border-color: #475569; color: #f8fafc; }
-    body.dark-mode .modal-content { background: #1e293b; }
-    body.dark-mode .sticky-recycle-header { background: #1e293b; }
-    body.dark-mode .category-name, body.dark-mode .page-title { color: #ffffff !important; }
-    .page-title { color: #1e293b !important; }
-    body.dark-mode .form-label { color: #cbd5e1; }
+    body[data-dark="true"] { background: var(--bg-body); color: var(--text-primary); }
+    body[data-dark="true"] .sticky-recycle-header { background: var(--bg-card); }
+    body[data-dark="true"] .category-name { color: var(--text-primary) !important; }
+    body[data-dark="true"] .form-label { color: var(--text-secondary); }
     
     .settings-panel {
-      background: white;
+      background: var(--settings-bg);
       border-radius: 4px;
       padding: 1.5rem;
-      max-width: 800px;
-      width: 90%;
+      max-width: 900px;
+      width: 94%;
       display: flex;
       flex-direction: column;
       max-height: 90vh;
       overflow: hidden;
     }
-    body.dark-mode .settings-panel { background: #1e293b; }
+    body[data-dark="true"] .settings-panel { background: #1e293b; }
     .settings-scroll {
       overflow-y: auto;
       flex: 1;
@@ -273,15 +285,19 @@
     .settings-group {
       margin-bottom: 1.5rem;
       padding-bottom: 1rem;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid var(--border-color);
     }
     .settings-title {
       font-size: 1rem;
       font-weight: 600;
       margin-bottom: 0.75rem;
-      color: #1e293b;
+      color: var(--text-primary);
     }
-    body.dark-mode .settings-title { color: #f8fafc; }
+    .theme-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); transform: translateY(-1px); }
+    body[data-dark="true"] .theme-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    .theme-card.active { border-color: var(--accent) !important; background: var(--accent-light) !important; }
+    .theme-mode-btn:hover { border-color: var(--accent); }
+    .theme-mode-btn.active { border-color: var(--accent) !important; background: var(--accent-light) !important; color: var(--accent) !important; }
     .layout-option {
       display: flex;
       align-items: center;
@@ -291,29 +307,28 @@
       border-radius: 2px;
       cursor: pointer;
     }
-    .layout-option:hover { background: #f1f5f9; }
-    body.dark-mode .layout-option:hover { background: #334155; }
+    .layout-option:hover { background: var(--btn-secondary-bg); }
     .layout-option.active {
-      background: #e0f2fe;
-      border: 1px solid #3b82f6;
+      background: var(--accent-subtle);
+      border: 1px solid var(--accent);
     }
-    body.dark-mode .layout-option.active { background: #1e40af; }
+    body[data-dark="true"] .layout-option.active { background: #1e40af; }
     
     .settings-footer {
       display: flex;
       justify-content: flex-end;
       gap: 0.75rem;
       padding-top: 1rem;
-      border-top: 1px solid #e2e8f0;
-      background: white;
+      border-top: 1px solid var(--border-color);
+      background: var(--settings-bg);
       flex-shrink: 0;
     }
-    body.dark-mode .settings-footer { background: #1e293b; border-top-color: #334155; }
+    body[data-dark="true"] .settings-footer { background: #1e293b; border-top-color: #334155; }
 
-    body.dark-mode #stats-content > div > div > div[style] { background: #1e293b !important; }
-    body.dark-mode #stats-content [style*="color:#64748b"] { color: #94a3b8 !important; }
-    body.dark-mode #stats-content [style*="color:#475569"] { color: #cbd5e1 !important; }
-    body.dark-mode #stats-content [style*="color:#94a3b8"] { color: #cbd5e1 !important; }
+    body[data-dark="true"] #stats-content > div > div > div[style] { background: #1e293b !important; }
+    body[data-dark="true"] #stats-content [style*="color:#64748b"] { color: #94a3b8 !important; }
+    body[data-dark="true"] #stats-content [style*="color:#475569"] { color: #cbd5e1 !important; }
+    body[data-dark="true"] #stats-content [style*="color:#94a3b8"] { color: #cbd5e1 !important; }
     
     .hide-recycle-btn {
       position: absolute;
@@ -330,16 +345,15 @@
     .page-btn { padding: 4px 8px; font-size: 12px; border: 1px solid #ddd; border-radius: 2px; cursor: pointer; }
     .page-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
 
-    .app-footer { text-align: center; padding: 1.5rem 1rem; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; width: 100%; background: #f1f5f9; }
-    body.dark-mode .app-footer { color: #64748b; border-top-color: #334155; background: #0f172a; }
+    .app-footer { text-align: center; padding: 1.5rem 1rem; font-size: 11px; color: var(--text-tertiary); border-top: 1px solid var(--border-color); width: 100%; background: var(--footer-bg); }
 
-    #task-list-batch-bar { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 2px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; }
-    body.dark-mode #task-list-batch-bar { background: #0c1929; border-color: #1e3a5f; }
+    #task-list-batch-bar { background: var(--accent-light); border: 1px solid var(--accent); border-radius: 2px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; }
+    body[data-dark="true"] #task-list-batch-bar { background: #0c1929; border-color: #1e3a5f; }
     .batch-move-dropdown { max-height: 200px; overflow-y: auto; }
     .form-input:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .table-striped tr:nth-child(even) { background: #f9fafb; }
-    body.dark-mode .table-striped tr:nth-child(even) { background: #1f2937; }
+    .table-striped tr:nth-child(even) { background: var(--bg-input); }
+    body[data-dark="true"] .table-striped tr:nth-child(even) { background: #1f2937; }
 
     @media (max-width: 1200px) {
       #categories-container { grid-template-columns: repeat(3, 1fr) !important; }
@@ -351,13 +365,11 @@
       #categories-container { grid-template-columns: repeat(1, 1fr) !important; }
     }
 
-    .reminder-bar { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 2px; padding: 0.375rem 0.625rem; display: flex; align-items: center; gap: 0.375rem; flex-wrap: wrap; font-size: 11px; }
-    body.dark-mode .reminder-bar { background: #2d1f0a; border-color: #78350f; }
+    .reminder-bar { background: var(--accent-light); border: 1px solid var(--accent); border-radius: 2px; padding: 0.375rem 0.625rem; display: flex; align-items: center; gap: 0.375rem; flex-wrap: wrap; font-size: 11px; }
+    body[data-dark="true"] .reminder-bar { background: #2d1f0a; border-color: #78350f; }
     .reminder-bar.hidden-bar { display: none; }
-    .reminder-item { background: #fff; border: 1px solid #fdba74; border-radius: 2px; padding: 1px 6px; font-size: 11px; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
-    .reminder-item:hover { background: #ffedd5; }
-    body.dark-mode .reminder-item { background: #422006; border-color: #9a3412; }
-    body.dark-mode .reminder-item:hover { background: #5c2a0a; }
+    .reminder-item { background: var(--bg-card); border: 1px solid var(--accent); border-radius: 2px; padding: 1px 6px; font-size: 11px; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+    .reminder-item:hover { background: var(--accent-light); }
     .reminder-close { cursor: pointer; color: #9ca3af; font-size: 14px; margin-left: auto; }
     .reminder-close:hover { color: #ef4444; }
 
@@ -366,37 +378,27 @@
     .tag-filter-btn.active { opacity: 1; box-shadow: 0 0 0 1px white; }
     .tag-filter-btn:hover { opacity: 1; }
     .tag-mgmt-list { max-height: 200px; overflow-y: auto; }
-    .tag-mgmt-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-bottom: 1px solid #e2e8f0; }
-    body.dark-mode .tag-mgmt-item { border-bottom-color: #334155; }
+    .tag-mgmt-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; border-bottom: 1px solid var(--border-color); }
 
     .cal-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
     .cal-nav button { padding: 2px 8px; border: 1px solid #e2e8f0; border-radius: 2px; background: transparent; cursor: pointer; font-size: 12px; }
-    .cal-nav button:hover { background: #f1f5f9; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #e2e8f0; border: 1px solid #e2e8f0; }
-    .cal-cell { background: #fff; min-height: 60px; padding: 2px; font-size: 10px; cursor: pointer; position: relative; }
-    body.dark-mode .cal-cell { background: #1e293b; }
-    .cal-cell.other-month { background: #f8fafc; }
-    body.dark-mode .cal-cell.other-month { background: #0f172a; }
-    .cal-cell.today { background: #eff6ff; }
-    body.dark-mode .cal-cell.today { background: #1e3a5f; }
-    .cal-cell .day-num { font-weight: 600; color: #475569; padding: 1px 3px; font-size: 10px; }
-    body.dark-mode .cal-cell .day-num { color: #94a3b8; }
-    .cal-cell.has-tasks { background: #fef3c7; }
-    body.dark-mode .cal-cell.has-tasks { background: #451a03; }
-    .cal-task-item { font-size: 8px; padding: 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #1e293b; border-radius: 1px; line-height: 14px; }
-    body.dark-mode .cal-task-item { color: #e2e8f0; }
-    .cal-weekday { text-align: center; font-size: 10px; font-weight: 600; color: #64748b; padding: 4px 0; background: #f8fafc; }
-    body.dark-mode .cal-weekday { background: #1e293b; color: #94a3b8; }
+    .cal-nav button:hover { background: var(--btn-secondary-bg); }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border-color); border: 1px solid var(--border-color); }
+    .cal-cell { background: var(--bg-card); min-height: 60px; padding: 2px; font-size: 10px; cursor: pointer; position: relative; }
+    .cal-cell.other-month { background: var(--bg-body); }
+    .cal-cell.today { background: var(--accent-light); }
+    .cal-cell .day-num { font-weight: 600; color: var(--text-secondary); padding: 1px 3px; font-size: 10px; }
+    .cal-cell.has-tasks { background: var(--accent-subtle); }
+    .cal-task-item { font-size: 8px; padding: 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); border-radius: 1px; line-height: 14px; }
+    .cal-weekday { text-align: center; font-size: 10px; font-weight: 600; color: var(--text-secondary); padding: 4px 0; background: var(--bg-card); }
 
-    .sort-opt { display:inline-flex;align-items:center;justify-content:center;width:14px;height:15px;cursor:pointer;border-radius:1px;color:#94a3b8;font-size:9px;line-height:1; }
-    .sort-opt:hover { background:#e2e8f0; }
-    .sort-opt.active { color:#3b82f6;font-weight:600;background:#eff6ff; }
-    body.dark-mode .sort-opt.active { background:#1e3a5f;color:#93c5fd; }
-    body.dark-mode .sort-opt:hover { background:#334155; }
+    .sort-opt { display:inline-flex;align-items:center;justify-content:center;width:14px;height:15px;cursor:pointer;border-radius:1px;color:var(--text-tertiary);font-size:9px;line-height:1; }
+    .sort-opt:hover { background:var(--btn-secondary-bg); }
+    .sort-opt.active { color:var(--accent);font-weight:600;background:var(--accent-subtle); }
 
     /* === 登录弹窗样式 === */
     .auth-modal-content { box-shadow:0 20px 60px rgba(0,0,0,0.15),0 0 0 1px rgba(0,0,0,0.05); }
-    body.dark-mode .auth-modal-content { box-shadow:0 20px 60px rgba(0,0,0,0.4); }
+    body[data-dark="true"] .auth-modal-content { box-shadow:0 20px 60px rgba(0,0,0,0.4); }
     .auth-modal-inner { display:flex;min-height:380px; }
     /* 左侧装饰区 */
     .auth-deco { position:relative;width:180px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden; }
@@ -411,31 +413,23 @@
     .auth-deco-features { display:flex;flex-direction:column;gap:8px;font-size:11px; }
     .auth-deco-features span { opacity:0.85;display:flex;align-items:center;gap:6px;justify-content:center; }
     .auth-deco-features i { width:14px;text-align:center;font-size:10px; }
-    body.dark-mode .auth-deco-bg { background:linear-gradient(135deg,#4f46e5,#7c3aed,#9333ea); }
+    body[data-dark="true"] .auth-deco-bg { background:linear-gradient(135deg,#4f46e5,#7c3aed,#9333ea); }
     /* 右侧表单区 */
-    .auth-form-area { flex:1;padding:32px 28px;position:relative;background:#fff; }
-    body.dark-mode .auth-form-area { background:#1e293b; }
+    .auth-form-area { flex:1;padding:32px 28px;position:relative;background:var(--bg-card); }
     .auth-form-inner { max-width:300px;margin:0 auto; }
     /* OAuth 按钮 */
     .auth-oauth-btns { display:flex;gap:10px;margin-bottom:16px; }
-    .auth-oauth-btn { flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s; }
+    .auth-oauth-btn { flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:8px;border:1px solid var(--border-color);background:var(--bg-card);cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s; }
     .auth-oauth-btn:hover { transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,0.08); }
     .auth-oauth-btn i { font-size:16px; }
     .google-btn { color:#ea4335;border-color:#fde8e8; }
     .google-btn:hover { border-color:#ea4335;background:#fef2f2; }
-    .github-btn { color:#333;border-color:#e2e8f0; }
-    .github-btn:hover { border-color:#333;background:#f8fafc; }
-    body.dark-mode .auth-oauth-btn { background:#334155;border-color:#475569;color:#e2e8f0; }
-    body.dark-mode .google-btn { color:#fc8181;border-color:#7f1d1d; }
-    body.dark-mode .google-btn:hover { background:#451a1a;border-color:#fc8181; }
-    body.dark-mode .github-btn { color:#cbd5e1;border-color:#475569; }
-    body.dark-mode .github-btn:hover { background:#475569;border-color:#94a3b8; }
+    .github-btn { color:#333;border-color:var(--border-color); }
+    .github-btn:hover { border-color:#333;background:var(--btn-secondary-bg); }
     /* 分隔线 */
     .auth-divider { display:flex;align-items:center;margin-bottom:16px;gap:12px; }
-    .auth-divider::before,.auth-divider::after { content:'';flex:1;height:1px;background:#e2e8f0; }
-    body.dark-mode .auth-divider::before,body.dark-mode .auth-divider::after { background:#475569; }
-    .auth-divider span { font-size:11px;color:#94a3b8;white-space:nowrap; }
-    body.dark-mode .auth-divider span { color:#64748b; }
+    .auth-divider::before,.auth-divider::after { content:'';flex:1;height:1px;background:var(--border-color); }
+    .auth-divider span { font-size:11px;color:var(--text-tertiary);white-space:nowrap; }
   </style>
 </head>
 <body>
@@ -443,7 +437,7 @@
     <div class="container">
       <header>
         <div class="flex flex-wrap justify-between items-center gap-1 mb-2">
-          <h1 class="text-lg font-bold page-title" contenteditable="true" style="white-space:nowrap">高效待办事项管理</h1>
+          <h1 class="text-lg font-bold page-title" contenteditable="true" id="main-page-title" style="white-space:nowrap;outline:none;border-bottom:1px dashed transparent;transition:border-color 0.2s" title="点击编辑标题">高效待办事项管理</h1>
           <div class="flex flex-wrap items-center gap-1" style="max-width:calc(100% - 140px)">
             <button id="new-task-btn" class="btn btn-primary"><i class="fa fa-plus"></i> 新建任务</button>
             <button id="new-category-btn" class="btn btn-secondary"><i class="fa fa-th-large"></i> 新增区块</button>
@@ -458,7 +452,69 @@
             <button id="reminder-icon-btn" class="btn btn-secondary" title="近期到期任务" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-bell-o"></i></button>
             <button id="calendar-btn" class="btn btn-secondary" title="任务日历" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-calendar"></i></button>
             <button id="settings-btn" class="btn btn-secondary" title="设置" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-cog"></i></button>
-            <button id="toggle-dark-mode" class="btn btn-secondary" title="深色模式" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-moon-o"></i></button>
+            <div class="relative" style="display:inline-block">
+              <button id="theme-btn" class="btn btn-secondary" title="主题配色" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-paint-brush"></i></button>
+              <div id="theme-popup" class="hidden" style="position:absolute;top:100%;right:0;margin-top:6px;z-index:100;min-width:260px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.18);padding:14px">
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
+                  <div class="theme-card" data-theme="default" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:6px;border:2px solid transparent;cursor:pointer;transition:all 0.2s;background:var(--btn-secondary-bg)">
+                    <div style="display:flex;gap:3px;width:42px;flex-wrap:wrap;justify-content:center">
+                      <div style="width:12px;height:12px;border-radius:3px;background:#3b82f6"></div>
+                      <div style="width:12px;height:12px;border-radius:3px;background:#f1f5f9;border:1px solid #ddd"></div>
+                      <div style="width:12px;height:12px;border-radius:3px;background:#1e293b"></div>
+                    </div>
+                    <span style="font-size:10px;font-weight:500;color:var(--text-primary)">经典蓝</span>
+                  </div>
+                  <div class="theme-card" data-theme="forest" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:6px;border:2px solid transparent;cursor:pointer;transition:all 0.2s;background:var(--btn-secondary-bg)">
+                    <div style="display:flex;gap:3px;width:42px;flex-wrap:wrap;justify-content:center">
+                      <div style="width:12px;height:12px;border-radius:3px;background:#22c55e"></div>
+                      <div style="width:12px;height:12px;border-radius:3px;background:#f0fdf4;border:1px solid #ddd"></div>
+                      <div style="width:12px;height:12px;border-radius:3px;background:#14532d"></div>
+                    </div>
+                    <span style="font-size:10px;font-weight:500;color:var(--text-primary)">森林绿</span>
+                  </div>
+                  <div class="theme-card" data-theme="sakura" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:6px;border:2px solid transparent;cursor:pointer;transition:all 0.2s;background:var(--btn-secondary-bg)">
+                    <div style="display:flex;gap:3px;width:42px;flex-wrap:wrap;justify-content:center">
+                      <div style="width:12px;height:12px;border-radius:3px;background:#ec4899"></div>
+                      <div style="width:12px;height:12px;border-radius:3px;background:#fdf2f8;border:1px solid #ddd"></div>
+                      <div style="width:12px;height:12px;border-radius:3px;background:#831843"></div>
+                    </div>
+                    <span style="font-size:10px;font-weight:500;color:var(--text-primary)">樱花粉</span>
+                  </div>
+                  <div class="theme-card" data-theme="amber" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:6px;border:2px solid transparent;cursor:pointer;transition:all 0.2s;background:var(--btn-secondary-bg)">
+                    <div style="display:flex;gap:3px;width:42px;flex-wrap:wrap;justify-content:center">
+                      <div style="width:12px;height:12px;border-radius:3px;background:#f59e0b"></div>
+                      <div style="width:12px;height:12px;border-radius:3px;background:#fffbeb;border:1px solid #ddd"></div>
+                      <div style="width:12px;height:12px;border-radius:3px;background:#78350f"></div>
+                    </div>
+                    <span style="font-size:10px;font-weight:500;color:var(--text-primary)">琥珀橙</span>
+                  </div>
+                  <div class="theme-card" data-theme="purple" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:6px;border:2px solid transparent;cursor:pointer;transition:all 0.2s;background:var(--btn-secondary-bg)">
+                    <div style="display:flex;gap:3px;width:42px;flex-wrap:wrap;justify-content:center">
+                      <div style="width:12px;height:12px;border-radius:3px;background:#8b5cf6"></div>
+                      <div style="width:12px;height:12px;border-radius:3px;background:#f5f3ff;border:1px solid #ddd"></div>
+                      <div style="width:12px;height:12px;border-radius:3px;background:#4c1d95"></div>
+                    </div>
+                    <span style="font-size:10px;font-weight:500;color:var(--text-primary)">紫罗兰</span>
+                  </div>
+                  <div class="theme-card" data-theme="ocean" style="display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:6px;border:2px solid transparent;cursor:pointer;transition:all 0.2s;background:var(--btn-secondary-bg)">
+                    <div style="display:flex;gap:3px;width:42px;flex-wrap:wrap;justify-content:center">
+                      <div style="width:12px;height:12px;border-radius:3px;background:#06b6d4"></div>
+                      <div style="width:12px;height:12px;border-radius:3px;background:#ecfeff;border:1px solid #ddd"></div>
+                      <div style="width:12px;height:12px;border-radius:3px;background:#164e63"></div>
+                    </div>
+                    <span style="font-size:10px;font-weight:500;color:var(--text-primary)">深海靛</span>
+                  </div>
+                </div>
+                <div style="display:flex;gap:6px;margin-bottom:10px">
+                  <div id="theme-mode-light" class="theme-mode-btn active" style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;padding:5px 0;border-radius:6px;border:2px solid var(--border-color);cursor:pointer;font-size:11px;font-weight:500;background:var(--btn-secondary-bg);color:var(--text-primary);transition:all 0.2s"><i class="fa fa-sun-o"></i> 浅色</div>
+                  <div id="theme-mode-dark" class="theme-mode-btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;padding:5px 0;border-radius:6px;border:2px solid var(--border-color);cursor:pointer;font-size:11px;font-weight:500;background:var(--btn-secondary-bg);color:var(--text-primary);transition:all 0.2s"><i class="fa fa-moon-o"></i> 深色</div>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <button id="theme-apply-btn" class="btn btn-primary" style="flex:1;padding:6px;font-size:12px;justify-content:center"><i class="fa fa-check"></i> 应用</button>
+                  <button id="theme-cancel-btn" class="btn btn-secondary" style="padding:6px 10px;font-size:12px">取消</button>
+                </div>
+              </div>
+            </div>
             <button id="help-btn" class="btn btn-secondary" title="使用说明" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-question-circle"></i></button>
             <span class="btn-sep" style="margin:0 1px"></span>
             <button id="auth-btn" class="btn btn-secondary" title="登录" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-user-circle-o"></i></button>
@@ -676,113 +732,134 @@
 
   <div id="settings-modal" class="modal-backdrop hidden">
     <div class="modal-content settings-panel">
-      <div class="flex justify-between items-center mb-4">
+      <div class="flex justify-between items-center mb-3">
         <h2 class="text-lg font-bold">系统设置</h2>
         <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
       </div>
       
-      <div class="settings-scroll">
+      <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:1.25rem;flex:1;overflow:hidden;min-height:0;font-size:12px">
       
-      <div class="settings-group">
-        <h3 class="settings-title">布局设置</h3>
-        <div class="grid grid-cols-2 gap-2">
-          <div class="layout-option active" data-layout="4">
-            <input type="radio" name="layout" id="layout-4" checked>
-            <label for="layout-4">每行显示 4 个区块</label>
+      <!-- ========== 左栏 ========== -->
+      <div style="overflow-y:auto;padding-right:0.75rem;border-right:1px solid var(--border-color)">
+        
+        <!-- 布局 -->
+        <div style="margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-color)">
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text-primary)">布局设置</h3>
+          <div style="display:flex;gap:6px">
+            <div class="layout-option active" data-layout="4" style="flex:1;padding:0.35rem 0.5rem;gap:0.35rem;margin-bottom:0">
+              <input type="radio" name="layout" id="layout-4" checked>
+              <label for="layout-4" style="font-size:11px">每行 4 个区块</label>
+            </div>
+            <div class="layout-option" data-layout="3" style="flex:1;padding:0.35rem 0.5rem;gap:0.35rem;margin-bottom:0">
+              <input type="radio" name="layout" id="layout-3">
+              <label for="layout-3" style="font-size:11px">每行 3 个区块</label>
+            </div>
           </div>
-          <div class="layout-option" data-layout="3">
-            <input type="radio" name="layout" id="layout-3">
-            <label for="layout-3">每行显示 3 个区块</label>
+        </div>
+        
+        <!-- 区块 -->
+        <div style="margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-color)">
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text-primary)">区块设置</h3>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-primary)">
+              <input type="checkbox" id="show-empty-categories" checked class="form-input w-auto" style="width:13px;height:13px">
+              显示空区块
+            </label>
+            <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-primary)">
+              <input type="checkbox" id="auto-hide-default" checked class="form-input w-auto" style="width:13px;height:13px">
+              无任务时自动隐藏默认区块
+            </label>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-primary)">
+              <span>区块默认显示任务数：</span>
+              <input type="number" id="task-limit" value="8" min="3" max="30" style="width:50px;padding:1px 4px;font-size:11px">
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-primary)">
+              <span>列表视口每页任务数：</span>
+              <input type="number" id="page-size" value="15" min="5" max="100" style="width:50px;padding:1px 4px;font-size:11px">
+            </div>
           </div>
         </div>
+        
+        <!-- 显示 -->
+        <div style="margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-color)">
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text-primary)">显示设置</h3>
+          <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-primary)">
+            <input type="checkbox" id="show-add-category-card" checked class="form-input w-auto" style="width:13px;height:13px">
+            主页显示"添加分类"占位卡
+          </label>
+        </div>
+        
+        <!-- 提醒 -->
+        <div style="margin-bottom:0;padding-bottom:0;border-bottom:none">
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text-primary)">任务提醒</h3>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-primary)">
+              <input type="checkbox" id="reminder-enabled" checked class="form-input w-auto" style="width:13px;height:13px">
+              开启近期到期任务提醒
+            </label>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-primary)">
+              <span>提前提醒天数：</span>
+              <input type="number" id="reminder-days" value="3" min="1" max="14" style="width:50px;padding:1px 4px;font-size:11px">
+            </div>
+          </div>
+        </div>
+        
       </div>
       
-      <div class="settings-group">
-        <h3 class="settings-title">区块设置</h3>
-        <div class="flex items-center gap-2 mb-2">
-          <input type="checkbox" id="show-empty-categories" checked class="form-input w-auto">
-          <label for="show-empty-categories">显示空区块</label>
+      <!-- ========== 右栏 ========== -->
+      <div style="overflow-y:auto">
+        
+        <!-- 备份 -->
+        <div style="margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-color)">
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text-primary)">自动备份</h3>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-primary)">
+              <input type="checkbox" id="auto-backup-enabled" checked class="form-input w-auto" style="width:13px;height:13px">
+              开启自动备份
+            </label>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-primary)">
+              <span>存储标识：</span>
+              <input type="text" id="backup-storage-key" value="todo_auto_backups" class="backup-dep" style="width:120px;padding:1px 4px;font-size:11px">
+            </div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-primary)">
+              <span>保留份数：</span>
+              <input type="number" id="backup-max-count" value="50" min="5" max="200" class="backup-dep" style="width:50px;padding:1px 4px;font-size:11px">
+              <span>检测频次：</span>
+              <input type="number" id="backup-interval" value="60" min="30" max="3600" step="10" class="backup-dep" style="width:50px;padding:1px 4px;font-size:11px">
+              <span>秒</span>
+            </div>
+            <div id="backup-status" style="font-size:10px;color:var(--text-secondary)"></div>
+            <div style="display:flex;gap:4px">
+              <button type="button" id="export-backups-btn" style="padding:2px 6px;font-size:10px;border-radius:2px;border:1px solid var(--border-color);background:var(--btn-secondary-bg);color:var(--text-primary);cursor:pointer"><i class="fa fa-download"></i> 导出</button>
+              <button type="button" id="clear-backups-btn" style="padding:2px 6px;font-size:10px;border-radius:2px;border:1px solid var(--border-color);background:var(--btn-secondary-bg);color:var(--text-primary);cursor:pointer"><i class="fa fa-trash-o"></i> 清除</button>
+            </div>
+          </div>
         </div>
-        <div class="flex items-center gap-2 mb-2">
-          <input type="checkbox" id="auto-hide-default" checked class="form-input w-auto">
-          <label for="auto-hide-default">无任务时自动隐藏默认区块</label>
+        
+        <!-- 去重 -->
+        <div style="margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-color)">
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text-primary)">数据去重</h3>
+          <p style="font-size:10px;color:var(--text-secondary);margin-bottom:4px">同一区块内，标题和截止日期完全相同的任务视为重复。</p>
+          <div id="dedup-status" style="font-size:10px;color:var(--text-secondary);margin-bottom:4px"></div>
+          <div style="display:flex;gap:4px;align-items:center">
+            <button type="button" id="dedup-detail-btn" style="padding:2px 6px;font-size:10px;border-radius:2px;border:none;background:var(--btn-primary-bg);color:white;cursor:pointer"><i class="fa fa-list"></i> 详情</button>
+            <button type="button" id="dedup-btn" style="padding:2px 6px;font-size:10px;border-radius:2px;border:1px solid var(--border-color);background:var(--btn-secondary-bg);color:var(--text-primary);cursor:pointer"><i class="fa fa-filter"></i> 快速去重</button>
+            <span id="dedup-result" class="hidden" style="font-size:10px;color:#22c55e"></span>
+          </div>
         </div>
-        <div class="flex items-center gap-2 mb-2">
-          <label>区块默认显示任务数：</label>
-          <input type="number" id="task-limit" value="8" min="3" max="30" class="form-input w-auto" style="width:60px">
+        
+        <!-- 标签 -->
+        <div style="margin-bottom:0;padding-bottom:0;border-bottom:none">
+          <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:0.4rem;color:var(--text-primary)">标签管理</h3>
+          <p style="font-size:10px;color:var(--text-secondary);margin-bottom:4px">为常用标签设置颜色，方便识别。</p>
+          <div style="display:flex;gap:4px;align-items:center;margin-bottom:4px">
+            <input type="text" id="tag-mgmt-input" placeholder="标签名" style="width:100px;padding:1px 4px;font-size:11px;border:1px solid var(--border-color);border-radius:2px;background:var(--bg-input);color:var(--text-primary)">
+            <input type="color" id="tag-mgmt-color" style="width:26px;height:22px;padding:0;border:1px solid var(--border-color);border-radius:2px;cursor:pointer" value="#3b82f6">
+            <button type="button" id="tag-mgmt-add" style="padding:2px 6px;font-size:10px;border-radius:2px;border:none;background:var(--btn-primary-bg);color:white;cursor:pointer"><i class="fa fa-plus"></i> 添加</button>
+          </div>
+          <div id="tag-mgmt-list" style="max-height:100px;overflow-y:auto"></div>
         </div>
-        <div class="flex items-center gap-2">
-          <label>列表视口每页任务数：</label>
-          <input type="number" id="page-size" value="15" min="5" max="100" class="form-input w-auto" style="width:60px">
-        </div>
-      </div>
-      
-      <div class="settings-group">
-        <h3 class="settings-title">显示设置</h3>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" id="show-add-category-card" checked class="form-input w-auto">
-          <label for="show-add-category-card">主页显示"添加分类"占位卡</label>
-        </div>
-      </div>
-      
-      <div class="settings-group">
-        <h3 class="settings-title">任务提醒</h3>
-        <div class="flex items-center gap-2 mb-2">
-          <input type="checkbox" id="reminder-enabled" checked class="form-input w-auto">
-          <label for="reminder-enabled">开启近期到期任务提醒</label>
-        </div>
-        <div class="flex items-center gap-2">
-          <label>提前提醒天数：</label>
-          <input type="number" id="reminder-days" value="3" min="1" max="14" class="form-input w-auto" style="width:60px">
-        </div>
-      </div>
-      
-      <div class="settings-group">
-        <h3 class="settings-title">自动备份设置</h3>
-        <div class="flex items-center gap-2 mb-2">
-          <input type="checkbox" id="auto-backup-enabled" checked class="form-input w-auto">
-          <label for="auto-backup-enabled">开启自动备份</label>
-        </div>
-        <div class="flex items-center gap-2 mb-2">
-          <label>备份存储标识：</label>
-          <input type="text" id="backup-storage-key" value="todo_auto_backups" class="backup-dep form-input w-auto" style="width:200px">
-        </div>
-        <div class="flex items-center gap-2 mb-2">
-          <label>备份滚动保留份数：</label>
-          <input type="number" id="backup-max-count" value="50" min="5" max="200" class="backup-dep form-input w-auto" style="width:70px">
-        </div>
-        <div class="flex items-center gap-2">
-          <label>备份检测频次（秒）：</label>
-          <input type="number" id="backup-interval" value="60" min="30" max="3600" step="10" class="backup-dep form-input w-auto" style="width:70px">
-        </div>
-        <div id="backup-status" class="text-xs text-gray-500 mt-2 mb-2"></div>
-        <div class="flex gap-2">
-          <button type="button" id="export-backups-btn" class="btn btn-secondary text-xs"><i class="fa fa-download"></i> 导出备份文件</button>
-          <button type="button" id="clear-backups-btn" class="btn btn-secondary text-xs"><i class="fa fa-trash-o"></i> 清除备份</button>
-        </div>
-        <p class="text-xs text-gray-400 mt-2">备份文件下载到本地后即为实际文件路径；存储标识是浏览器本地数据库的键名，仅本设备/本浏览器可访问。</p>
-      </div>
-      
-      <div class="settings-group">
-        <h3 class="settings-title">数据去重</h3>
-        <p class="text-xs text-gray-500 mb-2">同一区块内，标题和截止日期完全相同的任务视为重复。</p>
-        <div id="dedup-status" class="text-xs text-gray-500 mb-2"></div>
-        <div class="flex gap-2 items-center">
-          <button type="button" id="dedup-detail-btn" class="btn btn-primary text-xs"><i class="fa fa-list"></i> 查看重复详情</button>
-          <button type="button" id="dedup-btn" class="btn btn-secondary text-xs"><i class="fa fa-filter"></i> 一键快速去重</button>
-        </div>
-        <span id="dedup-result" class="text-xs text-green-600 mt-1 block hidden"></span>
-      </div>
-      
-      <div class="settings-group">
-        <h3 class="settings-title">标签管理</h3>
-        <p class="text-xs text-gray-500 mb-2">为常用标签设置颜色，方便识别。</p>
-        <div class="flex gap-1 items-center mb-2">
-          <input type="text" id="tag-mgmt-input" class="form-input w-auto" placeholder="标签名" style="width:120px">
-          <input type="color" id="tag-mgmt-color" class="form-input w-auto" style="width:32px;height:28px;padding:1px" value="#3b82f6">
-          <button type="button" id="tag-mgmt-add" class="btn btn-primary text-xs"><i class="fa fa-plus"></i> 添加</button>
-        </div>
-        <div id="tag-mgmt-list" class="tag-mgmt-list"></div>
+        
       </div>
       
       </div>
@@ -1028,7 +1105,9 @@
       backupStorageKey: 'todo_auto_backups',
       reminderEnabled: true,
       reminderDays: 3,
-      tagFilter: []
+      tagFilter: [],
+      theme: 'default',
+      darkMode: false
     };
 
     // === Supabase 配置 ===
@@ -1047,7 +1126,7 @@
       newCategoryBtn: document.getElementById('new-category-btn'),
       exportDataBtn: document.getElementById('export-data-btn'),
       importDataBtn: document.getElementById('import-data-btn'),
-      toggleDarkModeBtn: document.getElementById('toggle-dark-mode'),
+      toggleDarkModeBtn: document.getElementById('theme-btn'),
       allTasksBtn: document.getElementById('all-tasks-btn'),
       statsBtn: document.getElementById('stats-btn'),
       calendarBtn: document.getElementById('calendar-btn'),
@@ -1501,13 +1580,31 @@
       checkOverdueTasks();
       initTooltip();
       updateCalendarBtnDate();
-      document.querySelector('.page-title').addEventListener('input', function() {
-        pageTitle = this.textContent.trim() || '高效待办事项管理';
-        document.title = pageTitle;
-      });
-      document.querySelector('.page-title').addEventListener('blur', function() {
-        saveDataToStorage();
-      });
+      // 标题编辑
+      const titleEl = document.getElementById('main-page-title');
+      if (titleEl) {
+        titleEl.addEventListener('input', function() {
+          pageTitle = this.textContent.trim() || '高效待办事项管理';
+          document.title = pageTitle;
+          // 同步到设置面板
+          const titleInput = document.getElementById('settings-page-title');
+          if (titleInput) titleInput.value = pageTitle;
+          // 虚线提示
+          this.style.borderBottomColor = 'var(--accent)';
+        });
+        titleEl.addEventListener('blur', function() {
+          this.style.borderBottomColor = 'transparent';
+          saveDataToStorage();
+        });
+        titleEl.addEventListener('mouseenter', function() {
+          this.style.borderBottomColor = 'var(--text-tertiary)';
+        });
+        titleEl.addEventListener('mouseleave', function() {
+          if (document.activeElement !== this) {
+            this.style.borderBottomColor = 'transparent';
+          }
+        });
+      }
     }
 
     function initTooltip() {
@@ -1643,6 +1740,26 @@
       });
     }
 
+    function applyTheme() {
+      document.body.setAttribute('data-theme', appSettings.theme || 'default');
+      if (appSettings.darkMode) {
+        document.body.setAttribute('data-dark', 'true');
+      } else {
+        document.body.removeAttribute('data-dark');
+      }
+      // 更新弹出视口中的主题卡片选择状态
+      document.querySelectorAll('#theme-popup .theme-card').forEach(card => {
+        card.classList.toggle('active', card.dataset.theme === appSettings.theme);
+      });
+      // 更新弹出视口中的明暗按钮状态
+      const tLight = document.getElementById('theme-mode-light');
+      const tDark = document.getElementById('theme-mode-dark');
+      if (tLight && tDark) {
+        tLight.classList.toggle('active', !appSettings.darkMode);
+        tDark.classList.toggle('active', appSettings.darkMode);
+      }
+    }
+
     function loadSettings() {
       try {
         const saved = localStorage.getItem('todoApp-settings');
@@ -1676,6 +1793,8 @@
           document.getElementById('reminder-enabled').checked = appSettings.reminderEnabled !== false;
           document.getElementById('reminder-days').value = appSettings.reminderDays || 3;
         }
+        // 应用主题和明暗模式
+        applyTheme();
       } catch (e) {
         console.error('加载设置失败:', e);
       }
@@ -1693,6 +1812,7 @@
       appSettings.backupInterval = parseInt(document.getElementById('backup-interval').value) || 60;
       appSettings.reminderEnabled = document.getElementById('reminder-enabled').checked;
       appSettings.reminderDays = parseInt(document.getElementById('reminder-days').value) || 3;
+      // 布局选项实时应用
       localStorage.setItem('todoApp-settings', JSON.stringify(appSettings));
       elements.categoriesContainer.style.gridTemplateColumns = `repeat(${appSettings.layoutColumns}, 1fr)`;
       restartAutoBackup();
@@ -2905,8 +3025,70 @@
         renderCategories();
       });
       
-      elements.toggleDarkModeBtn.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
+      // 主题弹出视口
+      elements.toggleDarkModeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const popup = document.getElementById('theme-popup');
+        const isOpen = !popup.classList.contains('hidden');
+        // 关闭所有其他弹出
+        document.querySelectorAll('#theme-popup').forEach(p => p.classList.add('hidden'));
+        if (!isOpen) {
+          // 同步当前状态
+          document.querySelectorAll('#theme-popup .theme-card').forEach(card => {
+            card.classList.toggle('active', card.dataset.theme === appSettings.theme);
+          });
+          const tLight = document.getElementById('theme-mode-light');
+          const tDark = document.getElementById('theme-mode-dark');
+          if (tLight && tDark) {
+            tLight.classList.toggle('active', !appSettings.darkMode);
+            tDark.classList.toggle('active', appSettings.darkMode);
+          }
+          popup.classList.remove('hidden');
+        }
+      });
+      // 弹出视口主题卡片点击（实时预览）
+      document.querySelectorAll('#theme-popup .theme-card').forEach(card => {
+        card.addEventListener('click', function() {
+          document.querySelectorAll('#theme-popup .theme-card').forEach(c => c.classList.remove('active'));
+          this.classList.add('active');
+          document.body.setAttribute('data-theme', this.dataset.theme);
+        });
+      });
+      // 弹出视口明暗按钮点击（实时预览）
+      document.getElementById('theme-mode-light').addEventListener('click', function() {
+        document.querySelectorAll('#theme-popup .theme-mode-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        document.body.removeAttribute('data-dark');
+      });
+      document.getElementById('theme-mode-dark').addEventListener('click', function() {
+        document.querySelectorAll('#theme-popup .theme-mode-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        document.body.setAttribute('data-dark', 'true');
+      });
+      // 应用主题
+      document.getElementById('theme-apply-btn').addEventListener('click', () => {
+        const selTheme = document.querySelector('#theme-popup .theme-card.active')?.dataset.theme || 'default';
+        const selMode = document.querySelector('#theme-popup .theme-mode-btn.active')?.id === 'theme-mode-dark';
+        appSettings.theme = selTheme;
+        appSettings.darkMode = selMode;
+        applyTheme();
+        localStorage.setItem('todoApp-settings', JSON.stringify(appSettings));
+        saveDataToStorage();
+        document.getElementById('theme-popup').classList.add('hidden');
+      });
+      // 取消主题
+      document.getElementById('theme-cancel-btn').addEventListener('click', () => {
+        // 还原到已保存的主题
+        applyTheme();
+        document.getElementById('theme-popup').classList.add('hidden');
+      });
+      // 点击外部关闭弹出视口
+      document.addEventListener('click', (e) => {
+        const popup = document.getElementById('theme-popup');
+        if (!popup.classList.contains('hidden') && !e.target.closest('#theme-popup') && !e.target.closest('#theme-btn')) {
+          applyTheme(); // 还原
+          popup.classList.add('hidden');
+        }
       });
       
       elements.statsBtn.addEventListener('click', () => {
