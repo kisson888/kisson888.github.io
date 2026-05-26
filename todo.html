@@ -1089,7 +1089,7 @@
           <p class="text-sm text-gray-600 dark:text-gray-300">回收站中的任务可恢复或永久删除</p>
           <div class="flex gap-2">
             <button id="restore-all-btn" class="btn btn-secondary text-sm" onclick="if(typeof restoreAllRecycleTasks==='function'){ restoreAllRecycleTasks(); setTimeout(showRecycleModal,50); }"><i class="fa fa-recycle"></i> 恢复全部</button>
-            <button id="delete-all-btn" class="btn btn-danger text-sm" onclick="if(typeof emptyRecycleBin==='function'){ emptyRecycleBin(); setTimeout(showRecycleModal,50); }"><i class="fa fa-trash"></i> 清空回收站</button>
+            <button id="delete-all-btn" class="btn btn-danger text-sm" onclick="emptyRecycleBin();setTimeout(showRecycleModal,50)"><i class="fa fa-trash"></i> 清空回收站</button>
           </div>
         </div>
       </div>
@@ -4610,8 +4610,8 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       if (autoBackupTimer) { clearInterval(autoBackupTimer); autoBackupTimer = null; }
       if (appSettings.autoBackupEnabled) startAutoBackupTimer();
     }
-    function emptyRecycleBin() { const r = categories.find(c => c.isRecycle); r.tasks = []; saveDataToStorage(); renderCategories(); }
-    function deleteTaskForever(tid) { const r = categories.find(c => c.isRecycle); r.tasks = r.tasks.filter(t => t.id !== tid); saveDataToStorage(); }
+    function emptyRecycleBin() { const r = categories.find(c => c.id === recycleBinId); if (!r) return; r.tasks = []; saveDataToStorage(); renderCategories(); }
+    function deleteTaskForever(tid) { const r = categories.find(c => c.id === recycleBinId); if (!r) return; r.tasks = r.tasks.filter(t => t.id !== tid); saveDataToStorage(); }
     function escapeHTML(str) { return str?.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) || ''; }
 
     function refreshDedupStatus() {
