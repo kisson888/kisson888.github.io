@@ -3,7 +3,7 @@
   © 2026 AI Assisted Development
   邮箱: yongbing.yang@gmail.com
   本工具由 AI 辅助生成，仅供个人使用。
-  版本: 2026-05-26
+  版本: 2026-05-26 (Supabase 云端同步)
 --><!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <script>
     tailwind.config = {
@@ -416,6 +417,9 @@
             <button id="settings-btn" class="btn btn-secondary" title="设置" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-cog"></i></button>
             <button id="toggle-dark-mode" class="btn btn-secondary" title="深色模式" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-moon-o"></i></button>
             <button id="help-btn" class="btn btn-secondary" title="使用说明" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-question-circle"></i></button>
+            <span class="btn-sep" style="margin:0 1px"></span>
+            <button id="auth-btn" class="btn btn-secondary" title="登录" style="font-size:13px;padding:0.25rem 0.5rem"><i class="fa fa-user-circle-o"></i></button>
+            <span id="auth-email" class="text-xs text-gray-500 hidden" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
             
             <input type="file" id="file-input-json" accept=".json" class="hidden">
             <input type="file" id="file-input-excel" accept=".xlsx,.xls" class="hidden">
@@ -526,6 +530,35 @@
         <div class="flex justify-end gap-3 task-footer" style="flex-shrink:0;padding-top:10px;border-top:1px solid #e2e8f0;margin-top:4px;background:inherit">
           <button type="button" class="btn btn-secondary close-modal">取消</button>
           <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 登录/注册弹窗 -->
+  <div id="auth-modal" class="modal-backdrop hidden">
+    <div class="modal-content" style="max-width:360px">
+      <div class="flex justify-between items-center mb-4">
+        <h2 id="auth-modal-title" class="text-lg font-bold">登录</h2>
+        <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
+      </div>
+      <form id="auth-form">
+        <div class="form-group">
+          <label class="form-label">邮箱</label>
+          <input type="email" id="auth-email-input" class="form-input" required placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">密码</label>
+          <input type="password" id="auth-password-input" class="form-input" required minlength="6" placeholder="至少6位">
+        </div>
+        <div id="auth-error" class="text-xs text-red-500 mb-2 hidden"></div>
+        <div id="auth-loading" class="text-xs text-blue-500 mb-2 hidden"><i class="fa fa-spinner fa-spin"></i> 处理中...</div>
+        <div class="flex justify-end gap-3 mt-4">
+          <button type="button" id="auth-switch-btn" class="btn btn-secondary" style="font-size:11px">注册新账号</button>
+          <button type="submit" id="auth-submit-btn" class="btn btn-primary" style="min-width:80px">登录</button>
+        </div>
+        <div class="flex justify-center mt-3">
+          <button type="button" id="auth-logout-btn" class="btn btn-secondary hidden" style="font-size:11px;color:#ef4444"><i class="fa fa-sign-out"></i> 退出登录</button>
         </div>
       </form>
     </div>
@@ -810,7 +843,7 @@
         <hr class="border-gray-200 dark:border-gray-600">
         <div>
           <b class="text-gray-800 dark:text-white">关于</b>
-          <p class="mt-1">本工具由 AI 辅助生成，版本 v2026.05.23</p>
+          <p class="mt-1">本工具由 AI 辅助生成，版本 v2026.05.26</p>
           <p>作者邮箱：<a href="mailto:yongbing.yang@gmail.com" class="text-blue-600 dark:text-blue-400">yongbing.yang@gmail.com</a></p>
         </div>
       </div>
@@ -919,6 +952,16 @@
       tagFilter: []
     };
 
+    // === Supabase 配置 ===
+    const SUPABASE_URL = 'https://hyepdgiinfwgkrxgjyoa.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_PCh1pn6d36kg1XR_CSzk7w_EdzNvw6p';
+    let supabaseClient = null;
+    let currentUser = null;
+    let authInitialized = false;
+    let cloudDataVersion = 0;
+    let syncInProgress = false;
+    let pendingSync = false;
+
     const elements = {
       categoriesContainer: document.getElementById('categories-container'),
       newTaskBtn: document.getElementById('new-task-btn'),
@@ -983,7 +1026,286 @@
       tagMgmtList: document.getElementById('tag-mgmt-list')
     };
 
+    // ==================== Supabase 认证与同步 ====================
+
+    function initSupabase() {
+      try {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        authInitialized = true;
+      } catch(e) {
+        console.warn('Supabase 初始化失败:', e);
+        supabaseClient = null;
+      }
+    }
+
+    function getSupabase() {
+      if (!authInitialized) initSupabase();
+      return supabaseClient;
+    }
+
+    async function checkAuthSession() {
+      const sb = getSupabase();
+      if (!sb) return null;
+      try {
+        const { data: { session }, error } = await sb.auth.getSession();
+        if (error) throw error;
+        if (session) {
+          currentUser = session.user;
+          updateAuthUI();
+          return session.user;
+        }
+      } catch(e) {
+        console.warn('检查登录状态失败:', e);
+      }
+      return null;
+    }
+
+    async function loginUser(email, password) {
+      const sb = getSupabase();
+      if (!sb) { showAuthError('Supabase 未初始化'); return false; }
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) { showAuthError(error.message); return false; }
+      currentUser = data.user;
+      updateAuthUI();
+      hideAuthModal();
+      await pullFromCloud();
+      return true;
+    }
+
+    async function registerUser(email, password) {
+      const sb = getSupabase();
+      if (!sb) { showAuthError('Supabase 未初始化'); return false; }
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) { showAuthError(error.message); return false; }
+      showAuthError('注册成功！请检查邮箱确认后登录。', 'text-green-500');
+      return true;
+    }
+
+    async function logoutUser() {
+      const sb = getSupabase();
+      if (!sb) return;
+      await sb.auth.signOut();
+      currentUser = null;
+      updateAuthUI();
+    }
+
+    function updateAuthUI() {
+      const authBtn = document.getElementById('auth-btn');
+      const authEmail = document.getElementById('auth-email');
+      if (currentUser) {
+        authBtn.innerHTML = '<i class="fa fa-user-circle-o" style="color:#22c55e"></i>';
+        authBtn.title = '点击管理账号';
+        authEmail.textContent = currentUser.email;
+        authEmail.classList.remove('hidden');
+      } else {
+        authBtn.innerHTML = '<i class="fa fa-user-circle-o"></i>';
+        authBtn.title = '登录';
+        authEmail.textContent = '';
+        authEmail.classList.add('hidden');
+      }
+    }
+
+    function showAuthModal() {
+      document.getElementById('auth-modal').classList.remove('hidden');
+      document.getElementById('auth-error').classList.add('hidden');
+      document.getElementById('auth-loading').classList.add('hidden');
+      document.getElementById('auth-email-input').value = '';
+      document.getElementById('auth-password-input').value = '';
+      document.getElementById('auth-modal-title').textContent = '登录';
+      document.getElementById('auth-submit-btn').textContent = '登录';
+      document.getElementById('auth-switch-btn').textContent = '注册新账号';
+      document.getElementById('auth-logout-btn').classList.add('hidden');
+    }
+
+    function hideAuthModal() {
+      document.getElementById('auth-modal').classList.add('hidden');
+    }
+
+    function showAuthError(msg, cls) {
+      const el = document.getElementById('auth-error');
+      el.textContent = msg;
+      el.className = 'text-xs mb-2 ' + (cls || 'text-red-500');
+      el.classList.remove('hidden');
+    }
+
+    function showAuthLoading(show) {
+      document.getElementById('auth-loading').classList.toggle('hidden', !show);
+    }
+
+    // === 云端同步 ===
+
+    async function syncToCloud() {
+      if (!currentUser || !getSupabase()) return;
+      if (syncInProgress) { pendingSync = true; return; }
+      syncInProgress = true;
+      try {
+        const payload = {
+          title: pageTitle,
+          appSettings,
+          categories,
+          nextCategoryId,
+          nextTaskId,
+          allTags
+        };
+        cloudDataVersion++;
+
+        // upsert: 查找当前用户的数据行，有则更新，无则插入
+        const { data: existing } = await getSupabase()
+          .from('todo_data')
+          .select('id, version')
+          .eq('user_id', currentUser.id)
+          .maybeSingle();
+
+        if (existing) {
+          await getSupabase()
+            .from('todo_data')
+            .update({
+              data: payload,
+              version: cloudDataVersion,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', existing.id);
+        } else {
+          await getSupabase()
+            .from('todo_data')
+            .insert({
+              user_id: currentUser.id,
+              data: payload,
+              version: cloudDataVersion
+            });
+        }
+      } catch(e) {
+        console.warn('云端同步失败:', e);
+      } finally {
+        syncInProgress = false;
+        if (pendingSync) {
+          pendingSync = false;
+          setTimeout(syncToCloud, 1000);
+        }
+      }
+    }
+
+    async function pullFromCloud() {
+      if (!currentUser || !getSupabase()) return;
+      try {
+        const { data, error } = await getSupabase()
+          .from('todo_data')
+          .select('data, version')
+          .eq('user_id', currentUser.id)
+          .maybeSingle();
+
+        if (error) throw error;
+        if (data && data.data) {
+          cloudDataVersion = data.version || 0;
+          const cloud = data.data;
+          // 比较本地与云端的更新时间，以最新的为准
+          const localData = JSON.stringify({ categories, nextCategoryId, nextTaskId });
+          const cloudData = JSON.stringify(cloud.categories);
+          if (localData !== cloudData) {
+            // 以云端数据为准，覆盖本地
+            categories = cloud.categories || [];
+            nextCategoryId = cloud.nextCategoryId || 1;
+            nextTaskId = cloud.nextTaskId || 1;
+            if (cloud.title) {
+              pageTitle = cloud.title;
+              document.querySelector('.page-title').textContent = pageTitle;
+              document.title = pageTitle;
+            }
+            if (cloud.appSettings) {
+              appSettings = { ...appSettings, ...cloud.appSettings };
+            }
+            if (cloud.allTags) {
+              allTags = cloud.allTags;
+            }
+            saveDataToStorage();
+            renderCategories();
+            renderReminderBar();
+          }
+        } else if (data === null && categories.length > 0) {
+          // 云端没有数据，把本地数据上传
+          await syncToCloud();
+        }
+      } catch(e) {
+        console.warn('从云端拉取数据失败:', e);
+      }
+    }
+
+    function setupAuthEvents() {
+      // 登录按钮点击
+      document.getElementById('auth-btn').addEventListener('click', function() {
+        if (currentUser) {
+          // 已登录：显示登出选项
+          document.getElementById('auth-modal-title').textContent = '账号信息';
+          document.getElementById('auth-submit-btn').classList.add('hidden');
+          document.getElementById('auth-switch-btn').classList.add('hidden');
+          document.getElementById('auth-email-input').parentElement.classList.add('hidden');
+          document.getElementById('auth-password-input').parentElement.classList.add('hidden');
+          document.getElementById('auth-error').classList.add('hidden');
+          document.getElementById('auth-logout-btn').classList.remove('hidden');
+          document.getElementById('auth-modal').classList.remove('hidden');
+        } else {
+          showAuthModal();
+        }
+      });
+
+      // 登录/注册表单提交
+      document.getElementById('auth-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('auth-email-input').value.trim();
+        const password = document.getElementById('auth-password-input').value;
+        if (!email || !password) return;
+        showAuthLoading(true);
+        const isLogin = document.getElementById('auth-submit-btn').textContent === '登录';
+        if (isLogin) {
+          await loginUser(email, password);
+        } else {
+          await registerUser(email, password);
+        }
+        showAuthLoading(false);
+      });
+
+      // 切换登录/注册
+      document.getElementById('auth-switch-btn').addEventListener('click', function() {
+        const isLogin = document.getElementById('auth-submit-btn').textContent === '登录';
+        if (isLogin) {
+          document.getElementById('auth-modal-title').textContent = '注册';
+          document.getElementById('auth-submit-btn').textContent = '注册';
+          document.getElementById('auth-switch-btn').textContent = '已有账号？去登录';
+        } else {
+          document.getElementById('auth-modal-title').textContent = '登录';
+          document.getElementById('auth-submit-btn').textContent = '登录';
+          document.getElementById('auth-switch-btn').textContent = '注册新账号';
+        }
+        document.getElementById('auth-error').classList.add('hidden');
+      });
+
+      // 退出登录
+      document.getElementById('auth-logout-btn').addEventListener('click', function() {
+        logoutUser();
+        hideAuthModal();
+        // 重置弹窗状态下次打开时恢复
+        document.getElementById('auth-submit-btn').classList.remove('hidden');
+        document.getElementById('auth-switch-btn').classList.remove('hidden');
+        document.getElementById('auth-email-input').parentElement.classList.remove('hidden');
+        document.getElementById('auth-password-input').parentElement.classList.remove('hidden');
+      });
+    }
+
     function initApp() {
+      // 初始化 Supabase
+      initSupabase();
+      // 检查登录状态
+      checkAuthSession().then(function(user) {
+        if (user) {
+          currentUser = user;
+          updateAuthUI();
+          // 如果已经登录且在 loadDataFromStorage 之后才完成认证，再尝试拉取云端数据
+          setTimeout(pullFromCloud, 300);
+        }
+      });
+      // 设置认证相关事件
+      setupAuthEvents();
+      
       initModals();
       loadSettings();
       loadDataFromStorage();
@@ -2319,7 +2641,7 @@
     }
 
     function initModals() {
-      [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, document.getElementById('calendar-modal'), elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal')].forEach(m => m.classList.add('hidden'));
+      [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, document.getElementById('calendar-modal'), elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal'), document.getElementById('auth-modal')].forEach(m => m.classList.add('hidden'));
       
       elements.closeModalButtons.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -2334,7 +2656,7 @@
           } else {
             // No parent modal found, close all common modals except calendar
             if (!elements.taskListModal.classList.contains('hidden')) currentViewCatId = null;
-            [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal')].forEach(m => m.classList.add('hidden'));
+            [elements.addCategoryModal, elements.taskModal, elements.confirmModal, elements.importConfirmModal, elements.taskListModal, elements.statsModal, elements.settingsModal, elements.recycleModal, elements.helpModal, elements.exportModal, document.getElementById('dedup-modal'), document.getElementById('auth-modal')].forEach(m => m.classList.add('hidden'));
             document.body.style.overflow = '';
           }
         });
@@ -3483,6 +3805,10 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       } else {
         seedSampleData();
       }
+      // 登录后从云端拉取最新数据
+      if (currentUser) {
+        setTimeout(pullFromCloud, 500);
+      }
     }
 
     function saveDataToStorage() {
@@ -3495,6 +3821,8 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
           nextTaskId,
           allTags
         }));
+        // 同步到云端（静默执行，失败不影响本地使用）
+        syncToCloud();
       } catch(e) {}
     }
 
@@ -3765,8 +4093,8 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
   <div id="task-tooltip" class="task-tooltip hidden"></div>
   <footer class="app-footer">
     <p>yongbing.yang@gmail.com</p>
-    <p style="margin-top:2px;">本工具由 AI 辅助生成 · 仅供个人使用 · 数据仅存储于浏览器本地</p>
-    <p style="margin-top:4px;font-size:10px;color:#cbd5e1;">v2026.05.23</p>
+    <p style="margin-top:2px;">本工具由 AI 辅助生成 · 仅供个人使用 · 数据存储于浏览器本地，登录后同步至云端</p>
+    <p style="margin-top:4px;font-size:10px;color:#cbd5e1;">v2026.05.26</p>
   </footer>
 
   <div id="dedup-modal" class="modal-backdrop hidden">

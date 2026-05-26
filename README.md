@@ -4,7 +4,7 @@
 > 示例网页：https://kisson888.github.io/
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2026.05.26-green.svg)](#)
+[![Version](https://img.shields.io/badge/version-2026.05.26--supabase-blue.svg)](#)
 
 ---
 
@@ -28,6 +28,7 @@
 | **任务去重** | 自动检测重复任务，可查看详情（含部门/状态/优先级/备注）并手动勾选删除 |
 | **自动备份** | 每分钟检测变动，滚动保留 N 份 JSON 备份（份数/频次/存储键可配） |
 | **浏览器通知** | 到期任务推送通知（需授予权限），支持多账户 |
+| **云端同步** | 邮箱登录后自动同步数据到 Supabase 云端，多设备共享数据 |
 | **深色模式** | 一键切换，全界面适配 |
 | **搜索筛选** | 全局搜索 + 按状态筛选 + 按标签筛选 |
 | **布局设置** | 每行 3 / 4 区块可选，区块任务数、分页数可配 |
@@ -87,7 +88,8 @@ cp todo.html /usr/share/nginx/html/
 | 图标 | [Font Awesome 4.7](https://fontawesome.com/v4/) (CDN) |
 | 拖拽排序 | [SortableJS](https://sortablejs.github.io/Sortable/) (CDN) |
 | Excel 导入导出 | [SheetJS (xlsx)](https://sheetjs.com/) (CDN) |
-| 数据存储 | 浏览器 `localStorage` |
+| 数据存储 | 浏览器 `localStorage` + Supabase 云端同步 |
+| 云端后端 | [Supabase](https://supabase.com/) (PostgreSQL + Auth, CDN SDK) |
 
 **所有依赖均通过 CDN 加载，无需 `npm install`。**
 
@@ -108,8 +110,10 @@ cp todo.html /usr/share/nginx/html/
 
 ## 🔒 数据隐私
 
-- 所有数据存储在用户浏览器的 `localStorage` 中
-- 不会上传到任何服务器
+- 数据默认存储在浏览器 `localStorage` 中
+- **可选**登录后同步至 Supabase 云端（PostgreSQL 加密存储）
+- 隐私提示：云端数据存储于 Supabase 东京/新加坡节点，使用 Row Level Security 保护
+- 未登录状态完全离线使用，数据不上传
 - 导出/导入功能可备份到本地文件
 - 无追踪、无广告、无第三方数据收集
 
@@ -175,12 +179,24 @@ cp todo.html /usr/share/nginx/html/
 - 点击顶部 ♻ 图标打开回收站
 - 可逐条恢复/删除，或一键恢复全部/清空
 
+### 云端同步
+1. 点击导航栏右侧 👤 图标打开登录弹窗
+2. 已有账号 → 输入邮箱密码登录
+3. 未注册 → 点击「注册新账号」创建
+4. 登录后导航栏显示绿色用户图标 + 邮箱
+5. 数据自动同步到 Supabase 云端
+6. 换设备打开页面 → 登录同一账号 → 数据自动拉取
+7. 断网时本地照常使用，联网后自动同步
+
 ---
 
 ## 📋 更新日志
 
 ### v2026.05.26
 
+- **🚀 云端同步（Supabase）**：邮箱注册登录，数据自动同步到云端，多设备共享
+- **离线+云端双模式**：有网自动同步，断网本地照常使用，恢复联网自动补传
+- **登录认证**：用户头像按钮登录/注册/退出，邮箱显示在导航栏
 - **排序全面增强**：全部任务视图点击表头排序（状态/优先级/标题/区块/部门/截止日期），跨页连续排序
 - **统计报表升级**：趋势图、饼图、逾期分析、时间范围筛选
 - **导出增强**：CSV（含 BOM Excel 兼容）+ PDF 打印样式导出，支持序号列
