@@ -1447,12 +1447,11 @@
     // === 通知 Toast ===
 
     function showToast(message, type) {
-      type = type || 'info';
       const toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:10001;padding:6px 14px;border-radius:6px;color:rgba(255,255,255,0.85);font-size:12px;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,0.12);transition:opacity 0.3s;pointer-events:none';
+      toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:10001;padding:4px 10px;border-radius:4px;color:rgba(255,255,255,0.7);font-size:11px;background:rgba(160,160,160,0.4);box-shadow:0 1px 4px rgba(0,0,0,0.08);transition:opacity 0.3s;pointer-events:none';
       toast.textContent = message;
       document.body.appendChild(toast);
-      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2500);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2000);
     }
 
     // === 合并同步：按 ID + updatedAt 逐项合并，不丢数据 ===
@@ -1682,12 +1681,9 @@
       });
 
       // 退出登录
-      document.getElementById('auth-logout-btn').addEventListener('click', function() {
-        logoutUser();
+      document.getElementById('auth-logout-btn').addEventListener('click', async function() {
+        await logoutUser();
         hideAuthModal();
-        // 重置弹窗状态下次打开时恢复
-        showAuthModal();
-        // 恢复被禁用的邮箱输入框
         document.getElementById('auth-email-input').removeAttribute('disabled');
       });
 
