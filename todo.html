@@ -1088,8 +1088,8 @@
         <div class="mb-4 flex justify-between items-center">
           <p class="text-sm text-gray-600 dark:text-gray-300">回收站中的任务可恢复或永久删除</p>
           <div class="flex gap-2">
-            <button id="restore-all-btn" class="btn btn-secondary text-sm"><i class="fa fa-recycle"></i> 恢复全部</button>
-            <button id="delete-all-btn" class="btn btn-danger text-sm"><i class="fa fa-trash"></i> 清空回收站</button>
+            <button id="restore-all-btn" class="btn btn-secondary text-sm" onclick="if(typeof restoreAllRecycleTasks==='function'){ restoreAllRecycleTasks(); setTimeout(showRecycleModal,50); }"><i class="fa fa-recycle"></i> 恢复全部</button>
+            <button id="delete-all-btn" class="btn btn-danger text-sm" onclick="if(typeof emptyRecycleBin==='function'){ emptyRecycleBin(); setTimeout(showRecycleModal,50); }"><i class="fa fa-trash"></i> 清空回收站</button>
           </div>
         </div>
       </div>
