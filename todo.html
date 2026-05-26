@@ -1854,7 +1854,7 @@
       let defaultCat = categories.find(c => c.name === DEFAULT_CATEGORY_NAME);
       if (!defaultCat) {
         const newCat = {
-          id: nextCategoryId++,
+          id: crypto.randomUUID(),
           name: DEFAULT_CATEGORY_NAME,
           tasks: [],
           isDefault: true
@@ -1873,7 +1873,7 @@
       let recycleBin = categories.find(c => c.name === RECYCLE_BIN_NAME);
       if (!recycleBin) {
         const newBin = {
-          id: nextCategoryId++,
+          id: crypto.randomUUID(),
           name: RECYCLE_BIN_NAME,
           tasks: [],
           isRecycle: true
@@ -1893,7 +1893,7 @@
       let archive = categories.find(c => c.name === ARCHIVE_NAME);
       if (!archive) {
         const newArchive = {
-          id: nextCategoryId++,
+          id: crypto.randomUUID(),
           name: ARCHIVE_NAME,
           tasks: [],
           isArchive: true
@@ -1905,13 +1905,13 @@
     }
 
     function moveTaskToArchive(cid, tid) {
-      const cat = categories.find(c => c.id === +cid);
+      const cat = categories.find(c => c.id === cid);
       const archive = categories.find(c => c.isArchive);
       if (!cat || !archive || cat.isRecycle || cat.isArchive) return;
-      const task = cat.tasks.find(t => t.id === +tid);
+      const task = cat.tasks.find(t => t.id === tid);
       if (task && task.status === 'completed') {
         touchItem(task);
-        cat.tasks = cat.tasks.filter(t => t.id !== +tid);
+        cat.tasks = cat.tasks.filter(t => t.id !== tid);
         archive.tasks.push(task);
         saveDataToStorage();
         renderCategories();
@@ -1954,7 +1954,7 @@
       
       elements.taskListContent.querySelectorAll('.restore-archive-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          restoreTaskFromArchive(parseInt(btn.dataset.taskid));
+          restoreTaskFromArchive(btn.dataset.taskid);
           elements.taskListModal.classList.add('hidden');
           document.body.style.overflow = '';
         });
@@ -2077,7 +2077,7 @@
           
           const newOrder = [];
           document.querySelectorAll('.category-card.draggable').forEach(card => {
-            const id = parseInt(card.dataset.id);
+            const id = card.dataset.id;
             const cat = normalCats.find(c => c.id === id);
             if(cat) newOrder.push(cat);
           });
@@ -2389,14 +2389,14 @@
       
       elements.recycleContent.querySelectorAll('.restore-task-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          restoreTaskFromRecycle(parseInt(btn.dataset.taskid));
+          restoreTaskFromRecycle(btn.dataset.taskid);
           showRecycleModal();
         });
       });
       
       elements.recycleContent.querySelectorAll('.delete-forever-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          deleteTaskForever(parseInt(btn.dataset.taskid));
+          deleteTaskForever(btn.dataset.taskid);
           showRecycleModal();
         });
       });
@@ -2442,16 +2442,16 @@
     }
 
     function moveTaskToRecycle(cid, tid) {
-      const cat = categories.find(c => c.id === +cid);
+      const cat = categories.find(c => c.id === cid);
       const recycleBin = categories.find(c => c.id === recycleBinId);
       if (!cat || !recycleBin || cat.isRecycle || cat.isArchive) return;
       
-      const task = cat.tasks.find(t => t.id === +tid);
+      const task = cat.tasks.find(t => t.id === tid);
       if (task) {
         touchItem(task);
         task.originalCategory = cat.name;
         task.originalCategoryId = cat.id;
-        cat.tasks = cat.tasks.filter(t => t.id !== +tid);
+        cat.tasks = cat.tasks.filter(t => t.id !== tid);
         recycleBin.tasks.push(task);
         saveDataToStorage();
         renderCategories();
@@ -2485,7 +2485,7 @@
         var stChecked = modal.querySelectorAll('.export-status-cb:checked');
         var prChecked = modal.querySelectorAll('.export-pri-cb:checked');
         var cnt = 0;
-        var catIds = Array.from(catChecked).map(function(cb) { return parseInt(cb.value); });
+        var catIds = Array.from(catChecked).map(function(cb) { return cb.value; });
         var stVals = Array.from(stChecked).map(function(cb) { return cb.value; });
         var prVals = Array.from(prChecked).map(function(cb) { return cb.value; });
         categories.forEach(function(cat) {
@@ -2516,7 +2516,7 @@
         var catChecked = modal.querySelectorAll('.export-cat-cb:checked');
         var stChecked = modal.querySelectorAll('.export-status-cb:checked');
         var prChecked = modal.querySelectorAll('.export-pri-cb:checked');
-        var catIds = Array.from(catChecked).map(function(cb) { return parseInt(cb.value); });
+        var catIds = Array.from(catChecked).map(function(cb) { return cb.value; });
         var stVals = Array.from(stChecked).map(function(cb) { return cb.value; });
         var prVals = Array.from(prChecked).map(function(cb) { return cb.value; });
         exportFilteredData(fmt ? fmt.value : 'json', catIds, stVals, prVals);
@@ -2749,12 +2749,12 @@
     }
 
     function applyCategoryFilter(card, status) {
-      const cat = categories.find(c => c.id === parseInt(card.dataset.id));
+      const cat = categories.find(c => c.id === card.dataset.id);
       if (!cat) return;
       const tasks = card.querySelectorAll('.task-card');
       tasks.forEach(tc => {
         if (status === 'all') { tc.style.display = ''; return; }
-        const task = cat.tasks.find(t => t.id === parseInt(tc.dataset.id));
+        const task = cat.tasks.find(t => t.id === tc.dataset.id);
         tc.style.display = (task && task.status === status) ? '' : 'none';
       });
       const addBtns = card.querySelectorAll('.add-task');
@@ -3019,9 +3019,9 @@
           filter: '.add-task, .empty-hint, .recycle .task-card',
           preventOnFilter: true,
           onEnd: function(evt) {
-            const taskId = parseInt(evt.item.dataset.id);
-            const fromCatId = parseInt(evt.from.dataset.cat);
-            const toCatId = parseInt(evt.to.dataset.cat);
+            const taskId = evt.item.dataset.id;
+            const fromCatId = evt.from.dataset.cat;
+            const toCatId = evt.to.dataset.cat;
             
             const fromCat = categories.find(c => c.id === fromCatId);
             if (fromCat?.isRecycle || fromCat?.isArchive) return;
@@ -3035,7 +3035,7 @@
 
       document.querySelectorAll('.add-task').forEach(btn => {
         btn.addEventListener('click', () => {
-          const cid = parseInt(btn.dataset.cat);
+          const cid = btn.dataset.cat;
           openTaskModal(null, cid);
           document.body.style.overflow = 'hidden';
         });
@@ -3044,14 +3044,14 @@
       document.querySelectorAll('.delete-category').forEach(btn => {
         btn.addEventListener('click', () => {
           const card = btn.closest('.category-card');
-          const cid = parseInt(card.dataset.id);
+          const cid = card.dataset.id;
           showConfirmModal(cid, 'category');
         });
       });
 
       document.querySelectorAll('.view-tasks-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          const cid = parseInt(btn.dataset.cat);
+          const cid = btn.dataset.cat;
           showTaskListModal(cid);
         });
       });
@@ -3059,8 +3059,8 @@
       document.querySelectorAll('.task-card').forEach(card => {
         card.addEventListener('click', (e) => {
           if (e.target.closest('.delete-task, .restore-task, .task-checkbox, .edit-task, button')) return;
-          const tid = parseInt(card.dataset.id);
-          const cid = parseInt(card.dataset.cid);
+          const tid = card.dataset.id;
+          const cid = card.dataset.cid;
           openTaskModal(tid, cid);
           document.body.style.overflow = 'hidden';
         });
@@ -3070,8 +3070,8 @@
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const taskEl = btn.closest('.task-card');
-          const tid = parseInt(taskEl.dataset.id);
-          const cid = parseInt(taskEl.dataset.cid);
+          const tid = taskEl.dataset.id;
+          const cid = taskEl.dataset.cid;
           showConfirmModal({cid, tid}, 'task');
         });
       });
@@ -3080,8 +3080,8 @@
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const taskEl = btn.closest('.task-card');
-          const tid = parseInt(taskEl.dataset.id);
-          const cid = parseInt(taskEl.dataset.cid);
+          const tid = taskEl.dataset.id;
+          const cid = taskEl.dataset.cid;
           moveTaskToArchive(cid, tid);
         });
       });
@@ -3090,7 +3090,7 @@
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const taskEl = btn.closest('.task-card');
-          const tid = parseInt(taskEl.dataset.id);
+          const tid = taskEl.dataset.id;
           restoreTaskFromArchive(tid);
         });
       });
@@ -3098,7 +3098,7 @@
       document.querySelectorAll('.restore-task').forEach(btn => {
         btn.addEventListener('click', () => {
           const taskEl = btn.closest('.task-card');
-          const tid = parseInt(taskEl.dataset.id);
+          const tid = taskEl.dataset.id;
           restoreTaskFromRecycle(tid);
         });
       });
@@ -3106,8 +3106,8 @@
       document.querySelectorAll('.task-checkbox').forEach(cb => {
         cb.addEventListener('change', () => {
           const taskEl = cb.closest('.task-card');
-          const tid = parseInt(taskEl.dataset.id);
-          const cid = parseInt(taskEl.dataset.cid);
+          const tid = taskEl.dataset.id;
+          const cid = taskEl.dataset.cid;
           toggleTaskComplete(tid, cid);
         });
       });
@@ -3118,7 +3118,7 @@
           const status = this.dataset.status;
           const card = this.closest('.category-card');
           if (!card) return;
-          const cid = parseInt(card.dataset.id);
+          const cid = card.dataset.id;
           categoryFilters[cid] = status;
           document.querySelectorAll('.status-tag').forEach(t => t.classList.remove('active'));
           this.classList.add('active');
@@ -3131,7 +3131,7 @@
         if(cat.classList.contains('defaultCat')) return;
         
         h3.addEventListener('blur', () => {
-          const cid = parseInt(cat.dataset.id);
+          const cid = cat.dataset.id;
           const category = categories.find(c => c.id === cid);
           if (category && h3.textContent.trim()) {
             category.name = h3.textContent.trim();
@@ -3147,7 +3147,7 @@
       // Sort: bind directly to each .sort-opt
       document.querySelectorAll('.sort-opt').forEach(function(el) {
         el.onclick = function() {
-          var cid = parseInt(this.getAttribute('data-cid'));
+          var cid = this.getAttribute('data-cid');
           var sort = this.getAttribute('data-sort');
           var cat = null;
           for (var ci = 0; ci < categories.length; ci++) {
@@ -3194,7 +3194,7 @@
         const name = elements.categoryNameInput.value.trim();
         if (name) {
           const newCat = {
-            id: nextCategoryId++,
+            id: crypto.randomUUID(),
             name: name,
             tasks: []
           };
@@ -3379,9 +3379,9 @@
     }
 
     function saveTask() {
-      const id = elements.taskIdInput.value ? parseInt(elements.taskIdInput.value) : null;
-      const oldCatId = parseInt(elements.taskOldCategoryIdInput.value);
-      const newCatId = parseInt(elements.taskCategorySelect.value);
+      const id = elements.taskIdInput.value ? elements.taskIdInput.value : null;
+      const oldCatId = elements.taskOldCategoryIdInput.value;
+      const newCatId = elements.taskCategorySelect.value;
       const title = elements.taskTitleInput.value.trim();
       const dept = elements.taskDeptInput.value.trim();
       const description = elements.taskDescriptionInput.value.trim();
@@ -3419,7 +3419,7 @@
         }
       } else {
         const newTask = {
-          id: nextTaskId++,
+          id: crypto.randomUUID(),
           title: title,
           dept: dept,
           description: description,
@@ -3529,7 +3529,7 @@
       const cat = categories.find(c => c.id === catId);
       if (!cat) return;
       const recurrenceTask = {
-        id: nextTaskId++,
+        id: crypto.randomUUID(),
         title: originalTask.title,
         dept: originalTask.dept || '',
         description: originalTask.description || '',
@@ -3624,7 +3624,7 @@
               otherCats.forEach(oc => { h += `<button class="dd-item w-full text-left px-3 py-1.5 text-xs hover:bg-gray-100 dark:hover:bg-gray-600" data-val="${oc.id}">${escapeHTML(oc.name)}</button>`; });
               return h;
             }, (val) => {
-              batchMoveTasks([...batchSelected], catId, parseInt(val));
+              batchMoveTasks([...batchSelected], catId, val);
               batchSelected = new Set();
               renderPage(page);
               renderCategories();
@@ -3780,7 +3780,7 @@
         
         elements.taskListContent.querySelectorAll('.batch-cb').forEach(cb => {
           cb.addEventListener('change', function() {
-            const tid = parseInt(this.dataset.tid);
+            const tid = this.dataset.tid;
             this.checked ? batchSelected.add(tid) : batchSelected.delete(tid);
             refreshBatchBar(all);
             const pc = document.getElementById('batch-check-page');
@@ -4165,16 +4165,15 @@
       
       function batchDo(action, val) {
         Object.keys(sel).forEach(function(tid) {
-          tid = parseInt(tid);
           var cat = categories.find(function(c) { return c.tasks.some(function(t) { return t.id === tid; }); });
           if (!cat || cat.isRecycle || cat.isArchive) return;
           var task = cat.tasks.find(function(t) { return t.id === tid; });
           if (!task) return;
           if (action === 'delete') { deleteTask(cat.id, tid); }
-          else if (action === 'status') { if (task.status !== 'completed' && val === 'completed') task.completedAt = new Date().toISOString(); task.status = val; }
-          else if (action === 'priority') { task.priority = val; }
-          else if (action === 'date') { task.dueDate = val; }
-          else if (action === 'move') { var tc = categories.find(function(c) { return c.id === parseInt(val); }); if (tc && !tc.isRecycle) { cat.tasks = cat.tasks.filter(function(t) { return t.id !== tid; }); tc.tasks.push(task); } }
+          else if (action === 'status') { if (task.status !== 'completed' && val === 'completed') task.completedAt = new Date().toISOString(); task.status = val; touchItem(task); }
+          else if (action === 'priority') { task.priority = val; touchItem(task); }
+          else if (action === 'date') { task.dueDate = val; touchItem(task); }
+          else if (action === 'move') { var tc = categories.find(function(c) { return c.id === val; }); if (tc && !tc.isRecycle) { cat.tasks = cat.tasks.filter(function(t) { return t.id !== tid; }); tc.tasks.push(task); touchItem(task); } }
         });
         saveDataToStorage();
       }
@@ -4249,7 +4248,7 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
         var pc = document.getElementById('ba2-cp');
         if (pc) pc.onchange = function() { if (this.checked) { list.forEach(function(t){sel[t.id]=true;}); } else { list.forEach(function(t){delete sel[t.id];}); } renderP(page); };
         document.querySelectorAll('.ba2-cb').forEach(function(cb) {
-          cb.onchange = function() { var tid = parseInt(this.getAttribute('data-tid')); if (this.checked) sel[tid]=true; else delete sel[tid]; refreshBar(list); var p = document.getElementById('ba2-cp'); if (p) p.checked = list.every(function(t){return sel[t.id];}); };
+          cb.onchange = function() { var tid = this.getAttribute('data-tid'); if (this.checked) sel[tid]=true; else delete sel[tid]; refreshBar(list); var p = document.getElementById('ba2-cp'); if (p) p.checked = list.every(function(t){return sel[t.id];}); };
         });
         document.querySelectorAll('.page-btn').forEach(function(b) { b.onclick = function() { renderP(parseInt(this.getAttribute('data-p'))); }; });
         document.querySelectorAll('.edit-list-2').forEach(function(b, idx) { b.onclick = function() { var t = list[idx]; openTaskModal(t.id, t.catId); document.body.style.overflow = 'hidden'; }; });
@@ -4274,10 +4273,6 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       if (isAppend) {
         var existingCatNames = {};
         categories.forEach(function(c) { existingCatNames[c.name] = c; });
-        var maxCid = categories.reduce(function(m, c) { return Math.max(m, c.id); }, 0);
-        var maxTid = categories.reduce(function(m, c) { 
-          return Math.max(m, c.tasks.reduce(function(mm, t) { return Math.max(mm, t.id); }, 0));
-        }, 0);
         newData.forEach(function(newCat) {
           if (newCat.isRecycle || newCat.isDefault && newCat.name === '默认') return;
           if (existingCatNames[newCat.name]) {
@@ -4286,22 +4281,23 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
               if (skipDupes && target.tasks.some(function(ex) { return ex.title === t.title && ex.dueDate === t.dueDate; })) {
                 return; // skip duplicate
               }
-              target.tasks.push(Object.assign({}, t, { id: ++maxTid }));
+              target.tasks.push(Object.assign({}, t, { id: crypto.randomUUID() }));
             });
           } else {
-            var newC = { id: ++maxCid, name: newCat.name, tasks: [] };
+            var newC = { id: crypto.randomUUID(), name: newCat.name, tasks: [] };
             (newCat.tasks || []).forEach(function(t) {
-              newC.tasks.push(Object.assign({}, t, { id: ++maxTid }));
+              newC.tasks.push(Object.assign({}, t, { id: crypto.randomUUID() }));
             });
             var recycleIdx = categories.findIndex(function(c) { return c.isRecycle; });
             categories.splice(recycleIdx, 0, newC);
             existingCatNames[newC.name] = newC;
           }
         });
-        nextTaskId = maxTid + 1;
-        nextCategoryId = maxCid + 1;
+        // 导入完成后规范化 ID（老数据数字 ID → 字符串）
+        normalizeIds();
       } else {
         categories = newData;
+        normalizeIds();
         nextCategoryId = newNextCid;
         nextTaskId = newNextTid;
       }
@@ -4309,7 +4305,7 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       let defaultCat = categories.find(c => c.name === DEFAULT_CATEGORY_NAME);
       if (!defaultCat) {
         defaultCat = {
-          id: nextCategoryId++,
+          id: crypto.randomUUID(),
           name: DEFAULT_CATEGORY_NAME,
           tasks: [],
           isDefault: true
@@ -4322,7 +4318,7 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       let recycleBin = categories.find(c => c.name === RECYCLE_BIN_NAME);
       if (!recycleBin) {
         recycleBin = {
-          id: nextCategoryId++,
+          id: crypto.randomUUID(),
           name: RECYCLE_BIN_NAME,
           tasks: [],
           isRecycle: true
@@ -4386,6 +4382,17 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       saveDataToStorage();
     }
 
+    function normalizeIds() {
+      // 将所有分类和任务的 ID 统一转为字符串，确保数字 ID 和 UUID 兼容
+      categories.forEach(cat => {
+        cat.id = String(cat.id);
+        (cat.tasks || []).forEach(task => {
+          task.id = String(task.id);
+          if (task.originalCategoryId) task.originalCategoryId = String(task.originalCategoryId);
+        });
+      });
+    }
+
     function loadDataFromStorage() {
       const d = localStorage.getItem('todoApp-backup');
       if (d) {
@@ -4393,6 +4400,7 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
           const data = JSON.parse(d);
           if (data.categories && data.categories.length > 0) {
             categories = data.categories || [];
+            normalizeIds();
             nextCategoryId = data.nextCategoryId || 1;
             nextTaskId = data.nextTaskId || 1;
             if (data.title) { pageTitle = data.title; document.querySelector('.page-title').textContent = pageTitle; }
@@ -4405,6 +4413,8 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       } else {
         seedSampleData();
       }
+      // 确保所有 ID 一致为字符串（新数据 UUID，老数据数字→字符串转换）
+      normalizeIds();
       // 登录后从云端拉取最新数据
       if (currentUser) {
         setTimeout(pullFromCloud, 500);
@@ -4657,8 +4667,8 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       var cbs = document.querySelectorAll('#dedup-modal .dedup-cb:checked');
       var removed = 0;
       cbs.forEach(function(cb) {
-        var catId = parseInt(cb.dataset.cat);
-        var tid = parseInt(cb.dataset.tid);
+        var catId = cb.dataset.cat;
+        var tid = cb.dataset.tid;
         var cat = categories.find(function(c) { return c.id === catId; });
         if (cat) {
           cat.tasks = cat.tasks.filter(function(t) { return t.id !== tid; });
