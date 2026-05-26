@@ -1364,6 +1364,7 @@
         allTags = [];
         renderCategories();
       }
+      localStorage.removeItem('todo_sync_done');
 
       await sb.auth.signOut();
       currentUser = null;
@@ -1573,7 +1574,7 @@
 
       // 如果本地有数据，询问用户是否同步合并
       const localTaskCount = categories.reduce((sum, c) => sum + (c.tasks || []).length, 0);
-      if (localTaskCount > 0) {
+      if (localTaskCount > 0 && !localStorage.getItem('todo_sync_done')) {
         let action = null;
         while (action === null) {
           // 弹窗一：同步合并 or 不与云端合并
@@ -1609,6 +1610,7 @@
           }
         }
         // action 为 'merge' 走合并，'cloud' 走云端覆盖
+        localStorage.setItem('todo_sync_done', '1');
       }
       try {
         const { data, error } = await getSupabase()
