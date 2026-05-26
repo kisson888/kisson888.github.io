@@ -1432,6 +1432,42 @@
       }
     }
 
+    // === 合并同步：按 ID + updatedAt 逐项合并，不丢数据 ===
+
+    function mergeTasks(localTasks, cloudTasks) {
+      const localMap = {}, cloudMap = {};
+      localTasks.forEach(t => localMap[t.id] = t);
+      cloudTasks.forEach(t => cloudMap[t.id] = t);
+      const allIds = new Set([...Object.keys(localMap), ...Object.keys(cloudMap)]);
+      const merged = [];
+      allIds.forEach(id => {
+        const l = localMap[id], c = cloudMap[id];
+        if (!l) { merged.push(c); return; }
+        if (!c) { merged.push(l); return; }
+        merged.push((c.updatedAt || c.createdAt || '0') > (l.updatedAt || l.createdAt || '0') ? c : l);
+      });
+      return merged;
+    }
+
+    function mergeCategories(localCats, cloudCats) {
+      const localMap = {}, cloudMap = {};
+      localCats.forEach(c => localMap[c.id] = c);
+      cloudCats.forEach(c => cloudMap[c.id] = c);
+      const allIds = new Set([...Object.keys(localMap), ...Object.keys(cloudMap)]);
+      const merged = [];
+      allIds.forEach(id => {
+        const l = localMap[id], c = cloudMap[id];
+        if (!l) { merged.push(c); return; }
+        if (!c) { merged.push(l); return; }
+        // 两个分类都存在，按分类的更新时间决定用谁的元数据，但任务按 ID 逐项合并
+        const useCloud = (c.updatedAt || c.createdAt || '0') > (l.updatedAt || l.createdAt || '0');
+        const winner = useCloud ? { ...c } : { ...l };
+        winner.tasks = mergeTasks(l.tasks || [], c.tasks || []);
+        merged.push(winner);
+      });
+      return merged;
+    }
+
     async function pullFromCloud() {
       if (!currentUser || !getSupabase()) return;
       try {
@@ -1445,29 +1481,32 @@
         if (data && data.data) {
           cloudDataVersion = data.version || 0;
           const cloud = data.data;
-          // 比较本地与云端的更新时间，以最新的为准
-          const localData = JSON.stringify({ categories, nextCategoryId, nextTaskId });
-          const cloudData = JSON.stringify(cloud.categories);
-          if (localData !== cloudData) {
-            // 以云端数据为准，覆盖本地
-            categories = cloud.categories || [];
-            nextCategoryId = cloud.nextCategoryId || 1;
-            nextTaskId = cloud.nextTaskId || 1;
-            if (cloud.title) {
-              pageTitle = cloud.title;
-              document.querySelector('.page-title').textContent = pageTitle;
-              document.title = pageTitle;
-            }
-            if (cloud.appSettings) {
-              appSettings = { ...appSettings, ...cloud.appSettings };
-            }
-            if (cloud.allTags) {
-              allTags = cloud.allTags;
-            }
-            saveDataToStorage();
-            renderCategories();
-            renderReminderBar();
+
+          // 逐项合并：任务按 updatedAt，分类按 updatedAt，ID 自增取大值
+          backfillUpdatedAt();
+          if (cloud.categories) {
+            categories = mergeCategories(categories, cloud.categories);
           }
+          nextCategoryId = Math.max(nextCategoryId, cloud.nextCategoryId || 1);
+          nextTaskId = Math.max(nextTaskId, cloud.nextTaskId || 1);
+          if (cloud.title) {
+            pageTitle = cloud.title;
+            document.querySelector('.page-title').textContent = pageTitle;
+            document.title = pageTitle;
+          }
+          if (cloud.appSettings) {
+            appSettings = { ...appSettings, ...cloud.appSettings };
+          }
+          if (cloud.allTags) {
+            // 合并标签：以本地为主，补全云端独有的
+            const localTagNames = new Set(allTags.map(t => t.name));
+            cloud.allTags.forEach(t => {
+              if (!localTagNames.has(t.name)) allTags.push(t);
+            });
+          }
+          saveDataToStorage();
+          renderCategories();
+          renderReminderBar();
         } else if (data === null && categories.length > 0) {
           // 云端没有数据，把本地数据上传
           await syncToCloud();
@@ -1742,6 +1781,7 @@
           tasks: [],
           isDefault: true
         };
+        touchItem(newCat);
         categories.push(newCat);
         defaultCategoryId = newCat.id;
         saveDataToStorage();
@@ -1760,12 +1800,14 @@
           tasks: [],
           isRecycle: true
         };
+        touchItem(newBin);
         categories.push(newBin);
         recycleBinId = newBin.id;
         saveDataToStorage();
       } else {
         recycleBinId = recycleBin.id;
         recycleBin.isRecycle = true;
+        touchItem(recycleBin);
       }
     }
 
@@ -1778,6 +1820,7 @@
           tasks: [],
           isArchive: true
         };
+        touchItem(newArchive);
         categories.push(newArchive);
         saveDataToStorage();
       }
@@ -1789,6 +1832,7 @@
       if (!cat || !archive || cat.isRecycle || cat.isArchive) return;
       const task = cat.tasks.find(t => t.id === +tid);
       if (task && task.status === 'completed') {
+        touchItem(task);
         cat.tasks = cat.tasks.filter(t => t.id !== +tid);
         archive.tasks.push(task);
         saveDataToStorage();
@@ -1803,6 +1847,7 @@
       if (!task) return;
       let targetCat = categories.find(c => c.isDefault);
       archive.tasks = archive.tasks.filter(t => t.id !== tid);
+      touchItem(task);
       targetCat.tasks.push(task);
       saveDataToStorage();
       renderCategories();
@@ -2293,6 +2338,7 @@
       
       delete task.originalCategory;
       delete task.originalCategoryId;
+      touchItem(task);
       recycleBin.tasks = recycleBin.tasks.filter(t => t.id !== taskId);
       targetCat.tasks.push(task);
       
@@ -2308,6 +2354,7 @@
         let targetCat = categories.find(c => c.id === task.originalCategoryId && !c.isRecycle) || defaultCat;
         delete task.originalCategory;
         delete task.originalCategoryId;
+        touchItem(task);
         targetCat.tasks.push(task);
       });
       
@@ -2323,6 +2370,7 @@
       
       const task = cat.tasks.find(t => t.id === +tid);
       if (task) {
+        touchItem(task);
         task.originalCategory = cat.name;
         task.originalCategoryId = cat.id;
         cat.tasks = cat.tasks.filter(t => t.id !== +tid);
@@ -3009,6 +3057,7 @@
           const category = categories.find(c => c.id === cid);
           if (category && h3.textContent.trim()) {
             category.name = h3.textContent.trim();
+            touchItem(category);
             saveDataToStorage();
           } else {
             h3.textContent = category.name;
@@ -3033,6 +3082,7 @@
             cat.sortBy = sort;
             cat.sortOrder = 'asc';
           }
+          touchItem(cat);
           saveDataToStorage();
           renderCategories();
         };
@@ -3065,11 +3115,13 @@
         e.preventDefault();
         const name = elements.categoryNameInput.value.trim();
         if (name) {
-          categories.push({
+          const newCat = {
             id: nextCategoryId++,
             name: name,
             tasks: []
-          });
+          };
+          touchItem(newCat);
+          categories.push(newCat);
           saveDataToStorage();
           renderCategories();
           elements.addCategoryModal.classList.add('hidden');
@@ -3280,6 +3332,7 @@
           if (task.recurrence) createNextRecurrence(task, oldCatId);
         }
         task.status = status;
+        touchItem(task);
         
         if (oldCatId !== newCatId) {
           oldCat.tasks = oldCat.tasks.filter(t => t.id !== id);
@@ -3299,6 +3352,7 @@
           status: status,
           createdAt: new Date().toISOString()
         };
+        touchItem(newTask);
         const newCat = categories.find(c => c.id === newCatId);
         newCat.tasks.push(newTask);
       }
@@ -3335,6 +3389,7 @@
       
       if (cat && !cat.isDefault && !cat.isRecycle) {
         cat.tasks.forEach(task => {
+          touchItem(task);
           task.originalCategory = cat.name;
           task.originalCategoryId = cat.id;
           recycleBin.tasks.push(task);
@@ -3356,6 +3411,7 @@
       if (fromCat && toCat && !fromCat.isRecycle) {
         const task = fromCat.tasks.find(t => t.id === taskId);
         if (task) {
+          touchItem(task);
           fromCat.tasks = fromCat.tasks.filter(t => t.id !== taskId);
           toCat.tasks.push(task);
           saveDataToStorage();
@@ -3376,6 +3432,7 @@
             createNextRecurrence(task, catId);
           }
         }
+        touchItem(task);
         saveDataToStorage();
         renderCategories();
       }
@@ -3393,7 +3450,7 @@
       
       const cat = categories.find(c => c.id === catId);
       if (!cat) return;
-      cat.tasks.push({
+      const recurrenceTask = {
         id: nextTaskId++,
         title: originalTask.title,
         dept: originalTask.dept || '',
@@ -3404,7 +3461,9 @@
         recurrence: originalTask.recurrence,
         status: 'pending',
         createdAt: new Date().toISOString()
-      });
+      };
+      touchItem(recurrenceTask);
+      cat.tasks.push(recurrenceTask);
     }
 
     function showTaskListModal(catId) {
@@ -3688,6 +3747,7 @@
         const idx = fromCat.tasks.findIndex(t => t.id === tid);
         if (idx !== -1) {
           const [task] = fromCat.tasks.splice(idx, 1);
+          touchItem(task);
           toCat.tasks.push(task);
         }
       });
@@ -3704,6 +3764,7 @@
             task.completedAt = new Date().toISOString();
           }
           task.status = newStatus;
+          touchItem(task);
         }
       });
       saveDataToStorage();
@@ -3714,7 +3775,7 @@
       if (!cat) return;
       taskIds.forEach(tid => {
         const task = cat.tasks.find(t => t.id === tid);
-        if (task) task.dueDate = newDate;
+        if (task) { task.dueDate = newDate; touchItem(task); }
       });
       saveDataToStorage();
     }
@@ -3724,7 +3785,7 @@
       if (!cat) return;
       taskIds.forEach(tid => {
         const task = cat.tasks.find(t => t.id === tid);
-        if (task) task.priority = newPriority;
+        if (task) { task.priority = newPriority; touchItem(task); }
       });
       saveDataToStorage();
     }
@@ -4272,8 +4333,24 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       }
     }
 
+    // === 合并同步辅助函数 ===
+
+    function touchItem(item) {
+      item.updatedAt = new Date().toISOString();
+    }
+
+    function backfillUpdatedAt() {
+      categories.forEach(cat => {
+        if (!cat.updatedAt) cat.updatedAt = cat.createdAt || new Date().toISOString();
+        cat.tasks.forEach(task => {
+          if (!task.updatedAt) task.updatedAt = task.createdAt || new Date().toISOString();
+        });
+      });
+    }
+
     function saveDataToStorage() {
       try {
+        backfillUpdatedAt();
         localStorage.setItem('todoApp-backup', JSON.stringify({
           title: pageTitle,
           appSettings,
@@ -4295,6 +4372,7 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
         cat.tasks.forEach(task => {
           if (task.dueDate && task.dueDate < now && task.status !== 'completed' && task.status !== 'overdue') {
             task.status = 'overdue';
+            touchItem(task);
             changed = true;
           }
         });
