@@ -935,108 +935,105 @@
   </div>
 
   <div id="help-modal" class="modal-backdrop hidden">
-    <div class="modal-content" style="max-width:520px">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold">使用说明</h2>
+    <div class="modal-content" style="max-width:720px">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-base font-bold">使用说明</h2>
         <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
       </div>
-      <div class="text-sm text-gray-600 dark:text-gray-300 space-y-3">
+      <div class="grid grid-cols-2 gap-x-6 text-xs text-gray-600 dark:text-gray-300">
         <div>
-          <b class="text-gray-800 dark:text-white">基本操作</b>
-          <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li>顶部导航：新建任务、新增区块、全部任务、导入/导出、统计、回收站、归档</li>
-            <li>顶部右侧图标：🔔 近期到期 · 📅 日历 · 🎨 主题 · ⚙ 设置 · ❓ 帮助 · 👤 登录</li>
-            <li>点击顶部「新建任务」或区块内「添加任务」创建任务</li>
-            <li><b>点击任务条</b>即可编辑任务详情</li>
-            <li>勾选复选框标记完成，点右侧 🗑 删除（移入回收站）</li>
-            <li>任务条可<b>拖拽</b>移动到其他区块</li>
-            <li>已完成任务可点击 <b>归档</b> 移入归档区</li>
-            <li>点击主页标题可直接编辑，实时同步到系统设置</li>
-          </ul>
+          <div class="mb-2">
+            <b class="text-gray-800 dark:text-white">基本操作</b>
+            <ul class="list-disc pl-3 mt-0.5 space-y-0.5">
+              <li>顶部：新建任务 · 新增区块 · 全部任务 · 导入/导出 · 统计 · 回收站 · 归档</li>
+              <li>右侧图标：🔔到期 · 📅日历 · 🎨主题 · ⚙设置 · ❓帮助 · 👤登录</li>
+              <li><b>点击任务条</b>编辑详情，勾选即完成</li>
+              <li>任务可<b>拖拽</b>到其他区块 · 🗑删除移入回收站</li>
+              <li>已完成点 <b>归档</b> 移入归档区</li>
+            </ul>
+          </div>
+          <div class="mb-2">
+            <b class="text-gray-800 dark:text-white">排序 &amp; 标签</b>
+            <ul class="list-disc pl-3 mt-0.5 space-y-0.5">
+              <li>标题栏 ↕ 默认 / 题 标题 / 期 日期 / 要 重要性 / 部 部门</li>
+              <li>点击切换排序方式，再点切换升降序</li>
+              <li>添加<b>标签</b>（逗号分隔），彩色显示与筛选</li>
+            </ul>
+          </div>
+          <div class="mb-2">
+            <b class="text-gray-800 dark:text-white">批量操作</b>
+            <ul class="list-disc pl-3 mt-0.5 space-y-0.5">
+              <li>区块 📋 或「全部任务」打开列表视口勾选操作</li>
+              <li>工具栏：移动/改状态/改截止/改重要性/删除</li>
+              <li>支持全选当前页 / 全选全部</li>
+            </ul>
+          </div>
+          <div class="mb-2">
+            <b class="text-gray-800 dark:text-white">主题配色</b>
+            <ul class="list-disc pl-3 mt-0.5 space-y-0.5">
+              <li>🎨 打开主题选择器，6 套主题可选</li>
+              <li>支持浅色/深色模式切换</li>
+            </ul>
+          </div>
+          <div class="mb-2">
+            <b class="text-gray-800 dark:text-white">账号与云端同步</b>
+            <ul class="list-disc pl-3 mt-0.5 space-y-0.5">
+              <li>👤 登录，支持 Google / GitHub / 邮箱注册</li>
+              <li>登录后自动同步，多设备数据合并不丢失</li>
+              <li>未登录数据存本地，登录后云端合并</li>
+            </ul>
+          </div>
+          <div class="mb-2">
+            <b class="text-gray-800 dark:text-white">近期到期提醒</b>
+            <ul class="list-disc pl-3 mt-0.5 space-y-0.5">
+              <li>🔔 查看近期到期任务，表头可排序</li>
+              <li>提前天数可在设置中配置（默认3天）</li>
+            </ul>
+          </div>
         </div>
         <div>
-          <b class="text-gray-800 dark:text-white">排序 & 标签</b>
-          <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li>区块标题栏：↕ 默认 / 题 标题 / 期 日期 / 要 重要性 / 部 部门</li>
-            <li>点击排序按钮切换排序方式，再点切换升/降序</li>
-            <li>任务可添加<b>标签</b>（逗号分隔），支持彩色标签显示与筛选</li>
-            <li>设置面板中可管理标签颜色</li>
-          </ul>
-        </div>
-        <div>
-          <b class="text-gray-800 dark:text-white">批量操作</b>
-          <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li>点击区块标题栏 📋 或顶部「全部任务」打开任务列表视口</li>
-            <li>勾选后使用工具栏：移动/改状态/改截止/改重要性/删除</li>
-            <li>可按状态筛选后批量选中，支持全选当前页 / 全选全部</li>
-          </ul>
-        </div>
-        <div>
-          <b class="text-gray-800 dark:text-white">主题配色</b>
-          <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li>点击顶部 🎨 按钮打开主题选择器</li>
-            <li>内置 6 套主题（经典蓝/森林绿/樱花粉/琥珀橙/紫罗兰/深海靛）</li>
-            <li>支持浅色/深色模式切换，实时预览后点「应用」保存</li>
-          </ul>
-        </div>
-        <div>
-          <b class="text-gray-800 dark:text-white">账号与云端同步</b>
-          <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li>点击顶部 👤 按钮登录，支持 Google / GitHub OAuth 或邮箱注册</li>
-            <li>登录后数据自动同步到云端，更换设备或清缓存不丢失</li>
-            <li>未登录时数据存储在浏览器本地，登录后云端拉取覆盖</li>
-          </ul>
-        </div>
-        <div>
-          <b class="text-gray-800 dark:text-white">近期到期提醒</b>
-          <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li>点击顶部 🔔 图标查看近期到期任务列表</li>
-            <li>点击表头（任务/区块/截止日期/时限）可排序</li>
-            <li>提前天数可在设置中配置（默认3天）</li>
-          </ul>
-        </div>
-        <div>
-          <b class="text-gray-800 dark:text-white">任务日历</b>
-          <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li>点击顶部 📅 图标打开任务日历</li>
-            <li>日历中显示各日期的任务数量，点击日期可快速创建任务</li>
-          </ul>
-        </div>
-        <div>
-          <b class="text-gray-800 dark:text-white">周期性任务</b>
-          <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li>创建/编辑任务时可设置重复周期：每天/每周/每月/每年</li>
-            <li>完成后自动创建下一周期任务</li>
-          </ul>
-        </div>
-        <div>
-          <b class="text-gray-800 dark:text-white">导入导出</b>
-          <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li><b>导出</b>：按区块/状态/重要性多维度筛选后导出 JSON 或 Excel</li>
-            <li><b>导入</b>：预览导入概况，可选<b>覆盖</b>（替换全部）或<b>追加</b>（合并新增）</li>
-            <li>JSON 格式支持导入导出互通，Excel 支持跨工具编辑</li>
-          </ul>
-        </div>
-        <div>
-          <b class="text-gray-800 dark:text-white">回收站</b>
-          <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li>删除的任务移入回收站，可逐一恢复或永久删除</li>
-            <li>支持一键「恢复全部」或「清空回收站」</li>
-          </ul>
-        </div>
-        <div>
-          <b class="text-gray-800 dark:text-white">系统设置</b>
-          <ul class="list-disc pl-4 mt-1 space-y-1">
-            <li>点击 ⚙ 打开设置面板，双栏布局一屏展示</li>
-            <li>左栏：布局模式（4列/3列）、区块显示、显示选项、任务提醒</li>
-            <li>右栏：自动备份、数据去重、标签管理</li>
-          </ul>
-        </div>
-        <hr class="border-gray-200 dark:border-gray-600">
-        <div>
-          <b class="text-gray-800 dark:text-white">关于</b>
-          <p class="mt-1">本工具由 AI 辅助生成，版本 v2026.05.27</p>
-          <p>作者邮箱：<a href="mailto:yongbing.yang@gmail.com" class="text-blue-600 dark:text-blue-400">yongbing.yang@gmail.com</a></p>
+          <div class="mb-2">
+            <b class="text-gray-800 dark:text-white">任务日历</b>
+            <ul class="list-disc pl-3 mt-0.5 space-y-0.5">
+              <li>📅 打开日历，显示各日期任务数量</li>
+              <li>点击日期可快速创建任务</li>
+            </ul>
+          </div>
+          <div class="mb-2">
+            <b class="text-gray-800 dark:text-white">周期性任务</b>
+            <ul class="list-disc pl-3 mt-0.5 space-y-0.5">
+              <li>设置重复周期：每天/每周/每月/每年</li>
+              <li>完成后自动生成下一周期任务</li>
+            </ul>
+          </div>
+          <div class="mb-2">
+            <b class="text-gray-800 dark:text-white">导入导出</b>
+            <ul class="list-disc pl-3 mt-0.5 space-y-0.5">
+              <li><b>导出</b>：按区块/状态/重要性筛选导出 JSON / Excel</li>
+              <li><b>导入</b>：可覆盖替换全部或追加合并</li>
+              <li>JSON 互通，Excel 支持跨工具编辑</li>
+            </ul>
+          </div>
+          <div class="mb-2">
+            <b class="text-gray-800 dark:text-white">回收站</b>
+            <ul class="list-disc pl-3 mt-0.5 space-y-0.5">
+              <li>删除的任务移入回收站，可恢复或永久删除</li>
+              <li>支持「恢复全部」或「清空回收站」</li>
+            </ul>
+          </div>
+          <div class="mb-2">
+            <b class="text-gray-800 dark:text-white">系统设置</b>
+            <ul class="list-disc pl-3 mt-0.5 space-y-0.5">
+              <li>⚙ 双栏布局：布局/显示/提醒 + 备份/去重/标签</li>
+            </ul>
+          </div>
+          <div class="mb-2">
+            <b class="text-gray-800 dark:text-white">快捷键</b>
+            <ul class="list-disc pl-3 mt-0.5 space-y-0.5">
+              <li>Esc 关闭弹窗 · Enter 提交表单</li>
+            </ul>
+          </div>
+          <div class="text-gray-400 mt-2 border-t border-gray-200 dark:border-gray-600 pt-1" style="grid-column:span 2">v2026.05.27 · <a href="mailto:yongbing.yang@gmail.com" class="text-blue-500">反馈</a></div>
         </div>
       </div>
     </div>
@@ -1497,11 +1494,15 @@
     // === 通知 Toast ===
 
     function showToast(message, type) {
+      // 先清除已有的 toast，防止堆叠
+      const existing = document.getElementById('toast-el');
+      if (existing) { clearTimeout(existing._timer); existing.remove(); }
       const toast = document.createElement('div');
+      toast.id = 'toast-el';
       toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:10001;padding:4px 10px;border-radius:4px;color:rgba(255,255,255,0.7);font-size:11px;background:rgba(160,160,160,0.4);box-shadow:0 1px 4px rgba(0,0,0,0.08);transition:opacity 0.3s;pointer-events:none';
       toast.textContent = message;
       document.body.appendChild(toast);
-      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2000);
+      toast._timer = setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2000);
     }
 
     // === 合并同步：按 ID + updatedAt 逐项合并，不丢数据 ===
