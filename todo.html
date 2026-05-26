@@ -1621,6 +1621,21 @@
       return dedupedIds.size;
     }
 
+    function reconcileSystemCategory(flag) {
+      // 合并用一个 flag（如 isRecycle）标记的重复分类：将后面的任务合并到第一个，再删除多余的
+      const matched = categories.filter(c => c[flag]);
+      if (matched.length <= 1) return;
+      const first = matched[0];
+      for (let i = 1; i < matched.length; i++) {
+        const dup = matched[i];
+        (dup.tasks || []).forEach(t => {
+          // 避免重复
+          if (!first.tasks.some(ft => ft.id === t.id)) first.tasks.push(t);
+        });
+        categories.splice(categories.indexOf(dup), 1);
+      }
+    }
+
     function downloadLocalBackup() {
       // 导出本地数据为 JSON 文件供下载存档
       var blob = new Blob([JSON.stringify({ categories, nextCategoryId, nextTaskId, allTags, title: pageTitle, appSettings }, null, 2)], { type: 'application/json' });
@@ -1694,6 +1709,9 @@
           backfillUpdatedAt();
           if (cloud.categories) {
             categories = mergeCategories(categories, cloud.categories);
+            // 合并后处理：回收站和归档可能重复（本地和云端 UUID 不同），合并它们的任务
+            reconcileSystemCategory('isRecycle');
+            reconcileSystemCategory('isArchive');
           }
           // 全局去重：同一任务出现在多个分类时，只保留 updatedAt 最新的那一个
           const dedupCount = deduplicateTasksAcrossCategories();
@@ -2573,7 +2591,7 @@
     }
 
     function showRecycleModal() {
-      const recycleBin = categories.find(c => c.id === recycleBinId);
+      const recycleBin = categories.find(c => c.isRecycle);
       if (!recycleBin) return;
       
       let html = `<div class="overflow-x-auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg">
