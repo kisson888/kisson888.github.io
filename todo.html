@@ -1432,6 +1432,18 @@
       }
     }
 
+    // === 通知 Toast ===
+
+    function showToast(message, type) {
+      type = type || 'info';
+      const colors = { info: '#4A90D9', success: '#52C41A', warning: '#FAAD14', error: '#FF4D4F' };
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:10001;padding:12px 24px;border-radius:8px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);transition:opacity 0.3s;background:'+(colors[type]||colors.info)+';pointer-events:none';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3500);
+    }
+
     // === 合并同步：按 ID + updatedAt 逐项合并，不丢数据 ===
 
     function mergeTasks(localTasks, cloudTasks) {
@@ -1482,6 +1494,11 @@
           cloudDataVersion = data.version || 0;
           const cloud = data.data;
 
+          // 合并前快照，用于统计差异
+          const localCatIds = new Set(categories.map(c => c.id));
+          const localTaskIds = new Set();
+          categories.forEach(c => (c.tasks || []).forEach(t => localTaskIds.add(t.id)));
+
           // 逐项合并：任务按 updatedAt，分类按 updatedAt，ID 自增取大值
           backfillUpdatedAt();
           if (cloud.categories) {
@@ -1489,6 +1506,29 @@
           }
           nextCategoryId = Math.max(nextCategoryId, cloud.nextCategoryId || 1);
           nextTaskId = Math.max(nextTaskId, cloud.nextTaskId || 1);
+
+          // 合并后统计
+          const newCatIds = new Set(categories.map(c => c.id));
+          const newTaskIds = new Set();
+          categories.forEach(c => (c.tasks || []).forEach(t => newTaskIds.add(t.id)));
+          const addedCats = [...newCatIds].filter(id => !localCatIds.has(id)).length;
+          const addedTasks = [...newTaskIds].filter(id => !localTaskIds.has(id)).length;
+          let updatedTasks = 0;
+          cloud.categories && cloud.categories.forEach(c => (c.tasks || []).forEach(t => {
+            if (localTaskIds.has(t.id)) {
+              // 云端有同 ID 但 updatedAt 不同，说明被更新了
+              const localT = categories.find(cc => (cc.tasks || []).find(tt => tt.id === t.id));
+              // 简化判断：只要云端 ID 本地也有，且合并后的版本来自云端
+            }
+          }));
+          // 用更简单的方式：统计云端这个 ID 的 updatedAt 比本地新
+          const localTaskMap = {};
+          categories.forEach(c => (c.tasks || []).forEach(t => { localTaskMap[t.id] = t; }));
+          cloud.categories && cloud.categories.forEach(c => (c.tasks || []).forEach(t => {
+            const lt = localTaskMap[t.id];
+            if (lt && (t.updatedAt || t.createdAt || '0') !== (lt.updatedAt || lt.createdAt || '0')) updatedTasks++;
+          }));
+
           if (cloud.title) {
             pageTitle = cloud.title;
             document.querySelector('.page-title').textContent = pageTitle;
@@ -1507,6 +1547,17 @@
           saveDataToStorage();
           renderCategories();
           renderReminderBar();
+
+          // 显示合并通知
+          const parts = [];
+          if (addedCats > 0) parts.push('新增 ' + addedCats + ' 个分类');
+          if (addedTasks > 0) parts.push('新增 ' + addedTasks + ' 条任务');
+          if (updatedTasks > 0) parts.push('更新 ' + updatedTasks + ' 条任务');
+          if (parts.length > 0) {
+            showToast('☁️ 云端同步完成：' + parts.join('，'), 'success');
+          } else {
+            showToast('✓ 云端数据已同步，无新增内容', 'info');
+          }
         } else if (data === null && categories.length > 0) {
           // 云端没有数据，把本地数据上传
           await syncToCloud();
