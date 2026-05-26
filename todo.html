@@ -1314,9 +1314,21 @@
     async function logoutUser() {
       const sb = getSupabase();
       if (!sb) return;
+
+      const keepData = confirm('退出登录后，是否保留本地待办数据？\n\n· 确定 — 保留本地数据\n· 取消 — 清除本地数据');
+
+      if (!keepData) {
+        // 用户选择不保留，清除本地数据
+        localStorage.removeItem('todoApp-backup');
+        categories = [];
+        allTags = [];
+        renderCategories();
+      }
+
       await sb.auth.signOut();
       currentUser = null;
       updateAuthUI();
+      hideAuthModal();
     }
 
     function updateAuthUI() {
@@ -1436,12 +1448,11 @@
 
     function showToast(message, type) {
       type = type || 'info';
-      const colors = { info: '#4A90D9', success: '#52C41A', warning: '#FAAD14', error: '#FF4D4F' };
       const toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:10001;padding:12px 24px;border-radius:8px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);transition:opacity 0.3s;background:'+(colors[type]||colors.info)+';pointer-events:none';
+      toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:10001;padding:6px 14px;border-radius:6px;color:rgba(255,255,255,0.85);font-size:12px;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);box-shadow:0 2px 8px rgba(0,0,0,0.12);transition:opacity 0.3s;pointer-events:none';
       toast.textContent = message;
       document.body.appendChild(toast);
-      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3500);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2500);
     }
 
     // === 合并同步：按 ID + updatedAt 逐项合并，不丢数据 ===
