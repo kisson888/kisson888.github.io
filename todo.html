@@ -4231,7 +4231,12 @@
           el = document.getElementById('ba2-pr'); if(el) el.onclick = function(e) { e.stopPropagation();
             ddToggle('ba2-pr-w', [{v:'high',l:'高'},{v:'medium',l:'中'},{v:'low',l:'低'}], function(v) { batchDo('priority',v); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
           el = document.getElementById('ba2-dt'); if(el) el.onclick = function() { var d = prompt('新截止日期 YYYY-MM-DD：', new Date().toISOString().split('T')[0]); if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) { batchDo('date',d); sel={}; statusActive={}; renderP(page); renderCategories(); } else if (d) { alert('格式错误'); } };
-          el = document.getElementById('ba2-del'); if(el) el.onclick = function() { batchDo('delete'); sel={}; statusActive={}; renderP(page); renderCategories(); };
+          el = document.getElementById('ba2-del'); if(el) el.onclick = async function() {
+            var count = Object.keys(sel).length;
+            if (count === 0) return;
+            var ok = await showConfirmDialog('确定要批量删除选中的 '+count+' 条任务吗？\n删除的任务将移入回收站。', { text: '确定删除', color: '#ef4444' }, { text: '取消', color: '#9ca3af' });
+            if (!ok) return;
+            batchDo('delete'); sel={}; statusActive={}; renderP(page); renderCategories(); };
           el = document.getElementById('ba2-clr'); if(el) el.onclick = function() { sel={}; statusActive={}; renderP(page); };
         }
       }
