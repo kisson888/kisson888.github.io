@@ -1567,6 +1567,20 @@
 
     async function pullFromCloud() {
       if (!currentUser || !getSupabase()) return;
+
+      // 如果本地有数据，询问用户是否同步合并
+      const localTaskCount = categories.reduce((sum, c) => sum + (c.tasks || []).length, 0);
+      if (localTaskCount > 0) {
+        const ok = await showConfirmDialog(
+          '检测到本地已有 '+localTaskCount+' 条待办数据。\n是否与云端数据进行同步合并？',
+          { text: '同步合并', color: '#22c55e' },
+          { text: '保留本地', color: '#9ca3af' }
+        );
+        if (!ok) {
+          showToast('已保留本地数据，未同步云端');
+          return;
+        }
+      }
       try {
         const { data, error } = await getSupabase()
           .from('todo_data')
