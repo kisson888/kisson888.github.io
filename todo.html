@@ -1518,6 +1518,18 @@
           cloudDataVersion = data.version || 0;
           const cloud = data.data;
 
+          // 【关键】归一化云端数据的 ID：老版本 push 上去的数字 ID 转为字符串
+          // 否则与本地字符串 ID 比较时 "100" === 100 为 false，导致合并错乱
+          if (cloud.categories) {
+            cloud.categories.forEach(cat => {
+              cat.id = String(cat.id);
+              (cat.tasks || []).forEach(t => {
+                t.id = String(t.id);
+                if (t.originalCategoryId) t.originalCategoryId = String(t.originalCategoryId);
+              });
+            });
+          }
+
           // 合并前快照，用于统计差异
           const localCatIds = new Set(categories.map(c => c.id));
           const localTaskIds = new Set();
