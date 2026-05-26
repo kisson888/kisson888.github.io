@@ -1480,6 +1480,30 @@
       return merged;
     }
 
+    function deduplicateTasksAcrossCategories() {
+      // 扫描所有分类，对跨分类的同 ID 任务，只保留 updatedAt 最新的那一份
+      // 防止移动任务到其他分类后，在合并同步时出现重复
+      const bestVersion = {}; // taskId -> { task, catIndex }
+      categories.forEach((cat, ci) => {
+        (cat.tasks || []).forEach(task => {
+          const ts = task.updatedAt || task.createdAt || '0';
+          if (!bestVersion[task.id] || ts > (bestVersion[task.id].task.updatedAt || bestVersion[task.id].task.createdAt || '0')) {
+            bestVersion[task.id] = { task, catIndex: ci };
+          }
+        });
+      });
+      const dedupedIds = new Set();
+      categories.forEach((cat, ci) => {
+        cat.tasks = (cat.tasks || []).filter(task => {
+          const winner = bestVersion[task.id];
+          if (!winner || winner.catIndex === ci) return true;
+          dedupedIds.add(task.id);
+          return false;
+        });
+      });
+      return dedupedIds.size;
+    }
+
     async function pullFromCloud() {
       if (!currentUser || !getSupabase()) return;
       try {
@@ -1504,6 +1528,8 @@
           if (cloud.categories) {
             categories = mergeCategories(categories, cloud.categories);
           }
+          // 全局去重：同一任务出现在多个分类时，只保留 updatedAt 最新的那一个
+          const dedupCount = deduplicateTasksAcrossCategories();
           nextCategoryId = Math.max(nextCategoryId, cloud.nextCategoryId || 1);
           nextTaskId = Math.max(nextTaskId, cloud.nextTaskId || 1);
 
@@ -1553,6 +1579,7 @@
           if (addedCats > 0) parts.push('新增 ' + addedCats + ' 个分类');
           if (addedTasks > 0) parts.push('新增 ' + addedTasks + ' 条任务');
           if (updatedTasks > 0) parts.push('更新 ' + updatedTasks + ' 条任务');
+          if (dedupCount > 0) parts.push('去重 ' + dedupCount + ' 条任务');
           if (parts.length > 0) {
             showToast('☁️ 云端同步完成：' + parts.join('，'), 'success');
           } else {
