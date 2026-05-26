@@ -4225,12 +4225,30 @@
             setTimeout(function(){document.addEventListener('click',function cd(e){if(!w.contains(e.target)){dd.remove();document.removeEventListener('click',cd);}});},0);
           }
           el = document.getElementById('ba2-mv'); if(el) el.onclick = function(e) { e.stopPropagation(); var oc = categories.filter(function(c){return !c.isRecycle;}).map(function(c){return {v:c.id,l:c.name};});
-            ddToggle('ba2-mv-w', oc, function(v) { batchDo('move',v); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
+            ddToggle('ba2-mv-w', oc, async function(v) {
+              var count = Object.keys(sel).length; if (!count) return;
+              var ok = await showConfirmDialog('确定将选中的 '+count+' 条任务移动到其他区块吗？', { text: '确定移动', color: '#4a7ddb' }, { text: '取消', color: '#9ca3af' });
+              if (!ok) return;
+              batchDo('move',v); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
           el = document.getElementById('ba2-sts'); if(el) el.onclick = function(e) { e.stopPropagation();
-            ddToggle('ba2-sts-w', [{v:'pending',l:'待处理'},{v:'in-progress',l:'进行中'},{v:'completed',l:'已完成'}], function(v) { batchDo('status',v); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
+            ddToggle('ba2-sts-w', [{v:'pending',l:'待处理'},{v:'in-progress',l:'进行中'},{v:'completed',l:'已完成'}], async function(v) {
+              var count = Object.keys(sel).length; if (!count) return;
+              var labels = {pending:'待处理','in-progress':'进行中',completed:'已完成'};
+              var ok = await showConfirmDialog('确定将选中的 '+count+' 条任务状态改为「'+labels[v]+'」吗？', { text: '确定修改', color: '#4a7ddb' }, { text: '取消', color: '#9ca3af' });
+              if (!ok) return;
+              batchDo('status',v); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
           el = document.getElementById('ba2-pr'); if(el) el.onclick = function(e) { e.stopPropagation();
-            ddToggle('ba2-pr-w', [{v:'high',l:'高'},{v:'medium',l:'中'},{v:'low',l:'低'}], function(v) { batchDo('priority',v); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
-          el = document.getElementById('ba2-dt'); if(el) el.onclick = function() { var d = prompt('新截止日期 YYYY-MM-DD：', new Date().toISOString().split('T')[0]); if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) { batchDo('date',d); sel={}; statusActive={}; renderP(page); renderCategories(); } else if (d) { alert('格式错误'); } };
+            ddToggle('ba2-pr-w', [{v:'high',l:'高'},{v:'medium',l:'中'},{v:'low',l:'低'}], async function(v) {
+              var count = Object.keys(sel).length; if (!count) return;
+              var labels = {high:'高',medium:'中',low:'低'};
+              var ok = await showConfirmDialog('确定将选中的 '+count+' 条任务重要性改为「'+labels[v]+'」吗？', { text: '确定修改', color: '#4a7ddb' }, { text: '取消', color: '#9ca3af' });
+              if (!ok) return;
+              batchDo('priority',v); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
+          el = document.getElementById('ba2-dt'); if(el) el.onclick = async function() { var d = prompt('新截止日期 YYYY-MM-DD：', new Date().toISOString().split('T')[0]); if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) {
+            var count = Object.keys(sel).length; if (!count) return;
+            var ok = await showConfirmDialog('确定将选中的 '+count+' 条任务截止日期改为「'+d+'」吗？', { text: '确定修改', color: '#4a7ddb' }, { text: '取消', color: '#9ca3af' });
+            if (!ok) return;
+            batchDo('date',d); sel={}; statusActive={}; renderP(page); renderCategories(); } else if (d) { alert('格式错误'); } };
           el = document.getElementById('ba2-del'); if(el) el.onclick = async function() {
             var count = Object.keys(sel).length;
             if (count === 0) return;
