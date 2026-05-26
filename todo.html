@@ -687,10 +687,25 @@
               </div>
               <div id="auth-error" class="text-xs mb-2 hidden" style="padding:6px 10px;border-radius:6px;background:#fef2f2;color:#ef4444"></div>
               <div id="auth-loading" class="text-xs hidden" style="padding:6px 10px;border-radius:6px;background:#eef2ff;color:#6366f1;margin-bottom:8px"><i class="fa fa-spinner fa-spin"></i> 处理中...</div>
-              <button type="submit" id="auth-submit-btn" class="btn btn-primary" style="width:100%;padding:10px;font-size:14px;justify-content:center;margin-top:4px"><i class="fa fa-sign-in"></i> 登录</button>
-              <div id="auth-switch-area" class="flex justify-center" style="margin-top:12px">
-                <span style="font-size:12px;color:var(--text-tertiary,#94a3b8)">还没有账号？</span>
-                <button type="button" id="auth-switch-btn" style="font-size:12px;color:var(--accent,#6366f1);background:none;border:none;cursor:pointer;padding:0 0 0 4px;font-weight:500">注册新账号</button>
+              <!-- 登录/注册按钮区域 -->
+              <div id="auth-login-section">
+                <button type="submit" id="auth-submit-btn" class="btn btn-primary" style="width:100%;padding:10px;font-size:14px;justify-content:center;margin-top:4px"><i class="fa fa-sign-in"></i> 登录</button>
+                <div id="auth-switch-area" class="flex justify-center" style="margin-top:12px">
+                  <span style="font-size:12px;color:var(--text-tertiary,#94a3b8)">还没有账号？</span>
+                  <button type="button" id="auth-switch-btn" style="font-size:12px;color:var(--accent,#6366f1);background:none;border:none;cursor:pointer;padding:0 0 0 4px;font-weight:500">注册新账号</button>
+                </div>
+              </div>
+              <!-- 重置密码区域（隐藏，忘记密码流程显示） -->
+              <div id="auth-reset-section" class="hidden">
+                <div class="form-group">
+                  <label class="form-label">新密码</label>
+                  <input type="password" id="auth-new-password-input" class="form-input" required minlength="6" placeholder="至少6位">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">确认新密码</label>
+                  <input type="password" id="auth-confirm-password-input" class="form-input" required minlength="6" placeholder="再次输入新密码">
+                </div>
+                <button type="button" id="auth-reset-submit-btn" class="btn btn-primary" style="width:100%;padding:10px;font-size:14px;justify-content:center;margin-top:4px"><i class="fa fa-save"></i> 设置新密码</button>
               </div>
               <div class="flex justify-center" style="margin-top:6px">
                 <button type="button" id="auth-logout-btn" class="hidden" style="font-size:12px;color:#ef4444;background:none;border:1px solid #fecaca;border-radius:6px;padding:6px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:4px"><i class="fa fa-sign-out"></i> 退出登录</button>
@@ -1551,6 +1566,44 @@
         await resetPassword(email);
         showAuthLoading(false);
       });
+
+      // 设置新密码（重置密码流程）
+      document.getElementById('auth-reset-submit-btn').addEventListener('click', async function() {
+        const newPass = document.getElementById('auth-new-password-input').value;
+        const confirmPass = document.getElementById('auth-confirm-password-input').value;
+        if (!newPass || newPass.length < 6) {
+          showAuthError('新密码至少6位');
+          return;
+        }
+        if (newPass !== confirmPass) {
+          showAuthError('两次输入的密码不一致');
+          return;
+        }
+        showAuthLoading(true);
+        try {
+          const sb = getSupabase();
+          if (!sb) { showAuthError('Supabase 未初始化'); showAuthLoading(false); return; }
+          const { error } = await sb.auth.updateUser({ password: newPass });
+          if (error) throw error;
+          showAuthError('密码重置成功！请用新密码登录。', 'text-green-500');
+          // 恢复登录界面
+          document.getElementById('auth-reset-section').classList.add('hidden');
+          document.getElementById('auth-login-section').classList.remove('hidden');
+          document.getElementById('auth-modal-title').textContent = '登录';
+          document.getElementById('auth-new-password-input').value = '';
+          document.getElementById('auth-confirm-password-input').value = '';
+        } catch(e) {
+          showAuthError('密码重置失败: ' + e.message);
+        }
+        showAuthLoading(false);
+      });
+
+      // 回车触发设置新密码
+      document.getElementById('auth-confirm-password-input').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          document.getElementById('auth-reset-submit-btn').click();
+        }
+      });
     }
 
     function initApp() {
@@ -1575,6 +1628,24 @@
               updateAuthUI();
               hideAuthModal();
               setTimeout(pullFromCloud, 300);
+            } else if (event === 'PASSWORD_RECOVERY') {
+              // 密码重置：显示设置新密码界面
+              currentUser = session.user;
+              updateAuthUI();
+              const modal = document.getElementById('auth-modal');
+              modal.classList.remove('hidden');
+              document.getElementById('auth-modal-title').textContent = '重置密码';
+              // 隐藏登录注册区域，显示重置密码区域
+              document.getElementById('auth-login-section').classList.add('hidden');
+              document.getElementById('auth-reset-section').classList.remove('hidden');
+              document.querySelectorAll('.auth-oauth-btns, .auth-divider').forEach(function(el) {
+                el.classList.add('hidden');
+              });
+              document.getElementById('auth-email-input').parentElement.classList.add('hidden');
+              document.getElementById('auth-password-input').parentElement.classList.add('hidden');
+              document.getElementById('auth-forgot-btn').classList.add('hidden');
+              document.getElementById('auth-error').classList.add('hidden');
+              document.getElementById('auth-loading').classList.add('hidden');
             } else if (event === 'SIGNED_OUT') {
               currentUser = null;
               updateAuthUI();
