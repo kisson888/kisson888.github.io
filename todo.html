@@ -350,6 +350,18 @@
     #task-list-batch-bar { background: var(--accent-light); border: 1px solid var(--accent); border-radius: 2px; padding: 0.5rem 0.75rem; margin-bottom: 0.75rem; }
     body[data-dark="true"] #task-list-batch-bar { background: #0c1929; border-color: #1e3a5f; }
     .batch-move-dropdown { max-height: 200px; overflow-y: auto; }
+    /* 所有列表弹窗的表格表头固定 */
+    #task-list-content table thead th,
+    #recycle-content table thead th {
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 1 !important;
+      background: #f3f4f6 !important;
+    }
+    body[data-dark="true"] #task-list-content table thead th,
+    body[data-dark="true"] #recycle-content table thead th {
+      background: #374151 !important;
+    }
     .form-input:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .table-striped tr:nth-child(even) { background: var(--bg-input); }
@@ -2124,7 +2136,7 @@
     function showArchiveModal() {
       const archive = categories.find(c => c.isArchive);
       if (!archive) return;
-      let html = '<div style="max-height:55vh;overflow-y:auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg"><thead class="bg-gray-100 dark:bg-gray-700" style="position:sticky;top:0;z-index:1"><tr><th class="px-4 py-2 text-left text-xs">#</th><th class="px-4 py-2 text-left text-xs">任务标题</th><th class="px-4 py-2 text-left text-xs">主责部门</th><th class="px-4 py-2 text-left text-xs">原区块</th><th class="px-4 py-2 text-left text-xs">完成时间</th><th class="px-4 py-2 text-right text-xs">操作</th></tr></thead><tbody class="divide-y">';
+      let html = '<div style="max-height:55vh;overflow-y:auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg"><thead class="bg-gray-100 dark:bg-gray-700"><tr><th class="px-4 py-2 text-left text-xs">#</th><th class="px-4 py-2 text-left text-xs">任务标题</th><th class="px-4 py-2 text-left text-xs">主责部门</th><th class="px-4 py-2 text-left text-xs">原区块</th><th class="px-4 py-2 text-left text-xs">完成时间</th><th class="px-4 py-2 text-right text-xs">操作</th></tr></thead><tbody class="divide-y">';
       if (archive.tasks.length === 0) {
         html += '<tr><td colspan="6" class="text-center py-8">暂无归档任务</td></tr>';
       } else {
@@ -2698,7 +2710,7 @@
       if (!recycleBin) return;
       
       let html = `<div style="max-height:55vh;overflow-y:auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg">
-        <thead class="bg-gray-100 dark:bg-gray-700" style="position:sticky;top:0;z-index:1">
+        <thead class="bg-gray-100 dark:bg-gray-700">
           <tr><th class="px-4 py-2 text-left text-xs">#</th><th class="px-4 py-2 text-left text-xs">任务标题</th><th class="px-4 py-2 text-left text-xs">主责部门</th><th class="px-4 py-2 text-left text-xs">原区块</th><th class="px-4 py-2 text-right text-xs">操作</th></tr>
         </thead><tbody class="divide-y">`;
       
@@ -4031,7 +4043,7 @@
         refreshBatchBar(all);
         
         let html = `<div style="max-height:55vh;overflow-y:auto"><table class="min-w-full bg-white dark:bg-gray-800 rounded-lg table-striped">
-          <thead class="bg-gray-100 dark:bg-gray-700" style="position:sticky;top:0;z-index:1"><tr>
+          <thead class="bg-gray-100 dark:bg-gray-700"><tr>
 <th class="px-2 py-3 text-left w-8">#</th>
 <th class="px-2 py-3 text-left w-8"><input type="checkbox" id="batch-check-page" ${list.length > 0 && list.every(t => batchSelected.has(t.id)) ? 'checked' : ''}></th>
 <th class="px-4 py-3 text-left">状态</th>
