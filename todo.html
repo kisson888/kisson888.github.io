@@ -935,7 +935,7 @@
   </div>
 
   <div id="help-modal" class="modal-backdrop hidden">
-    <div class="modal-content" style="max-width:900px;max-height:90vh;display:flex;flex-direction:column">
+    <div class="modal-content" style="max-width:1000px;max-height:92vh;display:flex;flex-direction:column">
       <div class="flex justify-between items-center mb-2" style="flex-shrink:0">
         <h2 class="text-base font-bold flex items-center gap-1">📋 使用说明</h2>
         <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
@@ -2099,6 +2099,8 @@
       const task = cat.tasks.find(t => t.id === tid);
       if (task && task.status === 'completed') {
         touchItem(task);
+        task.originalCategory = cat.name;
+        task.originalCategoryId = cat.id;
         cat.tasks = cat.tasks.filter(t => t.id !== tid);
         archive.tasks.push(task);
         saveDataToStorage();
@@ -2628,7 +2630,7 @@
       document.getElementById('reminder-icon-btn').addEventListener('click', showReminderModal);
       
       elements.restoreAllBtn.addEventListener('click', async () => {
-        var count = (categories.find(c => c.id === recycleBinId)?.tasks||[]).length;
+        var count = (categories.find(c => c.isRecycle)?.tasks||[]).length;
         if (!count) return;
         var ok = await showConfirmDialog('确定要恢复全部 '+count+' 条任务到原区块吗？', { text: '恢复全部', color: '#4a7ddb' }, { text: '取消', color: '#9ca3af' });
         if (!ok) return;
@@ -2637,7 +2639,7 @@
       });
       
       elements.deleteAllBtn.addEventListener('click', async () => {
-        var count = (categories.find(c => c.id === recycleBinId)?.tasks||[]).length;
+        var count = (categories.find(c => c.isRecycle)?.tasks||[]).length;
         if (!count) return;
         var ok = await showConfirmDialog('确定要清空回收站吗？共 '+count+' 条任务将被永久删除，不可恢复。', { text: '清空回收站', color: '#ef4444' }, { text: '取消', color: '#9ca3af' });
         if (!ok) return;
@@ -2735,7 +2737,8 @@
     }
 
     function restoreTaskFromRecycle(taskId) {
-      const recycleBin = categories.find(c => c.id === recycleBinId);
+      const recycleBin = categories.find(c => c.isRecycle);
+      if (!recycleBin) return;
       const task = recycleBin.tasks.find(t => t.id === taskId);
       if (!task) return;
       
@@ -2757,7 +2760,8 @@
     }
 
     function restoreAllRecycleTasks() {
-      const recycleBin = categories.find(c => c.id === recycleBinId);
+      const recycleBin = categories.find(c => c.isRecycle);
+      if (!recycleBin) return;
       const defaultCat = categories.find(c => c.isDefault);
       
       recycleBin.tasks.forEach(task => {
@@ -2775,7 +2779,7 @@
 
     function moveTaskToRecycle(cid, tid) {
       const cat = categories.find(c => c.id === cid);
-      const recycleBin = categories.find(c => c.id === recycleBinId);
+      const recycleBin = categories.find(c => c.isRecycle);
       if (!cat || !recycleBin || cat.isRecycle || cat.isArchive) return;
       
       const task = cat.tasks.find(t => t.id === tid);
@@ -3713,7 +3717,7 @@
 
     function deleteCategory(cid) {
       const cat = categories.find(c => c.id === cid);
-      const recycleBin = categories.find(c => c.id === recycleBinId);
+      const recycleBin = categories.find(c => c.isRecycle);
       
       if (cat && !cat.isDefault && !cat.isRecycle) {
         cat.tasks.forEach(task => {
@@ -4832,8 +4836,8 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
       if (autoBackupTimer) { clearInterval(autoBackupTimer); autoBackupTimer = null; }
       if (appSettings.autoBackupEnabled) startAutoBackupTimer();
     }
-    function emptyRecycleBin() { const r = categories.find(c => c.id === recycleBinId); if (!r) return; r.tasks = []; saveDataToStorage(); renderCategories(); }
-    function deleteTaskForever(tid) { const r = categories.find(c => c.id === recycleBinId); if (!r) return; r.tasks = r.tasks.filter(t => t.id !== tid); saveDataToStorage(); }
+    function emptyRecycleBin() { const r = categories.find(c => c.isRecycle); if (!r) return; r.tasks = []; saveDataToStorage(); renderCategories(); }
+    function deleteTaskForever(tid) { const r = categories.find(c => c.isRecycle); if (!r) return; r.tasks = r.tasks.filter(t => t.id !== tid); saveDataToStorage(); }
     function escapeHTML(str) { return str?.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])) || ''; }
 
     function refreshDedupStatus() {
