@@ -935,12 +935,12 @@
   </div>
 
   <div id="help-modal" class="modal-backdrop hidden">
-    <div class="modal-content" style="max-width:1000px;max-height:92vh;display:flex;flex-direction:column">
+    <div class="modal-content" style="max-width:1000px;display:flex;flex-direction:column">
       <div class="flex justify-between items-center mb-2" style="flex-shrink:0">
         <h2 class="text-base font-bold flex items-center gap-1">📋 使用说明</h2>
         <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
       </div>
-      <div style="overflow-y:auto;flex:1;padding-right:4px;display:flex;flex-direction:column;gap:8px">
+      <div style="padding-right:4px;display:flex;flex-direction:column;gap:8px">
 
         <!-- 区块一：任务管理 -->
         <div style="border:1px solid #e2e8f0;border-radius:8px;padding:8px 14px" class="dark:border-gray-600">
@@ -2892,7 +2892,7 @@
             exportCats.push({ id: cid++, name: name, tasks: mappedTasks, isDefault: false });
           }
           // Add default and recycle system categories
-          exportCats.push({ id: 1, name: '默认', tasks: [], isDefault: true });
+          exportCats.push({ id: 1, name: DEFAULT_CATEGORY_NAME, tasks: [], isDefault: true });
           exportCats.push({ id: 2, name: '回收站', tasks: [], isRecycle: true });
           var d = { categories: exportCats, nextCategoryId: cid, nextTaskId: tid };
           var blob = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
@@ -2986,7 +2986,7 @@
         });
       });
       cats.forEach(function(cat) {
-        if (cat.isRecycle || cat.isArchive || cat.isDefault && cat.name === '默认') { return; }
+        if (cat.isRecycle || cat.isArchive || cat.isDefault && cat.name === DEFAULT_CATEGORY_NAME) { return; }
         var cnt = (cat.tasks || []).length;
         if (cnt === 0) return;
         taskCount += cnt;
@@ -3703,6 +3703,23 @@
       }
     }
 
+    // 日期选择器辅助函数（使用原生 date picker）
+    function pickDate(defaultDate) {
+      return new Promise(function(resolve) {
+        var inp = document.createElement('input');
+        inp.type = 'date';
+        inp.value = defaultDate || new Date().toISOString().split('T')[0];
+        inp.style.cssText = 'position:fixed;left:0;top:0;opacity:0;pointer-events:none;z-index:99999';
+        document.body.appendChild(inp);
+        function cleanup() { if (inp.parentNode) inp.remove(); }
+        inp.addEventListener('change', function() { cleanup(); resolve(inp.value); });
+        inp.addEventListener('blur', function() {
+          setTimeout(function() { if (inp.parentNode) { cleanup(); resolve(null); } }, 300);
+        });
+        try { inp.showPicker(); } catch(e) { cleanup(); resolve(prompt('请输入截止日期 YYYY-MM-DD：', defaultDate)); }
+      });
+    }
+
     function showConfirmModal(item, type) {
       itemToDelete = item;
       deleteType = type;
@@ -3903,15 +3920,13 @@
           });
           
           // batch change due date
-          document.getElementById('batch-date-btn').addEventListener('click', () => {
-            const d = prompt('请输入新的截止日期 (YYYY-MM-DD)：', new Date().toISOString().split('T')[0]);
-            if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) {
+          document.getElementById('batch-date-btn').addEventListener('click', async () => {
+            const d = await pickDate();
+            if (d) {
               batchChangeDueDate([...batchSelected], catId, d);
               batchSelected = new Set();
               renderPage(page);
               renderCategories();
-            } else if (d) {
-              alert('日期格式错误，请输入 YYYY-MM-DD 格式');
             }
           });
           
@@ -4425,11 +4440,11 @@
               var ok = await showConfirmDialog('确定将选中的 '+count+' 条任务重要性改为「'+labels[v]+'」吗？', { text: '确定修改', color: '#4a7ddb' }, { text: '取消', color: '#9ca3af' });
               if (!ok) return;
               batchDo('priority',v); sel={}; statusActive={}; renderP(page); renderCategories(); }); };
-          el = document.getElementById('ba2-dt'); if(el) el.onclick = async function() { var d = prompt('新截止日期 YYYY-MM-DD：', new Date().toISOString().split('T')[0]); if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) {
+          el = document.getElementById('ba2-dt'); if(el) el.onclick = async function() { var d = await pickDate(); if (d) {
             var count = Object.keys(sel).length; if (!count) return;
             var ok = await showConfirmDialog('确定将选中的 '+count+' 条任务截止日期改为「'+d+'」吗？', { text: '确定修改', color: '#4a7ddb' }, { text: '取消', color: '#9ca3af' });
             if (!ok) return;
-            batchDo('date',d); sel={}; statusActive={}; renderP(page); renderCategories(); } else if (d) { alert('格式错误'); } };
+            batchDo('date',d); sel={}; statusActive={}; renderP(page); renderCategories(); } };
           el = document.getElementById('ba2-del'); if(el) el.onclick = async function() {
             var count = Object.keys(sel).length;
             if (count === 0) return;
@@ -4551,7 +4566,7 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
         var existingCatNames = {};
         categories.forEach(function(c) { existingCatNames[c.name] = c; });
         newData.forEach(function(newCat) {
-          if (newCat.isRecycle || newCat.isDefault && newCat.name === '默认') return;
+          if (newCat.isRecycle || newCat.isDefault && newCat.name === DEFAULT_CATEGORY_NAME) return;
           if (existingCatNames[newCat.name]) {
             var target = existingCatNames[newCat.name];
             (newCat.tasks || []).forEach(function(t) {
