@@ -1752,9 +1752,7 @@
             document.querySelector('.page-title').textContent = pageTitle;
             document.title = pageTitle;
           }
-          if (cloud.appSettings) {
-            appSettings = { ...appSettings, ...cloud.appSettings };
-          }
+          // 设置由本地 todoApp-settings 独立管理，不随云端覆盖
           if (cloud.allTags) {
             // 合并标签：以本地为主，补全云端独有的
             const localTagNames = new Set(allTags.map(t => t.name));
