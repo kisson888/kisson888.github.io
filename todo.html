@@ -3470,13 +3470,15 @@
       elements.confirmDeleteBtn.addEventListener('click', () => {
         if (deleteType === 'category') {
           deleteCategory(itemToDelete);
+          elements.confirmModal.classList.add('hidden');
+          if (currentViewCatId) {
+            showTaskListModal(currentViewCatId);
+          } else {
+            document.body.style.overflow = '';
+          }
         } else if (deleteType === 'task') {
           deleteTask(itemToDelete.cid, itemToDelete.tid);
-        }
-        elements.confirmModal.classList.add('hidden');
-        if (currentViewCatId) {
-          showTaskListModal(currentViewCatId);
-        } else {
+          elements.confirmModal.classList.add('hidden');
           document.body.style.overflow = '';
         }
       });
@@ -3703,20 +3705,54 @@
       }
     }
 
-    // 日期选择器辅助函数（使用原生 date picker）
+    // 日期选择弹窗（统一界面，点击输入框弹出控件或手动编辑）
     function pickDate(defaultDate) {
       return new Promise(function(resolve) {
+        var val = defaultDate || new Date().toISOString().split('T')[0];
+        var backdrop = document.createElement('div');
+        backdrop.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:10000;display:flex;align-items:center;justify-content:center';
+        var box = document.createElement('div');
+        box.style.cssText = 'background:#fff;border-radius:12px;padding:24px;min-width:340px;box-shadow:0 8px 30px rgba(0,0,0,0.15);display:flex;flex-direction:column;gap:16px';
+        // 深色模式适配
+        if (document.documentElement.classList.contains('dark')) { box.style.background = '#1e293b'; }
+
+        // 标题
+        var title = document.createElement('div');
+        title.style.cssText = 'font-size:15px;font-weight:700;color:' + (document.documentElement.classList.contains('dark') ? '#f1f5f9' : '#1e293b');
+        title.textContent = '选择截止日期';
+        box.appendChild(title);
+
+        // 日期输入框
         var inp = document.createElement('input');
         inp.type = 'date';
-        inp.value = defaultDate || new Date().toISOString().split('T')[0];
-        inp.style.cssText = 'position:fixed;left:0;top:0;opacity:0;pointer-events:none;z-index:99999';
-        document.body.appendChild(inp);
-        function cleanup() { if (inp.parentNode) inp.remove(); }
-        inp.addEventListener('change', function() { cleanup(); resolve(inp.value); });
-        inp.addEventListener('blur', function() {
-          setTimeout(function() { if (inp.parentNode) { cleanup(); resolve(null); } }, 300);
-        });
-        try { inp.showPicker(); } catch(e) { cleanup(); resolve(prompt('请输入截止日期 YYYY-MM-DD：', defaultDate)); }
+        inp.value = val;
+        inp.style.cssText = 'width:100%;padding:8px 12px;font-size:14px;border:1px solid #d1d5db;border-radius:8px;outline:none;box-sizing:border-box;background:' + (document.documentElement.classList.contains('dark') ? '#334155' : '#fff') + ';color:' + (document.documentElement.classList.contains('dark') ? '#f1f5f9' : '#1e293b');
+        inp.setAttribute('title', '点击弹出日期选择，或直接编辑年月日');
+        inp.onfocus = function() { try { inp.showPicker(); } catch(e) {} };
+        box.appendChild(inp);
+
+        // 按钮区
+        var btnRow = document.createElement('div');
+        btnRow.style.cssText = 'display:flex;justify-content:flex-end;gap:10px';
+        var cancelBtn = document.createElement('button');
+        cancelBtn.textContent = '取消';
+        cancelBtn.style.cssText = 'padding:8px 20px;border:1px solid #d1d5db;border-radius:8px;background:#fff;color:#6b7280;font-size:13px;cursor:pointer';
+        var confirmBtn = document.createElement('button');
+        confirmBtn.textContent = '确定';
+        confirmBtn.style.cssText = 'padding:8px 20px;border:none;border-radius:8px;background:#3b82f6;color:#fff;font-size:13px;cursor:pointer';
+
+        btnRow.appendChild(cancelBtn);
+        btnRow.appendChild(confirmBtn);
+        box.appendChild(btnRow);
+        backdrop.appendChild(box);
+        document.body.appendChild(backdrop);
+
+        function cleanup(result) { if (backdrop.parentNode) backdrop.remove(); resolve(result); }
+        confirmBtn.onclick = function() { cleanup(inp.value); };
+        cancelBtn.onclick = function() { cleanup(null); };
+        backdrop.addEventListener('click', function(e) { if (e.target === backdrop) cleanup(null); });
+        inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') confirmBtn.click(); });
+        setTimeout(function() { inp.focus(); inp.select(); }, 100);
       });
     }
 
