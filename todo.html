@@ -4768,7 +4768,7 @@ h += '<th class="px-4 py-3 text-left sort-th" data-sort="status" style="cursor:p
             nextCategoryId = data.nextCategoryId || 1;
             nextTaskId = data.nextTaskId || 1;
             if (data.title) { pageTitle = data.title; document.querySelector('.page-title').textContent = pageTitle; }
-            if (data.appSettings) { appSettings = { ...appSettings, ...data.appSettings }; }
+            // 设置已由 loadSettings 从 todoApp-settings 独立加载，不覆盖
             if (data.allTags) { allTags = data.allTags; }
           }
         } catch(e) {}
