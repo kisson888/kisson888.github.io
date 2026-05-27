@@ -935,88 +935,99 @@
   </div>
 
   <div id="help-modal" class="modal-backdrop hidden">
-    <div class="modal-content" style="max-width:780px;max-height:85vh;display:flex;flex-direction:column">
-      <div class="flex justify-between items-center mb-2" style="flex-shrink:0">
+    <div class="modal-content" style="max-width:740px;max-height:85vh;display:flex;flex-direction:column">
+      <div class="flex justify-between items-center mb-3" style="flex-shrink:0">
         <h2 class="text-base font-bold flex items-center gap-1">📋 使用说明</h2>
         <button class="btn-icon close-modal"><i class="fa fa-times"></i></button>
       </div>
-      <div style="overflow-y:auto;flex:1;padding-right:4px">
-      <div class="grid grid-cols-2 gap-x-5 gap-y-1 text-xs text-gray-600 dark:text-gray-300" style="line-height:1.7">
+      <div style="overflow-y:auto;flex:1;padding-right:4px;display:flex;flex-direction:column;gap:10px">
 
-        <div class="mb-1">
-          <div class="font-bold text-gray-800 dark:text-white mb-0.5 flex items-center gap-1">🗂 基本操作</div>
-          <div>• 顶部：新建任务 · 新增区块 · 全部任务 · 导入/导出 · 统计 · 回收站 · 归档</div>
-          <div>• 右侧图标：🔔到期 · 📅日历 · 🎨主题 · ⚙设置 · ❓帮助 · 👤登录</div>
-          <div>• <b>点击任务条</b>编辑详情，勾选即完成</div>
-          <div>• 任务可<b>拖拽</b>到其他区块 · 🗑删除移入回收站</div>
-          <div>• 已完成点 <b>归档</b> 移入归档区</div>
+        <!-- 区块一：任务管理 -->
+        <div style="border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px" class="dark:border-gray-600">
+          <div class="font-bold text-gray-800 dark:text-white mb-2" style="font-size:13px">📝 任务管理</div>
+          <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600 dark:text-gray-300" style="line-height:1.8">
+            <div>
+              <div class="font-medium text-gray-500 dark:text-gray-400 mb-0.5">基本操作</div>
+              <div>• 顶部：新建任务 · 新增区块 · 全部任务</div>
+              <div>• 右侧：🔔到期 · 📅日历 · 🎨主题</div>
+              <div>• ⚙设置 · ❓帮助 · 👤登录</div>
+              <div>• 点击任务条编辑详情，勾选即完成</div>
+              <div>• 任务可拖拽到其他区块</div>
+            </div>
+            <div>
+              <div class="font-medium text-gray-500 dark:text-gray-400 mb-0.5">排序 &amp; 批量</div>
+              <div>• 标题栏 ↕ 默认/标题/日期/重要性/部门</div>
+              <div>• 点击切换排序，再点切换升降序</div>
+              <div>• 区块📋打开列表勾选批量操作</div>
+              <div>• 工具栏：移动/状态/截止/重要性/删除</div>
+              <div>• 支持全选当前页/全选全部</div>
+            </div>
+          </div>
         </div>
 
-        <div class="mb-1">
-          <div class="font-bold text-gray-800 dark:text-white mb-0.5 flex items-center gap-1">📅 任务日历</div>
-          <div>• 📅 打开日历，显示各日期任务数量</div>
-          <div>• 点击日期可快速创建任务</div>
-          <div class="mt-1 font-bold text-gray-800 dark:text-white mb-0.5 flex items-center gap-1">🔄 周期性任务</div>
-          <div>• 设置重复周期：每天/每周/每月/每年</div>
-          <div>• 完成后自动生成下一周期任务</div>
+        <!-- 区块二：区块与数据 -->
+        <div style="border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px" class="dark:border-gray-600">
+          <div class="font-bold text-gray-800 dark:text-white mb-2" style="font-size:13px">🗂 区块与数据</div>
+          <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600 dark:text-gray-300" style="line-height:1.8">
+            <div>
+              <div class="font-medium text-gray-500 dark:text-gray-400 mb-0.5">导入导出</div>
+              <div>• 导出：按区块/状态/重要性导出JSON/Excel</div>
+              <div>• 导入：覆盖替换全部或追加合并</div>
+              <div>• JSON互通，Excel支持跨工具编辑</div>
+              <div class="mt-1 font-medium text-gray-500 dark:text-gray-400 mb-0.5">标签管理</div>
+              <div>• 添加标签（逗号分隔），彩色显示与筛选</div>
+            </div>
+            <div>
+              <div class="font-medium text-gray-500 dark:text-gray-400 mb-0.5">回收站 &amp; 归档</div>
+              <div>• 删除移入回收站，可恢复或永久删除</div>
+              <div>• 支持恢复全部或清空回收站</div>
+              <div>• 已完成任务可归档移入归档区</div>
+              <div class="mt-1 font-medium text-gray-500 dark:text-gray-400 mb-0.5">系统设置</div>
+              <div>• ⚙ 布局/显示/提醒 + 备份/去重/标签</div>
+            </div>
+          </div>
         </div>
 
-        <div class="mb-1">
-          <div class="font-bold text-gray-800 dark:text-white mb-0.5 flex items-center gap-1">🔃 排序 &amp; 标签</div>
-          <div>• 标题栏 ↕ 默认 / 题 标题 / 期 日期 / 要 重要性 / 部 部门</div>
-          <div>• 点击切换排序方式，再点切换升降序</div>
-          <div>• 添加<b>标签</b>（逗号分隔），彩色显示与筛选</div>
+        <!-- 区块三：日历与任务 -->
+        <div style="border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px" class="dark:border-gray-600">
+          <div class="font-bold text-gray-800 dark:text-white mb-2" style="font-size:13px">📅 日历与任务</div>
+          <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600 dark:text-gray-300" style="line-height:1.8">
+            <div>
+              <div class="font-medium text-gray-500 dark:text-gray-400 mb-0.5">任务日历</div>
+              <div>• 📅 打开日历查看各日期任务数量</div>
+              <div>• 点击日期可快速创建任务</div>
+            </div>
+            <div>
+              <div class="font-medium text-gray-500 dark:text-gray-400 mb-0.5">周期性任务</div>
+              <div>• 设置重复：每天/每周/每月/每年</div>
+              <div>• 完成后自动生成下一周期任务</div>
+            </div>
+          </div>
         </div>
 
-        <div class="mb-1">
-          <div class="font-bold text-gray-800 dark:text-white mb-0.5 flex items-center gap-1">📥 导入导出</div>
-          <div>• <b>导出</b>：按区块/状态/重要性筛选导出 JSON / Excel</div>
-          <div>• <b>导入</b>：可覆盖替换全部或追加合并</div>
-          <div>• JSON 互通，Excel 支持跨工具编辑</div>
-        </div>
-
-        <div class="mb-1">
-          <div class="font-bold text-gray-800 dark:text-white mb-0.5 flex items-center gap-1">☑ 批量操作</div>
-          <div>• 区块 📋 或「全部任务」打开列表视口勾选操作</div>
-          <div>• 工具栏：移动/改状态/改截止/改重要性/删除</div>
-          <div>• 支持全选当前页 / 全选全部</div>
-        </div>
-
-        <div class="mb-1">
-          <div class="font-bold text-gray-800 dark:text-white mb-0.5 flex items-center gap-1">🗑 回收站</div>
-          <div>• 删除的任务移入回收站，可恢复或永久删除</div>
-          <div>• 支持「恢复全部」或「清空回收站」</div>
-          <div class="mt-1 font-bold text-gray-800 dark:text-white mb-0.5 flex items-center gap-1">⚙ 系统设置</div>
-          <div>• ⚙ 双栏布局：布局/显示/提醒 + 备份/去重/标签</div>
-        </div>
-
-        <div class="mb-1">
-          <div class="font-bold text-gray-800 dark:text-white mb-0.5 flex items-center gap-1">🎨 主题配色</div>
-          <div>• 🎨 打开主题选择器，6 套主题可选</div>
-          <div>• 支持浅色/深色模式切换</div>
-        </div>
-
-        <div class="mb-1">
-          <div class="font-bold text-gray-800 dark:text-white mb-0.5 flex items-center gap-1">👤 账号与云端同步</div>
-          <div>• 👤 登录，支持 Google / GitHub / 邮箱注册</div>
-          <div>• 登录后自动同步，多设备数据合并不丢失</div>
-          <div>• 未登录数据存本地，登录后云端合并</div>
-        </div>
-
-        <div class="mb-1">
-          <div class="font-bold text-gray-800 dark:text-white mb-0.5 flex items-center gap-1">🔔 近期到期提醒</div>
-          <div>• 🔔 查看近期到期任务，表头可排序</div>
-          <div>• 提前天数可在设置中配置（默认3天）</div>
-        </div>
-
-        <div class="mb-1">
-          <div class="font-bold text-gray-800 dark:text-white mb-0.5 flex items-center gap-1">⌨ 快捷键</div>
-          <div>• <b>Esc</b> 关闭弹窗 · <b>Enter</b> 提交表单</div>
+        <!-- 区块四：账号与界面 -->
+        <div style="border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px" class="dark:border-gray-600">
+          <div class="font-bold text-gray-800 dark:text-white mb-2" style="font-size:13px">👤 账号与界面</div>
+          <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600 dark:text-gray-300" style="line-height:1.8">
+            <div>
+              <div class="font-medium text-gray-500 dark:text-gray-400 mb-0.5">云端同步</div>
+              <div>• 登录后自动同步，多设备合并</div>
+              <div>• 支持Google/GitHub/邮箱注册</div>
+              <div>• 未登录存本地，登录后云端合并</div>
+              <div class="mt-1 font-medium text-gray-500 dark:text-gray-400 mb-0.5">快捷键</div>
+              <div>• <b>Esc</b> 关闭弹窗 · <b>Enter</b> 提交表单</div>
+            </div>
+            <div>
+              <div class="font-medium text-gray-500 dark:text-gray-400 mb-0.5">主题 &amp; 提醒</div>
+              <div>• 🎨 6套主题可选，支持深色/浅色模式</div>
+              <div>• 🔔 查看近期到期任务，表头可排序</div>
+              <div>• 提前天数可在设置中配置（默认3天）</div>
+            </div>
+          </div>
         </div>
 
       </div>
-      </div>
-      <div class="text-gray-400 text-xs mt-2 pt-1 border-t border-gray-200 dark:border-gray-600 flex justify-between items-center" style="flex-shrink:0">
+      <div class="text-gray-400 text-xs mt-3 pt-2 border-t border-gray-200 dark:border-gray-600 flex justify-between items-center" style="flex-shrink:0">
         <span>v2026.05.27</span>
         <span>反馈：<a href="mailto:yongbing.yang@gmail.com" class="text-blue-500">yongbing.yang@gmail.com</a></span>
       </div>
@@ -2400,6 +2411,114 @@
         });
       });
       
+      // === document 级别事件委托（覆盖动态创建的任务卡片元素） ===
+      if (!document._todoDelegation) {
+        document._todoDelegation = true;
+
+        document.addEventListener('click', function(e) {
+          // 删除任务
+          const delBtn = e.target.closest('.delete-task');
+          if (delBtn) {
+            e.preventDefault(); e.stopPropagation();
+            const taskEl = delBtn.closest('.task-card');
+            if (!taskEl) return;
+            showConfirmModal({ cid: taskEl.dataset.cid, tid: taskEl.dataset.id }, 'task');
+            return;
+          }
+
+          // 归档任务
+          const archBtn = e.target.closest('.archive-task');
+          if (archBtn) {
+            e.preventDefault(); e.stopPropagation();
+            const taskEl = archBtn.closest('.task-card');
+            if (!taskEl) return;
+            moveTaskToArchive(taskEl.dataset.cid, taskEl.dataset.id);
+            return;
+          }
+
+          // 从归档恢复
+          const restoreArchBtn = e.target.closest('.restore-archive');
+          if (restoreArchBtn) {
+            e.preventDefault(); e.stopPropagation();
+            const taskEl = restoreArchBtn.closest('.task-card');
+            if (!taskEl) return;
+            restoreTaskFromArchive(taskEl.dataset.id);
+            return;
+          }
+
+          // 从回收站恢复
+          const restoreBtn = e.target.closest('.restore-task');
+          if (restoreBtn) {
+            e.preventDefault(); e.stopPropagation();
+            const taskEl = restoreBtn.closest('.task-card');
+            if (!taskEl) return;
+            restoreTaskFromRecycle(taskEl.dataset.id);
+            return;
+          }
+
+          // 状态标签筛选
+          const tag = e.target.closest('.status-tag');
+          if (tag) {
+            e.preventDefault(); e.stopPropagation();
+            const status = tag.dataset.status;
+            const card = tag.closest('.category-card');
+            if (card) {
+              const cid = card.dataset.id;
+              categoryFilters[cid] = status;
+              card.querySelectorAll('.status-tag').forEach(t => t.classList.remove('active'));
+              tag.classList.add('active');
+              applyCategoryFilter(card, status);
+            }
+            return;
+          }
+
+          // 排序
+          const sortOpt = e.target.closest('.sort-opt');
+          if (sortOpt) {
+            e.preventDefault(); e.stopPropagation();
+            var cid = sortOpt.dataset.cid;
+            var sort = sortOpt.dataset.sort;
+            var cat = null;
+            for (var ci = 0; ci < categories.length; ci++) {
+              if (categories[ci].id === cid) { cat = categories[ci]; break; }
+            }
+            if (!cat) return;
+            if (cat.sortBy === sort) {
+              cat.sortOrder = cat.sortOrder === 'asc' ? 'desc' : 'asc';
+            } else {
+              cat.sortBy = sort;
+              cat.sortOrder = 'asc';
+            }
+            touchItem(cat);
+            saveDataToStorage();
+            renderCategories();
+            return;
+          }
+
+          // 点击任务卡片空白区域（非按钮/非checkbox）→ 打开编辑
+          const taskCard = e.target.closest('.task-card');
+          if (taskCard && !e.target.closest('.delete-task, .restore-task, .archive-task, .restore-archive, .task-checkbox, .edit-task, button, a')) {
+            const tid = taskCard.dataset.id;
+            const cid = taskCard.dataset.cid;
+            if (tid) {
+              openTaskModal(tid, cid);
+              document.body.style.overflow = 'hidden';
+            }
+          }
+        });
+
+        // change 事件委托：勾选完成
+        document.addEventListener('change', function(e) {
+          const cb = e.target.closest('.task-checkbox');
+          if (cb) {
+            const taskEl = cb.closest('.task-card');
+            if (taskEl) {
+              toggleTaskComplete(taskEl.dataset.id, taskEl.dataset.cid);
+            }
+          }
+        });
+      }
+
       elements.saveSettingsBtn.addEventListener('click', () => {
         saveSettings();
         elements.settingsModal.classList.add('hidden');
@@ -3225,111 +3344,6 @@
     }
 
     function initTaskDrag() {
-      // === 事件委托：统一绑在 categoriesContainer，覆盖所有动态创建的元素 ===
-      const cc = elements.categoriesContainer;
-      if (cc && !cc.dataset.handlerBound) {
-        cc.dataset.handlerBound = '1';
-
-        // 点击任务卡片 → 打开编辑
-        cc.addEventListener('click', (e) => {
-          const card = e.target.closest('.task-card');
-          if (!card) return;
-          if (e.target.closest('.delete-task, .restore-task, .task-checkbox, .edit-task, button, a')) return;
-          const tid = card.dataset.id;
-          const cid = card.dataset.cid;
-          if (!tid) return;
-          openTaskModal(tid, cid);
-          document.body.style.overflow = 'hidden';
-        });
-
-        // 删除任务
-        cc.addEventListener('click', (e) => {
-          const btn = e.target.closest('.delete-task');
-          if (!btn) return;
-          e.preventDefault(); e.stopPropagation();
-          const taskEl = btn.closest('.task-card');
-          if (!taskEl) return;
-          showConfirmModal({ cid: taskEl.dataset.cid, tid: taskEl.dataset.id }, 'task');
-        });
-
-        // 归档任务
-        cc.addEventListener('click', (e) => {
-          const btn = e.target.closest('.archive-task');
-          if (!btn) return;
-          e.preventDefault(); e.stopPropagation();
-          const taskEl = btn.closest('.task-card');
-          if (!taskEl) return;
-          moveTaskToArchive(taskEl.dataset.cid, taskEl.dataset.id);
-        });
-
-        // 从归档恢复
-        cc.addEventListener('click', (e) => {
-          const btn = e.target.closest('.restore-archive');
-          if (!btn) return;
-          e.preventDefault(); e.stopPropagation();
-          const taskEl = btn.closest('.task-card');
-          if (!taskEl) return;
-          restoreTaskFromArchive(taskEl.dataset.id);
-        });
-
-        // 从回收站恢复
-        cc.addEventListener('click', (e) => {
-          const btn = e.target.closest('.restore-task');
-          if (!btn) return;
-          e.preventDefault(); e.stopPropagation();
-          const taskEl = btn.closest('.task-card');
-          if (!taskEl) return;
-          restoreTaskFromRecycle(taskEl.dataset.id);
-        });
-
-        // 勾选完成任务
-        cc.addEventListener('change', (e) => {
-          const cb = e.target.closest('.task-checkbox');
-          if (!cb) return;
-          const taskEl = cb.closest('.task-card');
-          if (!taskEl) return;
-          toggleTaskComplete(taskEl.dataset.id, taskEl.dataset.cid);
-        });
-
-        // 状态标签筛选
-        cc.addEventListener('click', (e) => {
-          const tag = e.target.closest('.status-tag');
-          if (!tag) return;
-          e.preventDefault(); e.stopPropagation();
-          const status = tag.dataset.status;
-          const card = tag.closest('.category-card');
-          if (!card) return;
-          const cid = card.dataset.id;
-          categoryFilters[cid] = status;
-          card.querySelectorAll('.status-tag').forEach(t => t.classList.remove('active'));
-          tag.classList.add('active');
-          applyCategoryFilter(card, status);
-        });
-
-        // 排序
-        cc.addEventListener('click', (e) => {
-          const opt = e.target.closest('.sort-opt');
-          if (!opt) return;
-          e.preventDefault(); e.stopPropagation();
-          var cid = opt.dataset.cid;
-          var sort = opt.dataset.sort;
-          var cat = null;
-          for (var ci = 0; ci < categories.length; ci++) {
-            if (categories[ci].id === cid) { cat = categories[ci]; break; }
-          }
-          if (!cat) return;
-          if (cat.sortBy === sort) {
-            cat.sortOrder = cat.sortOrder === 'asc' ? 'desc' : 'asc';
-          } else {
-            cat.sortBy = sort;
-            cat.sortOrder = 'asc';
-          }
-          touchItem(cat);
-          saveDataToStorage();
-          renderCategories();
-        });
-      }
-
       // Sortable 拖拽（每次 render 都重新初始化）
       document.querySelectorAll('.category-content').forEach(el => {
         if (el._sortable) el._sortable.destroy();
